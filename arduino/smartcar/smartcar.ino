@@ -46,52 +46,40 @@ void setup()
 {
     Serial.begin(9600);
 }
-
+//Main loop method.
+// TODO *Alex & Chris* check reaction to obstacles on the sides.
+// TODO *Alex & Chris* change while condition (local var or a bool method (if value is between x, return true) would probably be more efficient).
 void loop()
 {
-    //var = newMethod -- returns the problem sensor (first letter) or pins if possible
-    //char sensor = checkSensors();
-    char sensor;
-    if(frontUS.getDistance() < 80 && frontUS.getDistance() > 0){
-        sensor = 'f';
-    }else if (backIR.getDistance() < 70 && backIR.getDistance() > 0){
-        sensor = 'b';
-    }else if (leftIR.getDistance() < 70 && leftIR.getDistance() > 0){
-        sensor = 'l';
-    }else if (rightIR.getDistance() < 70 && rightIR.getDistance() > 0){
-        sensor = 'r';
-    }else{
-        sensor = 'x';
-    }
-
+    char sensor = checkSensors();
     switch(sensor){
         case 'f':
             { car.setSpeed(0);
             delay(1000);
-            while(frontUS.getDistance() < 80){
+            while(frontUS.getDistance() > 0 && frontUS.getDistance() < 80){
                 car.setSpeed(-10);
-            }};
+            }car.setSpeed(0);};
             break;
         case 'b':
             {car.setSpeed(0);
             delay(1000);
-            while(backIR.getDistance() < 30 || backIR.getDistance() == 0){
+            while(backIR.getDistance() > 0 && backIR.getDistance() < 30 ){
                 car.setSpeed(10);
-            }};
+            }car.setSpeed(0);};
             break;
         case 'l':
             {car.setSpeed(10);
             delay(1000);
-            while(leftIR.getDistance() < 40){
+            while(leftIR.getDistance() > 0 && leftIR.getDistance() < 30 ){
                 car.setAngle(90);
-            }};
+            }car.setAngle(0);};
             break;
         case 'r':
             { car.setSpeed(10);
             delay(1000);
-            while(rightIR.getDistance() < 40){
+            while(rightIR.getDistance() > 0 && rightIR.getDistance() < 30) {
                 car.setAngle(-90);
-            }};
+            }car.setAngle(0);};
             break;
         case 'x':
             { handleInput();
@@ -100,29 +88,11 @@ void loop()
             //Serial.println(frontIR.getDistance());
             //Serial.println(leftIR.getDistance());
             //Serial.println(rightIR.getDistance());
-            Serial.println(backIR.getDistance());
+            //Serial.println(backIR.getDistance());
             delay(100);
             }};
 
     }
-    //replace if statement (switch with letter/pin cases)
-/*    if (frontUS.getDistance() > 80 || frontUS.getDistance()  == 0) {
-        handleInput();
-        Serial.println(frontUS.getDistance());
-        //Disabled to not overload the serial console, Enable if you want to see the distance printed.
-        //Serial.println(frontIR.getDistance());
-        //Serial.println(leftIR.getDistance());
-        //Serial.println(rightIR.getDistance());
-        //Serial.println(backIR.getDistance());
-        delay(100);
-    }else{
-        car.setSpeed(0);
-        delay(1000);
-        while(front.getDistance() < 80){
-            car.setSpeed(-10);
-        }
-    }*/
-
 
 void handleInput() {
     if (Serial.available()) {
@@ -142,21 +112,25 @@ void handleInput() {
         }
     }
 }
+//Method to check which sensor is being affected.
+// TODO *Alex & Chris* char value to be changed to the pin number of each sensor.
+// TODO *Alex & Chris* comparative values (80, 30) to be changed to a calculated value based on the speed (Longer range sensors are needed for this).
+char checkSensors()
+{
+    char sensor;
+    if(frontUS.getDistance() > 0 && frontUS.getDistance() < 80){
+        sensor = 'f';
+    }else if (backIR.getDistance() > 0 && backIR.getDistance() < 30){
+        sensor = 'b';
+    }else if (leftIR.getDistance() > 0 && leftIR.getDistance() < 30){
+        sensor = 'l';
+    }else if (rightIR.getDistance() > 0 && rightIR.getDistance() < 30){
+        sensor = 'r';
+    }else{
+        sensor = 'x';
+    }
+    return sensor;
+}
 
-/*    char checkSensors()
-    {
-        char sensor;
-        if(frontUS.getDistance() < 80){
-            sensor = f;
-        }else if (backIR.getDistance() < 70){
-            sensor = b;
-        }else if (leftIR.getDistance() < 70){
-            sensor = l;
-        }else if (rightIR.getDistance() < 70){
-            sensor = r;
-        }else{
-            sensor = x;
-        }
-        return sensor;
-    }*/
-//}
+
+
