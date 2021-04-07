@@ -49,6 +49,6 @@ void handleInput()
       int inputAngle = input.substring(1).toInt();
       car.setAngle(inputAngle);
 
-    }else if(input.
+    }
   }
 }
