@@ -1,5 +1,8 @@
 #include <Smartcar.h>
-
+const int FRONT_PIN = 0;
+const int LEFT_PIN = 1;
+const int RIGHT_PIN = 2;
+const int BACK_PIN = 3;
 const int TRIGGER_PIN           = 6; // D6
 const int ECHO_PIN              = 7; // D7
 const unsigned int MAX_DISTANCE = 1000;
@@ -10,7 +13,12 @@ BrushedMotor leftMotor(arduinoRuntime, smartcarlib::pins::v2::leftMotorPins);
 BrushedMotor rightMotor(arduinoRuntime, smartcarlib::pins::v2::rightMotorPins);
 DifferentialControl control(leftMotor, rightMotor);
 
-SR04 front(arduinoRuntime, TRIGGER_PIN, ECHO_PIN, MAX_DISTANCE);
+GP2Y0A21 frontIR(arduinoRuntime, FRONT_PIN);
+GP2Y0A21 rightIR(arduinoRuntime, RIGHT_PIN);
+GP2Y0A21 leftIR(arduinoRuntime, LEFT_PIN);
+GP2Y0A21 backIR(arduinoRuntime, BACK_PIN);
+SR04 frontUS(arduinoRuntime, TRIGGER_PIN, ECHO_PIN, MAX_DISTANCE);
+
 
 GY50 gyroscope(arduinoRuntime, 37);
 
@@ -34,10 +42,14 @@ void setup()
 
 void loop()
 {
-    //Add all sensors!
-    if (front.getDistance() > 80 || front.getDistance()  == 0) {
+
+    if (frontUS.getDistance() > 80 || frontUS.getDistance()  == 0) {
         handleInput();
-        Serial.println(front.getDistance());
+        Serial.println(frontUS.getDistance());
+        //Serial.println(frontIR.getDistance());
+        //Serial.println(leftIR.getDistance());
+        //Serial.println(rightIR.getDistance());
+        //Serial.println(backIR.getDistance());
         delay(100);
     }else{
         car.setSpeed(0);
