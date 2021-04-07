@@ -14,16 +14,16 @@ SR04 front(arduinoRuntime, TRIGGER_PIN, ECHO_PIN, MAX_DISTANCE);
 
 GY50 gyroscope(arduinoRuntime, 37);
 
-DirectionalOdometer leftOdometer(
+DirectionalOdometer leftOdometer{
     arduinoRuntime,
     smartcarlib::pins::v2::leftOdometerPins,
     []() { leftOdometer.update(); },
-    pulsesPerMeter);
-DirectionalOdometer rightOdometer(
+    pulsesPerMeter};
+DirectionalOdometer rightOdometer{
     arduinoRuntime,
     smartcarlib::pins::v2::rightOdometerPins,
     []() { rightOdometer.update(); },
-    pulsesPerMeter);
+    pulsesPerMeter};
 
 SmartCar car(arduinoRuntime, control, gyroscope, leftOdometer, rightOdometer);
 
@@ -34,9 +34,18 @@ void setup()
 
 void loop()
 {
-    handleInput();
-    Serial.println(front.getDistance());
-    delay(100);
+    //Add all sensors!
+    if (front.getDistance() > 80 || front.getDistance()  == 0) {
+        handleInput();
+        Serial.println(front.getDistance());
+        delay(100);
+    }else{
+        car.setSpeed(0);
+        delay(1000);
+        while(front.getDistance() < 80){
+            car.setSpeed(-10);
+        }
+    }
 }
 
 void handleInput()
