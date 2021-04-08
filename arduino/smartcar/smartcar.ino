@@ -31,15 +31,15 @@ GY50 gyroscope(arduinoRuntime, 37);
 
 //Directional odometers
 DirectionalOdometer leftOdometer(
-    arduinoRuntime,
-    smartcarlib::pins::v2::leftOdometerPins,
-    []() { leftOdometer.update(); },
-    pulsesPerMeter);
+        arduinoRuntime,
+        smartcarlib::pins::v2::leftOdometerPins,
+        []() { leftOdometer.update(); },
+        pulsesPerMeter);
 DirectionalOdometer rightOdometer(
-    arduinoRuntime,
-    smartcarlib::pins::v2::rightOdometerPins,
-    []() { rightOdometer.update(); },
-    pulsesPerMeter);
+        arduinoRuntime,
+        smartcarlib::pins::v2::rightOdometerPins,
+        []() { rightOdometer.update(); },
+        pulsesPerMeter);
 
 //Constructor of the SmartCar
 SmartCar car(arduinoRuntime, control, gyroscope, leftOdometer, rightOdometer);
@@ -51,5 +51,53 @@ void setup()
 
 void loop()
 {
-  
+    if(isClear()){
+        handleInput();
+    }else{
+        stop();
+        delay(100);
+        adjustCar();
+
+    }
+    delay(50);
+}
+
+void handleInput() {
+    if (Serial.available()) {
+
+        String input = Serial.readStringUntil('\n');
+
+        if (input.startsWith("m")) {
+
+            int inputSpeed = input.substring(1).toInt();
+            car.setSpeed(inputSpeed);
+
+        } else if (input.startsWith("t")) {
+
+            int inputAngle = input.substring(1).toInt();
+            car.setAngle(inputAngle);
+
+        }
+    }
+}
+
+void adjustCar(){
+    if (frontUS.getDistance() <= 80 && frontUS.getDistance() != 0){
+        while(frontUS.getDistance() > 0 && frontUS.getDistance() <= 100){
+            car.setSpeed(-10);
+        }
+    } else if (backIR.getDistance() <= 30 && backIR.getDistance() != 0){
+        while(backIR.getDistance() != 0){
+            car.setSpeed(10);
+        }
+    }
+    car.setSpeed (0);
+}
+
+void stop(){
+    car.setSpeed(0);
+}
+
+boolean isClear(){
+    return ((frontUS.getDistance() > 80 || frontUS.getDistance()== 0) && (backIR.getDistance() > 30 || backIR.getDistance() == 0));
 }
