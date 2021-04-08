@@ -71,7 +71,7 @@ void slowDownSmoothly()
   while (car.getSpeed() > 0) { //while moving forward
     car.setSpeed(convertSpeed(car.getSpeed())/2);//cut it down by 50%
     Serial.println(car.getSpeed());
-    if (car.getSpeed() <= 0.2) { //if "slow enough"
+    if (convertSpeed(car.getSpeed()) <= 10) { //if/when "slow enough" (10%)
       car.setSpeed(0);//stop
     }
   }
