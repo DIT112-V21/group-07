@@ -51,7 +51,7 @@ void loop()
    
    int sensorDistance = frontUS.getDistance(); 
    if (sensorDistance !=0 ){ // if the sensor has readings .. 
-        if ( sensorDistance <= stopDistance ){ // check if the sensor measurment is equal or less than the stopping distance.
+        if ( sensorDistance <= stopDistance ){ // check if the sensor measurment is equal or less than the stopping distance
           car.setSpeed(0); // stop the car.
         }
    }
