@@ -94,3 +94,25 @@ void SR04sensorData(boolean pubSensorData, String publishTopic){
 
     }
 }
+
+void MQTTMessageInput(){
+
+  if (mqtt.connect("arduino", "public", "public")) {
+    mqtt.subscribe("/smartcar/control/#", 1);
+    mqtt.onMessage([](String topic, String message) {
+      if (topic == "/smartcar/control/speed") {
+        car.setSpeed(message.toInt());
+      } else if (topic == "/smartcar/control/angle") {
+        car.setAngle(message.toInt());
+      } else {
+        Serial.println(topic + " " + message);
+      }
+    });
+  }
+}
+
+void noCPUoverload (){
+#ifdef __SMCE__
+  delay(35);
+#endif
+}
