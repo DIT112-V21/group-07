@@ -1,3 +1,4 @@
+  
 #include <Smartcar.h>
 #include <MQTT.h>
 #include <WiFi.h>
@@ -42,16 +43,16 @@ SR04 frontUS(arduinoRuntime, TRIGGER_PIN, ECHO_PIN, MAX_DISTANCE);
 GY50 gyroscope(arduinoRuntime, 37);
 
 //Directional odometers
-DirectionalOdometer leftOdometer(
+DirectionalOdometer leftOdometer{  // for MAC - use : () instead of {}
     arduinoRuntime,
     smartcarlib::pins::v2::leftOdometerPins,
     []() { leftOdometer.update(); },
-    pulsesPerMeter);
-DirectionalOdometer rightOdometer(
+    pulsesPerMeter};
+DirectionalOdometer rightOdometer{  
     arduinoRuntime,
     smartcarlib::pins::v2::rightOdometerPins,
     []() { rightOdometer.update(); },
-    pulsesPerMeter);
+    pulsesPerMeter};
 
 //Constructor of the SmartCar
 SmartCar car(arduinoRuntime, control, gyroscope, leftOdometer, rightOdometer);
@@ -62,22 +63,23 @@ void setup()
       //Ex: 
   // chose to connect to localhost or external
 
-    //connectHost(true,"test.mosquitto.org",1883); //choosing to connect to localhost. 
+    connectHost(true); //choosing to connect to localhost. 
   
-    //MQTTMessageInput();
+    MQTTMessageInput();
 }
 
 void loop()
 {
       if (mqtt.connected()) { // check if the mqtt is connected .. needed if you connect through MQTT
-     mqtt.loop();  // Also needed to keep soing the mqtt operations
+        mqtt.loop();  // Also needed to keep soing the mqtt operations
      
-     //SR04sensorData(true, "/smartcar/ultrasound/front"); //publish sensor data every one second through MQTT
+        SR04sensorData(true, "/smartcar/ultrasound/front"); //publish sensor data every one second through MQTT
+      }
   
 }
 
 
-void connectHost(boolean ifLocalhost, String AddIP, int Hport){ // in case of other host just set the IP and the port, local host is false by default. 
+void connectHost(boolean ifLocalhost){ // in case of other host just set the IP and the port, local host is false by default. 
 
 if (ifLocalhost){
     #ifdef __SMCE__
@@ -91,7 +93,7 @@ if (ifLocalhost){
     #else
       mqtt.begin(net);
     #endif
-      }
+     }
 }
 
 void SR04sensorData(boolean pubSensorData, String publishTopic){ // Method to publish SR04 sensor Data
@@ -107,7 +109,7 @@ void SR04sensorData(boolean pubSensorData, String publishTopic){ // Method to pu
 
       if (currentTime - previousTransmission >= oneSecond) {
         previousTransmission = currentTime;
-        const auto distance = String(front.getDistance());
+        const auto distance = String(frontUS.getDistance());
         mqtt.publish(publishTopic, distance);  
       }
 
