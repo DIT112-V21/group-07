@@ -1,6 +1,14 @@
 #include <Smartcar.h>
+#include <MQTT.h>
+#include <WiFi.h>
+
+#ifndef __SMCE__
+WiFiClient net;
+#endif
+MQTTClient mqtt;
 
 //Pin definition and constants
+const auto oneSecond = 1000UL;
 const int FRONT_PIN = 0;
 const int LEFT_PIN = 1;
 const int RIGHT_PIN = 2;
@@ -13,11 +21,14 @@ const float maxSpeedMs = 1.845;
 
 //Runtime environment
 ArduinoRuntime arduinoRuntime;
+
 //Motors
 BrushedMotor leftMotor(arduinoRuntime, smartcarlib::pins::v2::leftMotorPins);
 BrushedMotor rightMotor(arduinoRuntime, smartcarlib::pins::v2::rightMotorPins);
+
 //Control
 DifferentialControl control(leftMotor, rightMotor);
+
 //Infrared sensors (all medium - 12 to 78cm) backIR = 25 - 120cm range
 GP2Y0A21 frontIR(arduinoRuntime, FRONT_PIN);
 GP2Y0A21 rightIR(arduinoRuntime, RIGHT_PIN);
@@ -53,3 +64,37 @@ void loop()
 {
   
 }
+
+void SR04sensorData(boolean pubSensorData, String publishTopic){  // Method to publish SR04 sensor Data 
+      
+  if(pubSensorData){
+
+      const auto currentTime = millis();
+      static auto previousTransmission = 0UL;
+
+      if (currentTime - previousTransmission >= oneSecond) {
+        previousTransmission = currentTime;
+        const auto distance = String(front.getDistance());
+        mqtt.publish(publishTopic, distance);  
+      }
+
+    }
+}
+
+void connectHost(boolean ifLocalhost, String AddIP, int Hport){ // in case of other host just set the IP and the port, local host is false by default. 
+
+if (ifLocalhost){
+    #ifdef __SMCE__
+      mqtt.begin(WiFi);
+    #else
+      mqtt.begin(net);
+    #endif
+}else{
+    #ifdef __SMCE__
+      mqtt.begin("test.mosquitto.org", 1883, WiFi);
+    #else
+      mqtt.begin(net);
+    #endif
+      }
+}
+
