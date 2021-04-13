@@ -1,6 +1,14 @@
 #include <Smartcar.h>
+#include <MQTT.h>
+#include <WiFi.h>
+
+#ifndef __SMCE__
+WiFiClient net;
+#endif
+MQTTClient mqtt;
 
 //Pin definition and constants
+const auto oneSecond = 1000UL;
 const int FRONT_PIN = 0;
 const int LEFT_PIN = 1;
 const int RIGHT_PIN = 2;
@@ -52,4 +60,37 @@ void setup()
 void loop()
 {
   
+}
+
+
+void SR04sensorData(boolean pubSensorData, String publishTopic){ 
+      
+  if(pubSensorData){
+      const auto currentTime = millis();
+      static auto previousTransmission = 0UL;
+
+      if (currentTime - previousTransmission >= oneSecond) {
+        previousTransmission = currentTime;
+        const auto distance = String(front.getDistance());
+        mqtt.publish(publishTopic, distance);  
+      }
+
+    }
+}
+
+void connectHost(boolean ifLocalhost, String AddIP, int Hport){ 
+
+if (ifLocalhost){
+    #ifdef __SMCE__
+      mqtt.begin(WiFi);
+    #else
+      mqtt.begin(net);
+    #endif
+}else{
+    #ifdef __SMCE__
+      mqtt.begin("test.mosquitto.org", 1883, WiFi);
+    #else
+      mqtt.begin(net);
+    #endif
+      }
 }
