@@ -22,12 +22,12 @@ import org.eclipse.paho.client.mqttv3.MqttMessage;
 
 public class Dashboard extends AppCompatActivity {
     private static final String TAG = "PathfinderController";
-    private static final String EXTERNAL_MQTT_BROKER = "aerostun.dev";
+    private static final String EXTERNAL_MQTT_BROKER = "test.mosquitto.org";
     private static final String LOCALHOST = "10.0.2.2";
     private static final String MQTT_SERVER = "tcp://" + EXTERNAL_MQTT_BROKER + ":1883";
-    private static final String THROTTLE_CONTROL = "/smartcar/control/throttle";
-    private static final String STEERING_CONTROL = "/smartcar/control/steering";
-    private static final int MOVEMENT_SPEED = 70;
+    private static final String THROTTLE_CONTROL = "/smartcar/control/speed";
+    private static final String STEERING_CONTROL = "/smartcar/control/angle";
+    private static final int MOVEMENT_SPEED = 50;
     private static final int IDLE_SPEED = 0;
     private static final int STRAIGHT_ANGLE = 0;
     private static final int STEERING_ANGLE = 50;
