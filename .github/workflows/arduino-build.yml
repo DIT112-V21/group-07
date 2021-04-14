@@ -5,9 +5,6 @@ on: [push]
 jobs:
   build-sketch:
     runs-on: ubuntu-20.04
-    defaults:
-          run:
-            working-directory: arduino
     steps:
       - name: Clone Repo
         uses: actions/checkout@v2
