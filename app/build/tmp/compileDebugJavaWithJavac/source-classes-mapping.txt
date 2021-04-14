@@ -1,0 +1,18 @@
+com/example/pathfinder/Client/MqttClient.java
+ com.example.pathfinder.Client.MqttClient
+com/example/pathfinder/Activities/MainActivity.java
+ com.example.pathfinder.Activities.MainActivity
+ com.example.pathfinder.Activities.MainActivity$1
+com/example/pathfinder/Activities/Dashboard.java
+ com.example.pathfinder.Activities.Dashboard
+ com.example.pathfinder.Activities.Dashboard$1
+ com.example.pathfinder.Activities.Dashboard$2
+ com.example.pathfinder.Activities.Dashboard$3
+com/example/pathfinder/FirstFragment.java
+ com.example.pathfinder.FirstFragment
+ com.example.pathfinder.FirstFragment$1
+com/example/pathfinder/SecondFragment.java
+ com.example.pathfinder.SecondFragment
+ com.example.pathfinder.SecondFragment$1
+com/example/pathfinder/BuildConfig.java
+ com.example.pathfinder.BuildConfig
