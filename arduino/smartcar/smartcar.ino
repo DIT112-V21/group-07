@@ -108,15 +108,47 @@ void handleInput() {
         String input = Serial.readStringUntil('\n');
 
         if (input.startsWith("s")) {
-
+            // front and back sensors and we look at the + or -
             int inputSpeed = input.substring(1).toInt();
-            car.setSpeed(inputSpeed);
-
+            if (inputSpeed > 0){
+                float frontValue = frontIR.getDistance();
+                if(frontValue != 0){
+                    Serial.println("Obstacle detected in the direction you are trying to move");
+                }else{
+                    car.setSpeed(inputSpeed);
+                }
+            } else if (inputSpeed < 0){
+                float backValue = backIR.getDistance();
+                if(backValue != 0){
+                    Serial.println("Obstacle detected in the direction you are trying to move");
+                }else{
+                    car.setSpeed(inputSpeed);
+                }
+            } else {
+                car.setSpeed(inputSpeed);
+            }
         } else if (input.startsWith("a")) {
-
+             // look at the angle + or - + -> right and - left
             int inputAngle = input.substring(1).toInt();
-            car.setAngle(inputAngle);
-
+            if (inputAngle > 0){
+                float rightValue = rightIR.getDistance();
+                if(rightValue != 0){
+                    Serial.println("Obstacle detected in the direction you are trying to move");
+                }else{
+                    car.setAngle(inputAngle);
+                }
+            }else if(inputAngle < 0){
+                //get left sensor
+                float leftValue = leftIR.getDistance();
+                if(leftValue != 0){
+                    Serial.println("Obstacle detected in the direction you are trying to move");
+                }else{
+                    car.setAngle(inputAngle);
+                }
+            }else{
+                car.setAngle(inputAngle);
+            }
+            car.update();
         }
     }
 }
