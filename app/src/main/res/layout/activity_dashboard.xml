@@ -19,6 +19,13 @@
             android:src="@drawable/img_menu"
             android:layout_centerVertical="true"/>
 
+        <ImageView
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:src="@drawable/img_camera"
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true"/>
+
     </RelativeLayout>
     
     <RelativeLayout
@@ -64,7 +71,7 @@
 
             <RelativeLayout
                 android:layout_width="140dp"
-                android:layout_height="60dp">
+                android:layout_height="70dp">
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -75,7 +82,7 @@
 
             <RelativeLayout
                 android:layout_width="140dp"
-                android:layout_height="60dp">
+                android:layout_height="70dp">
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
