@@ -63,22 +63,8 @@ void loop()
         emergencyBrake();
 }
 
-/*bool isClear() {
-    int backValue = backIR.getDistance();
-    int frontValue = frontIR.getDistance();
-    int rightValue = rightIR.getDistance();
-    int leftValue = leftIR.getDistance();
-    Serial.println(backValue);
-    return (backValue == 0 && frontValue == 0 && rightValue == 0 && leftValue == 0);
-}*/
-
-/* 1) Look at direction and angle so we know which sensors we focus on
- * 2) look at the selected sensors
- * 3) act accordingly
- * */
 void handleInput() {
     if (Serial.available()) {
-        // TODO : Retrieve the code to prevent accident
         String input = Serial.readStringUntil('\n');
 
         if (input.startsWith("s")) {
@@ -135,13 +121,8 @@ void emergencyBrake(){
     if(leftDirection == 1 && rightDirection == 1){
         int frontSensorDistance = frontUS.getDistance();
         direction = true;
-        if (frontSensorDistance !=0 ){ // if the sensor has readings ..
-            if ( frontSensorDistance <= FRONT_STOP_DISTANCE ){ // check if the sensor measurement is equal or less than the stopping distance
-                car.setSpeed(0);// stop the car.
-                delay(2000);
-            }
-        }
-    }else{ //TODO: Make sure the situation where leftDirection and rightDirection are not equal that it we always want the behaviour described in the else part (following)
+        reactToSensor(frontSensorDistance, FRONT_STOP_DISTANCE);
+        }else{ //TODO: Make sure the situation where leftDirection and rightDirection are not equal that it we always want the behaviour described in the else part (following)
         int backSensorDistance = backIR.getDistance();
         if (backSensorDistance !=0 ){ // if the sensor has readings ..
             if ( backSensorDistance <= BACK_STOP_DISTANCE ){ // check if the sensor measurement is equal or less than the stopping distance
@@ -153,6 +134,14 @@ void emergencyBrake(){
     reverseFunction(direction); //TODO: if we decide to keep this: check the following behaviour: the car seems not to stop when reversing -> could be because of the CLEAR_DISTANCE parameter not being properly coded or handled
 }
 
+void reactToSensor(int sensorDistance, int STOP_DISTANCE){
+    if (sensorDistance !=0 ){ // if the sensor has readings ..
+        if ( sensorDistance <= STOP_DISTANCE ){ // check if the sensor measurement is equal or less than the stopping distance
+            car.setSpeed(0);// stop the car.
+            delay(2000);
+        }
+    }
+}
 
 void reverseFunction(bool direction){
     int frontSensorDistance = frontUS.getDistance();
@@ -178,6 +167,17 @@ void reverseFunction(bool direction){
     }
 
 }
+
+// UNUSED METHODS
+
+/*bool isClear() {
+    int backValue = backIR.getDistance();
+    int frontValue = frontIR.getDistance();
+    int rightValue = rightIR.getDistance();
+    int leftValue = leftIR.getDistance();
+    Serial.println(backValue);
+    return (backValue == 0 && frontValue == 0 && rightValue == 0 && leftValue == 0);
+}*/
 
 
 
