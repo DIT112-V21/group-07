@@ -64,53 +64,95 @@ void loop()
         reactToSides();
 }
 
+void reactToSides() {
+    float currentHeading = car.getHeading();
+    float rightValue = rightIR.getDistance();
+    float leftValue = leftIR.getDistance();
+    if (currentHeading > 0) {
+        if (rightValue < SIDE_REACT_DISTANCE) {
+            delay(300);
+            float newValue = rightIR.getDistance();
+            if (newValue < rightValue) {
+                sideAvoidance(-30);
+            }
+        }
+    } else if (currentHeading < 0) {
+        if (leftValue < SIDE_REACT_DISTANCE) {
+            delay(300);
+            float newValue = leftIR.getDistance();
+            if (newValue < leftValue) {
+                sideAvoidance(30);
+            }
+        }
+    } else {
+        if(rightValue < SIDE_REACT_DISTANCE && leftValue < SIDE_REACT_DISTANCE){
+            car.setSpeed(0);
+            Serial.println("Obstacle detected in the right and left direction, car stopped for safety");
+        }
+    }
+}
+
+void sideAvoidance(int newAngle){
+    if (newAngle < 0){
+        while(rightIR.getDistance() < 60){
+            car.setAngle(newAngle);
+            emergencyBrake();
+            car.update();
+            //for distance x, then turn back
+        }
+    }else{
+        while(leftIR.getDistance() < 60){
+            car.setAngle(newAngle);
+            emergencyBrake();
+            car.update();
+        }
+    }
+    car.setAngle(0 - newAngle);
+
+}
+
 void handleInput() {
     if (Serial.available()) {
         String input = Serial.readStringUntil('\n');
-
+        //TODO: Look at how the mqtt com has been implemented and how it impacts this method
         if (input.startsWith("s")) {
-            // front and back sensors and we look at the + or -
+            // front and back sensors and we look at the + or - for direction
             int inputSpeed = input.substring(1).toInt();
-            if (inputSpeed > 0){
+            if (inputSpeed > 0) {
                 float frontValue = frontIR.getDistance();
-                if(frontValue != 0){
-                    Serial.println("Obstacle detected in the direction you are trying to move");
-                }else{
-                    car.setSpeed(inputSpeed);
-                }
-            } else if (inputSpeed < 0){
+                handleSpeedInput(frontValue);
+            } else if (inputSpeed < 0) {
                 float backValue = backIR.getDistance();
-                if(backValue != 0){
-                    Serial.println("Obstacle detected in the direction you are trying to move");
-                }else{
-                    car.setSpeed(inputSpeed);
-                }
-            } else {
-                car.setSpeed(inputSpeed);
+                handleSpeedInput(backValue);
             }
         } else if (input.startsWith("a")) {
-             // look at the angle + or - + -> right and - left
-            int inputAngle = input.substring(1).toInt();
-            if (inputAngle > 0){
+            // look at the angle + or - :  + -> right and - -> left
+            // int inputAngle = input.substring(1).toInt();
+            if (inputAngle > 0) {
                 float rightValue = rightIR.getDistance();
-                if(rightValue != 0){
-                    Serial.println("Obstacle detected in the direction you are trying to move");
-                }else{
-                    car.setAngle(inputAngle);
-                }
-            }else if(inputAngle < 0){
-                //get left sensor
+                handleAngleInput(rightValue)
+            } else if (inputAngle < 0) {//get left sensor
                 float leftValue = leftIR.getDistance();
-                if(leftValue != 0){
-                    Serial.println("Obstacle detected in the direction you are trying to move");
-                }else{
-                    car.setAngle(inputAngle);
-                }
-            }else{
-                car.setAngle(inputAngle);
+                handlehandleAngleInput(leftValue);
             }
             car.update();
         }
+    }
+}
+
+void handleSpeedInput(float distance){
+    if(distance != 0){
+        Serial.println("Obstacle detected in the direction you are trying to move");
+    }else{
+        car.setSpeed(inputSpeed);
+    }
+}
+
+void handleAngleInput(float angle){
+    if (angle != 0) {
+        Serial.println("Obstacle detected in the direction you are trying to move");
+    } else {
+        car.setAngle(inputAngle);
     }
 }
 
@@ -121,7 +163,7 @@ void emergencyBrake(){
     if(leftDirection == 1 && rightDirection == 1){
         int frontSensorDistance = frontUS.getDistance();
         reactToSensor(frontSensorDistance, FRONT_STOP_DISTANCE);
-        }else{ //TODO: Make sure the situation where leftDirection and rightDirection are not equal that it we always want the behaviour described in the else part (following)
+    }else{ //TODO for the future: Make sure the situation where leftDirection and rightDirection are not equal that it we always want the behaviour described in the else part (following)
         int backSensorDistance = backIR.getDistance();
         reactToSensor(backSensorDistance, BACK_STOP_DISTANCE);
     }
