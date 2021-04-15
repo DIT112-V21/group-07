@@ -5,6 +5,8 @@ const int ECHO_PIN              = 7; // D7
 const unsigned int MAX_DISTANCE = 1000;
 const auto pulsesPerMeter = 600;
 const float maxSpeedMs = 1.845;
+const float STOPPING_SPEED = 0.2; //m/s. used to decide when to stop in slowDownSmoothly
+const int SAFETY_RANGE_COEFF = 150; // multiply by car.getSpeed() to get a safety range
 
 ArduinoRuntime arduinoRuntime;
 BrushedMotor leftMotor(arduinoRuntime, smartcarlib::pins::v2::leftMotorPins);
@@ -35,15 +37,17 @@ void setup()
 
 void loop()
 {
-  float safetyDistance = car.getSpeed() * 200;
-  //Add all sensors!
-  if (front.getDistance() > safetyDistance || front.getDistance()  == 0) {
+  car.update();
+  if (isFrontClear()){
     handleInput();
-    Serial.println(front.getDistance());
-    delay(100);
   } else {
+    Serial.print("Going to slow down at distance:");//TODO: REMOVE PRINT LINES
+    Serial.println(front.getDistance()); 
+    Serial.print("Going to slow down at speed:");
+    Serial.println(car.getSpeed());
     slowDownSmoothly();
   }
+  Serial.println(car.getSpeed());
 }
 
 void handleInput()
@@ -66,19 +70,24 @@ void handleInput()
   }
 }
 
-void slowDownSmoothly()
+boolean isFrontClear()
 {
-  while (car.getSpeed() > 0) { //while moving forward
-    car.setSpeed(convertSpeed(car.getSpeed())/2);//cut it down by 50%
-    Serial.println(car.getSpeed());
-    if (convertSpeed(car.getSpeed()) <= 10) { //if/when "slow enough" (10%)
-      car.setSpeed(0);//stop
-    }
-  }
+  float safetyDistance = car.getSpeed() * SAFETY_RANGE_COEFF;
+  float frontUSDistance = front.getDistance();
+  return (frontUSDistance > safetyDistance || frontUSDistance == 0 
+          || leftOdometer.getDirection() == -1);//true if frontUS clear or moving backward
 }
 
-float convertSpeed(float currentSpeedMs)
+
+void slowDownSmoothly()
 {
-    float result = (currentSpeedMs/maxSpeedMs)*100;
-    return result;
+  while (car.getSpeed() >= STOPPING_SPEED){//check constant for details
+    car.setSpeed(convertSpeed(car.getSpeed())/2);//cut speed down by 50%
+  }
+  car.setSpeed(0);
+}
+
+float convertSpeed(float currentSpeedMs) //parameter: car.getSpeed(). returns: percentage over maxSpeed
+{
+    return (currentSpeedMs/maxSpeedMs)*100;
 }
