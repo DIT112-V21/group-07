@@ -1020,6 +1020,7 @@ color error_color_material_dark
 color error_color_material_light
 color foreground_material_dark
 color foreground_material_light
+color gray
 color highlighted_text_material_dark
 color highlighted_text_material_light
 color material_blue_grey_800
@@ -1111,6 +1112,7 @@ color primary_text_default_material_dark
 color primary_text_default_material_light
 color primary_text_disabled_material_dark
 color primary_text_disabled_material_light
+color purple
 color purple_200
 color purple_500
 color purple_700
@@ -1577,6 +1579,7 @@ drawable btn_radio_off_mtrl
 drawable btn_radio_off_to_on_mtrl_animation
 drawable btn_radio_on_mtrl
 drawable btn_radio_on_to_off_mtrl_animation
+drawable card_1
 drawable design_bottom_navigation_item_background
 drawable design_fab_background
 drawable design_ic_visibility
@@ -1590,15 +1593,18 @@ drawable ic_mtrl_chip_checked_black
 drawable ic_mtrl_chip_checked_circle
 drawable ic_mtrl_chip_close_circle
 drawable img_back
+drawable img_camera
 drawable img_car
 drawable img_cloud
 drawable img_controller
+drawable img_distance
 drawable img_distance_log
 drawable img_down
 drawable img_left
 drawable img_lock
 drawable img_menu
 drawable img_right
+drawable img_speed
 drawable img_speed_log
 drawable img_status_bar
 drawable img_up
@@ -2192,12 +2198,14 @@ string about
 string app_name
 string appbar_scrolling_view_behavior
 string bottom_sheet_behavior
+string break_car
 string character_counter_content_description
 string character_counter_overflowed_content_description
 string character_counter_pattern
 string chip_text
 string clear_text_end_icon_content_description
 string distance
+string distance_log
 string error_icon_content_description
 string exposed_dropdown_menu_content_description
 string fab_transformation_scrim_behavior
@@ -2208,7 +2216,6 @@ string hello_second_fragment
 string hide_bottom_view_on_scroll_behavior
 string icon_content_description
 string item_view_role_description
-string locked
 string material_slider_range_end
 string material_slider_range_start
 string mtrl_badge_numberless_content_description
@@ -2249,6 +2256,7 @@ string mtrl_picker_toggle_to_year_selection
 string nav_app_bar_navigate_up_description
 string nav_app_bar_open_drawer_description
 string next
+string park
 string password_toggle_content_description
 string path_password_eye
 string path_password_eye_mask_strike_through
@@ -2258,9 +2266,9 @@ string previous
 string search_menu_title
 string second_fragment_label
 string speed
+string speed_log
 string status_bar_notification_info_overflow
 string title_activity_dashboard
-string unlocked
 style AlertDialog_AppCompat
 style AlertDialog_AppCompat_Light
 style AndroidThemeColorAccentYellow

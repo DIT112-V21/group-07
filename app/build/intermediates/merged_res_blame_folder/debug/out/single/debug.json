@@ -16,24 +16,24 @@
         "source": "/Users/juliavankirk/Desktop/pathfinder/app/build/generated/res/pngs/debug/drawable-xhdpi/img_down.png"
     },
     {
-        "merged": "/Users/juliavankirk/Desktop/pathfinder/app/build/intermediates/res/merged/debug/mipmap-hdpi_ic_launcher_round.png.flat",
-        "source": "/Users/juliavankirk/Desktop/pathfinder/app/src/main/res/mipmap-hdpi/ic_launcher_round.png"
-    },
-    {
         "merged": "/Users/juliavankirk/Desktop/pathfinder/app/build/intermediates/res/merged/debug/drawable-ldpi_img_distance_log.png.flat",
         "source": "/Users/juliavankirk/Desktop/pathfinder/app/build/generated/res/pngs/debug/drawable-ldpi/img_distance_log.png"
+    },
+    {
+        "merged": "/Users/juliavankirk/Desktop/pathfinder/app/build/intermediates/res/merged/debug/mipmap-hdpi_ic_launcher_round.png.flat",
+        "source": "/Users/juliavankirk/Desktop/pathfinder/app/src/main/res/mipmap-hdpi/ic_launcher_round.png"
     },
     {
         "merged": "/Users/juliavankirk/Desktop/pathfinder/app/build/intermediates/res/merged/debug/layout_fragment_first.xml.flat",
         "source": "/Users/juliavankirk/Desktop/pathfinder/app/src/main/res/layout/fragment_first.xml"
     },
     {
-        "merged": "/Users/juliavankirk/Desktop/pathfinder/app/build/intermediates/res/merged/debug/drawable-mdpi_img_speed_log.png.flat",
-        "source": "/Users/juliavankirk/Desktop/pathfinder/app/build/generated/res/pngs/debug/drawable-mdpi/img_speed_log.png"
-    },
-    {
         "merged": "/Users/juliavankirk/Desktop/pathfinder/app/build/intermediates/res/merged/debug/drawable-xhdpi_img_status_bar.png.flat",
         "source": "/Users/juliavankirk/Desktop/pathfinder/app/build/generated/res/pngs/debug/drawable-xhdpi/img_status_bar.png"
+    },
+    {
+        "merged": "/Users/juliavankirk/Desktop/pathfinder/app/build/intermediates/res/merged/debug/drawable-mdpi_img_speed_log.png.flat",
+        "source": "/Users/juliavankirk/Desktop/pathfinder/app/build/generated/res/pngs/debug/drawable-mdpi/img_speed_log.png"
     },
     {
         "merged": "/Users/juliavankirk/Desktop/pathfinder/app/build/intermediates/res/merged/debug/mipmap-xhdpi_ic_launcher_round.png.flat",
@@ -52,16 +52,24 @@
         "source": "/Users/juliavankirk/Desktop/pathfinder/app/build/generated/res/pngs/debug/drawable-xxhdpi/ic_launcher_background.png"
     },
     {
-        "merged": "/Users/juliavankirk/Desktop/pathfinder/app/build/intermediates/res/merged/debug/drawable-xxxhdpi_img_lock.png.flat",
-        "source": "/Users/juliavankirk/Desktop/pathfinder/app/build/generated/res/pngs/debug/drawable-xxxhdpi/img_lock.png"
-    },
-    {
         "merged": "/Users/juliavankirk/Desktop/pathfinder/app/build/intermediates/res/merged/debug/drawable-ldpi_img_cloud.png.flat",
         "source": "/Users/juliavankirk/Desktop/pathfinder/app/build/generated/res/pngs/debug/drawable-ldpi/img_cloud.png"
     },
     {
+        "merged": "/Users/juliavankirk/Desktop/pathfinder/app/build/intermediates/res/merged/debug/drawable-xxxhdpi_img_lock.png.flat",
+        "source": "/Users/juliavankirk/Desktop/pathfinder/app/build/generated/res/pngs/debug/drawable-xxxhdpi/img_lock.png"
+    },
+    {
+        "merged": "/Users/juliavankirk/Desktop/pathfinder/app/build/intermediates/res/merged/debug/drawable-anydpi-v24_img_speed.xml.flat",
+        "source": "/Users/juliavankirk/Desktop/pathfinder/app/build/generated/res/pngs/debug/drawable-anydpi-v24/img_speed.xml"
+    },
+    {
         "merged": "/Users/juliavankirk/Desktop/pathfinder/app/build/intermediates/res/merged/debug/drawable-xhdpi_img_lock.png.flat",
         "source": "/Users/juliavankirk/Desktop/pathfinder/app/build/generated/res/pngs/debug/drawable-xhdpi/img_lock.png"
+    },
+    {
+        "merged": "/Users/juliavankirk/Desktop/pathfinder/app/build/intermediates/res/merged/debug/drawable-xxxhdpi_img_camera.png.flat",
+        "source": "/Users/juliavankirk/Desktop/pathfinder/app/build/generated/res/pngs/debug/drawable-xxxhdpi/img_camera.png"
     },
     {
         "merged": "/Users/juliavankirk/Desktop/pathfinder/app/build/intermediates/res/merged/debug/drawable-anydpi-v21_img_back.xml.flat",
@@ -100,6 +108,10 @@
         "source": "/Users/juliavankirk/Desktop/pathfinder/app/src/main/res/mipmap-xxxhdpi/ic_launcher_round.png"
     },
     {
+        "merged": "/Users/juliavankirk/Desktop/pathfinder/app/build/intermediates/res/merged/debug/drawable-xhdpi_img_speed.png.flat",
+        "source": "/Users/juliavankirk/Desktop/pathfinder/app/build/generated/res/pngs/debug/drawable-xhdpi/img_speed.png"
+    },
+    {
         "merged": "/Users/juliavankirk/Desktop/pathfinder/app/build/intermediates/res/merged/debug/mipmap-xhdpi_ic_launcher.png.flat",
         "source": "/Users/juliavankirk/Desktop/pathfinder/app/src/main/res/mipmap-xhdpi/ic_launcher.png"
     },
@@ -112,8 +124,8 @@
         "source": "/Users/juliavankirk/Desktop/pathfinder/app/build/generated/res/pngs/debug/drawable-hdpi/img_up.png"
     },
     {
-        "merged": "/Users/juliavankirk/Desktop/pathfinder/app/build/intermediates/res/merged/debug/drawable-anydpi-v21_img_left.xml.flat",
-        "source": "/Users/juliavankirk/Desktop/pathfinder/app/build/generated/res/pngs/debug/drawable-anydpi-v21/img_left.xml"
+        "merged": "/Users/juliavankirk/Desktop/pathfinder/app/build/intermediates/res/merged/debug/drawable-anydpi-v24_img_right.xml.flat",
+        "source": "/Users/juliavankirk/Desktop/pathfinder/app/build/generated/res/pngs/debug/drawable-anydpi-v24/img_right.xml"
     },
     {
         "merged": "/Users/juliavankirk/Desktop/pathfinder/app/build/intermediates/res/merged/debug/drawable-xxxhdpi_img_controller.png.flat",
@@ -126,6 +138,10 @@
     {
         "merged": "/Users/juliavankirk/Desktop/pathfinder/app/build/intermediates/res/merged/debug/drawable-mdpi_img_cloud.png.flat",
         "source": "/Users/juliavankirk/Desktop/pathfinder/app/build/generated/res/pngs/debug/drawable-mdpi/img_cloud.png"
+    },
+    {
+        "merged": "/Users/juliavankirk/Desktop/pathfinder/app/build/intermediates/res/merged/debug/drawable-ldpi_img_distance.png.flat",
+        "source": "/Users/juliavankirk/Desktop/pathfinder/app/build/generated/res/pngs/debug/drawable-ldpi/img_distance.png"
     },
     {
         "merged": "/Users/juliavankirk/Desktop/pathfinder/app/build/intermediates/res/merged/debug/drawable-hdpi_img_speed_log.png.flat",
@@ -144,16 +160,20 @@
         "source": "/Users/juliavankirk/Desktop/pathfinder/app/build/generated/res/pngs/debug/drawable-mdpi/img_menu.png"
     },
     {
-        "merged": "/Users/juliavankirk/Desktop/pathfinder/app/build/intermediates/res/merged/debug/drawable-xxhdpi_img_up.png.flat",
-        "source": "/Users/juliavankirk/Desktop/pathfinder/app/build/generated/res/pngs/debug/drawable-xxhdpi/img_up.png"
-    },
-    {
         "merged": "/Users/juliavankirk/Desktop/pathfinder/app/build/intermediates/res/merged/debug/drawable-xhdpi_img_left.png.flat",
         "source": "/Users/juliavankirk/Desktop/pathfinder/app/build/generated/res/pngs/debug/drawable-xhdpi/img_left.png"
     },
     {
+        "merged": "/Users/juliavankirk/Desktop/pathfinder/app/build/intermediates/res/merged/debug/drawable-xxhdpi_img_up.png.flat",
+        "source": "/Users/juliavankirk/Desktop/pathfinder/app/build/generated/res/pngs/debug/drawable-xxhdpi/img_up.png"
+    },
+    {
         "merged": "/Users/juliavankirk/Desktop/pathfinder/app/build/intermediates/res/merged/debug/mipmap-xxxhdpi_ic_launcher.png.flat",
         "source": "/Users/juliavankirk/Desktop/pathfinder/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png"
+    },
+    {
+        "merged": "/Users/juliavankirk/Desktop/pathfinder/app/build/intermediates/res/merged/debug/drawable-anydpi-v24_img_camera.xml.flat",
+        "source": "/Users/juliavankirk/Desktop/pathfinder/app/build/generated/res/pngs/debug/drawable-anydpi-v24/img_camera.xml"
     },
     {
         "merged": "/Users/juliavankirk/Desktop/pathfinder/app/build/intermediates/res/merged/debug/drawable-mdpi_img_left.png.flat",
@@ -168,8 +188,8 @@
         "source": "/Users/juliavankirk/Desktop/pathfinder/app/build/generated/res/pngs/debug/drawable-mdpi/img_right.png"
     },
     {
-        "merged": "/Users/juliavankirk/Desktop/pathfinder/app/build/intermediates/res/merged/debug/drawable-anydpi-v21_img_up.xml.flat",
-        "source": "/Users/juliavankirk/Desktop/pathfinder/app/build/generated/res/pngs/debug/drawable-anydpi-v21/img_up.xml"
+        "merged": "/Users/juliavankirk/Desktop/pathfinder/app/build/intermediates/res/merged/debug/drawable-ldpi_img_speed.png.flat",
+        "source": "/Users/juliavankirk/Desktop/pathfinder/app/build/generated/res/pngs/debug/drawable-ldpi/img_speed.png"
     },
     {
         "merged": "/Users/juliavankirk/Desktop/pathfinder/app/build/intermediates/res/merged/debug/drawable-hdpi_img_cloud.png.flat",
@@ -220,6 +240,22 @@
         "source": "/Users/juliavankirk/Desktop/pathfinder/app/build/generated/res/pngs/debug/drawable-hdpi/img_distance_log.png"
     },
     {
+        "merged": "/Users/juliavankirk/Desktop/pathfinder/app/build/intermediates/res/merged/debug/drawable-anydpi-v24_img_up.xml.flat",
+        "source": "/Users/juliavankirk/Desktop/pathfinder/app/build/generated/res/pngs/debug/drawable-anydpi-v24/img_up.xml"
+    },
+    {
+        "merged": "/Users/juliavankirk/Desktop/pathfinder/app/build/intermediates/res/merged/debug/drawable-xxxhdpi_img_distance.png.flat",
+        "source": "/Users/juliavankirk/Desktop/pathfinder/app/build/generated/res/pngs/debug/drawable-xxxhdpi/img_distance.png"
+    },
+    {
+        "merged": "/Users/juliavankirk/Desktop/pathfinder/app/build/intermediates/res/merged/debug/drawable-xxhdpi_img_camera.png.flat",
+        "source": "/Users/juliavankirk/Desktop/pathfinder/app/build/generated/res/pngs/debug/drawable-xxhdpi/img_camera.png"
+    },
+    {
+        "merged": "/Users/juliavankirk/Desktop/pathfinder/app/build/intermediates/res/merged/debug/drawable-hdpi_img_distance.png.flat",
+        "source": "/Users/juliavankirk/Desktop/pathfinder/app/build/generated/res/pngs/debug/drawable-hdpi/img_distance.png"
+    },
+    {
         "merged": "/Users/juliavankirk/Desktop/pathfinder/app/build/intermediates/res/merged/debug/layout_content_dashboard.xml.flat",
         "source": "/Users/juliavankirk/Desktop/pathfinder/app/src/main/res/layout/content_dashboard.xml"
     },
@@ -264,16 +300,16 @@
         "source": "/Users/juliavankirk/Desktop/pathfinder/app/build/generated/res/pngs/debug/drawable-xxhdpi/img_lock.png"
     },
     {
-        "merged": "/Users/juliavankirk/Desktop/pathfinder/app/build/intermediates/res/merged/debug/drawable-anydpi-v21_img_right.xml.flat",
-        "source": "/Users/juliavankirk/Desktop/pathfinder/app/build/generated/res/pngs/debug/drawable-anydpi-v21/img_right.xml"
-    },
-    {
         "merged": "/Users/juliavankirk/Desktop/pathfinder/app/build/intermediates/res/merged/debug/drawable-xhdpi_img_back.png.flat",
         "source": "/Users/juliavankirk/Desktop/pathfinder/app/build/generated/res/pngs/debug/drawable-xhdpi/img_back.png"
     },
     {
         "merged": "/Users/juliavankirk/Desktop/pathfinder/app/build/intermediates/res/merged/debug/drawable-xxxhdpi_img_distance_log.png.flat",
         "source": "/Users/juliavankirk/Desktop/pathfinder/app/build/generated/res/pngs/debug/drawable-xxxhdpi/img_distance_log.png"
+    },
+    {
+        "merged": "/Users/juliavankirk/Desktop/pathfinder/app/build/intermediates/res/merged/debug/drawable-xhdpi_img_distance.png.flat",
+        "source": "/Users/juliavankirk/Desktop/pathfinder/app/build/generated/res/pngs/debug/drawable-xhdpi/img_distance.png"
     },
     {
         "merged": "/Users/juliavankirk/Desktop/pathfinder/app/build/intermediates/res/merged/debug/drawable-xxhdpi_img_controller.png.flat",
@@ -292,8 +328,12 @@
         "source": "/Users/juliavankirk/Desktop/pathfinder/app/build/generated/res/pngs/debug/drawable-ldpi/ic_launcher_background.png"
     },
     {
-        "merged": "/Users/juliavankirk/Desktop/pathfinder/app/build/intermediates/res/merged/debug/drawable-anydpi-v21_img_down.xml.flat",
-        "source": "/Users/juliavankirk/Desktop/pathfinder/app/build/generated/res/pngs/debug/drawable-anydpi-v21/img_down.xml"
+        "merged": "/Users/juliavankirk/Desktop/pathfinder/app/build/intermediates/res/merged/debug/drawable-xxxhdpi_img_speed.png.flat",
+        "source": "/Users/juliavankirk/Desktop/pathfinder/app/build/generated/res/pngs/debug/drawable-xxxhdpi/img_speed.png"
+    },
+    {
+        "merged": "/Users/juliavankirk/Desktop/pathfinder/app/build/intermediates/res/merged/debug/drawable-mdpi_img_distance.png.flat",
+        "source": "/Users/juliavankirk/Desktop/pathfinder/app/build/generated/res/pngs/debug/drawable-mdpi/img_distance.png"
     },
     {
         "merged": "/Users/juliavankirk/Desktop/pathfinder/app/build/intermediates/res/merged/debug/drawable-ldpi_img_status_bar.png.flat",
@@ -306,6 +346,10 @@
     {
         "merged": "/Users/juliavankirk/Desktop/pathfinder/app/build/intermediates/res/merged/debug/drawable-ldpi_img_left.png.flat",
         "source": "/Users/juliavankirk/Desktop/pathfinder/app/build/generated/res/pngs/debug/drawable-ldpi/img_left.png"
+    },
+    {
+        "merged": "/Users/juliavankirk/Desktop/pathfinder/app/build/intermediates/res/merged/debug/drawable-ldpi_img_camera.png.flat",
+        "source": "/Users/juliavankirk/Desktop/pathfinder/app/build/generated/res/pngs/debug/drawable-ldpi/img_camera.png"
     },
     {
         "merged": "/Users/juliavankirk/Desktop/pathfinder/app/build/intermediates/res/merged/debug/drawable-anydpi-v24_img_speed_log.xml.flat",
@@ -324,12 +368,12 @@
         "source": "/Users/juliavankirk/Desktop/pathfinder/app/build/generated/res/pngs/debug/drawable-xhdpi/img_speed_log.png"
     },
     {
-        "merged": "/Users/juliavankirk/Desktop/pathfinder/app/build/intermediates/res/merged/debug/drawable-mdpi_img_back.png.flat",
-        "source": "/Users/juliavankirk/Desktop/pathfinder/app/build/generated/res/pngs/debug/drawable-mdpi/img_back.png"
+        "merged": "/Users/juliavankirk/Desktop/pathfinder/app/build/intermediates/res/merged/debug/drawable-xxhdpi_img_speed.png.flat",
+        "source": "/Users/juliavankirk/Desktop/pathfinder/app/build/generated/res/pngs/debug/drawable-xxhdpi/img_speed.png"
     },
     {
-        "merged": "/Users/juliavankirk/Desktop/pathfinder/app/build/intermediates/res/merged/debug/drawable-anydpi-v24_img_status_bar.xml.flat",
-        "source": "/Users/juliavankirk/Desktop/pathfinder/app/build/generated/res/pngs/debug/drawable-anydpi-v24/img_status_bar.xml"
+        "merged": "/Users/juliavankirk/Desktop/pathfinder/app/build/intermediates/res/merged/debug/drawable-mdpi_img_back.png.flat",
+        "source": "/Users/juliavankirk/Desktop/pathfinder/app/build/generated/res/pngs/debug/drawable-mdpi/img_back.png"
     },
     {
         "merged": "/Users/juliavankirk/Desktop/pathfinder/app/build/intermediates/res/merged/debug/drawable-hdpi_img_controller.png.flat",
@@ -340,12 +384,28 @@
         "source": "/Users/juliavankirk/Desktop/pathfinder/app/build/generated/res/pngs/debug/drawable-xhdpi/img_cloud.png"
     },
     {
+        "merged": "/Users/juliavankirk/Desktop/pathfinder/app/build/intermediates/res/merged/debug/drawable-mdpi_img_speed.png.flat",
+        "source": "/Users/juliavankirk/Desktop/pathfinder/app/build/generated/res/pngs/debug/drawable-mdpi/img_speed.png"
+    },
+    {
+        "merged": "/Users/juliavankirk/Desktop/pathfinder/app/build/intermediates/res/merged/debug/drawable-anydpi-v21_img_status_bar.xml.flat",
+        "source": "/Users/juliavankirk/Desktop/pathfinder/app/build/generated/res/pngs/debug/drawable-anydpi-v21/img_status_bar.xml"
+    },
+    {
+        "merged": "/Users/juliavankirk/Desktop/pathfinder/app/build/intermediates/res/merged/debug/drawable-anydpi-v24_img_down.xml.flat",
+        "source": "/Users/juliavankirk/Desktop/pathfinder/app/build/generated/res/pngs/debug/drawable-anydpi-v24/img_down.xml"
+    },
+    {
         "merged": "/Users/juliavankirk/Desktop/pathfinder/app/build/intermediates/res/merged/debug/drawable-ldpi_img_back.png.flat",
         "source": "/Users/juliavankirk/Desktop/pathfinder/app/build/generated/res/pngs/debug/drawable-ldpi/img_back.png"
     },
     {
         "merged": "/Users/juliavankirk/Desktop/pathfinder/app/build/intermediates/res/merged/debug/drawable-xxhdpi_img_speed_log.png.flat",
         "source": "/Users/juliavankirk/Desktop/pathfinder/app/build/generated/res/pngs/debug/drawable-xxhdpi/img_speed_log.png"
+    },
+    {
+        "merged": "/Users/juliavankirk/Desktop/pathfinder/app/build/intermediates/res/merged/debug/drawable-anydpi-v24_img_left.xml.flat",
+        "source": "/Users/juliavankirk/Desktop/pathfinder/app/build/generated/res/pngs/debug/drawable-anydpi-v24/img_left.xml"
     },
     {
         "merged": "/Users/juliavankirk/Desktop/pathfinder/app/build/intermediates/res/merged/debug/drawable-anydpi-v21_ic_launcher_background.xml.flat",
@@ -356,6 +416,10 @@
         "source": "/Users/juliavankirk/Desktop/pathfinder/app/src/main/res/navigation/nav_graph.xml"
     },
     {
+        "merged": "/Users/juliavankirk/Desktop/pathfinder/app/build/intermediates/res/merged/debug/drawable-hdpi_img_speed.png.flat",
+        "source": "/Users/juliavankirk/Desktop/pathfinder/app/build/generated/res/pngs/debug/drawable-hdpi/img_speed.png"
+    },
+    {
         "merged": "/Users/juliavankirk/Desktop/pathfinder/app/build/intermediates/res/merged/debug/drawable-mdpi_img_up.png.flat",
         "source": "/Users/juliavankirk/Desktop/pathfinder/app/build/generated/res/pngs/debug/drawable-mdpi/img_up.png"
     },
@@ -364,8 +428,16 @@
         "source": "/Users/juliavankirk/Desktop/pathfinder/app/build/generated/res/pngs/debug/drawable-xhdpi/img_controller.png"
     },
     {
+        "merged": "/Users/juliavankirk/Desktop/pathfinder/app/build/intermediates/res/merged/debug/drawable-anydpi-v24_img_distance.xml.flat",
+        "source": "/Users/juliavankirk/Desktop/pathfinder/app/build/generated/res/pngs/debug/drawable-anydpi-v24/img_distance.xml"
+    },
+    {
         "merged": "/Users/juliavankirk/Desktop/pathfinder/app/build/intermediates/res/merged/debug/drawable-xhdpi_img_menu.png.flat",
         "source": "/Users/juliavankirk/Desktop/pathfinder/app/build/generated/res/pngs/debug/drawable-xhdpi/img_menu.png"
+    },
+    {
+        "merged": "/Users/juliavankirk/Desktop/pathfinder/app/build/intermediates/res/merged/debug/drawable_card_1.xml.flat",
+        "source": "/Users/juliavankirk/Desktop/pathfinder/app/src/main/res/drawable/card_1.xml"
     },
     {
         "merged": "/Users/juliavankirk/Desktop/pathfinder/app/build/intermediates/res/merged/debug/drawable-xxhdpi_img_status_bar.png.flat",
@@ -374,6 +446,10 @@
     {
         "merged": "/Users/juliavankirk/Desktop/pathfinder/app/build/intermediates/res/merged/debug/drawable-xxxhdpi_img_speed_log.png.flat",
         "source": "/Users/juliavankirk/Desktop/pathfinder/app/build/generated/res/pngs/debug/drawable-xxxhdpi/img_speed_log.png"
+    },
+    {
+        "merged": "/Users/juliavankirk/Desktop/pathfinder/app/build/intermediates/res/merged/debug/drawable-mdpi_img_camera.png.flat",
+        "source": "/Users/juliavankirk/Desktop/pathfinder/app/build/generated/res/pngs/debug/drawable-mdpi/img_camera.png"
     },
     {
         "merged": "/Users/juliavankirk/Desktop/pathfinder/app/build/intermediates/res/merged/debug/drawable-xhdpi_img_up.png.flat",
@@ -412,6 +488,10 @@
         "source": "/Users/juliavankirk/Desktop/pathfinder/app/build/generated/res/pngs/debug/drawable-xxhdpi/img_down.png"
     },
     {
+        "merged": "/Users/juliavankirk/Desktop/pathfinder/app/build/intermediates/res/merged/debug/drawable-xxhdpi_img_distance.png.flat",
+        "source": "/Users/juliavankirk/Desktop/pathfinder/app/build/generated/res/pngs/debug/drawable-xxhdpi/img_distance.png"
+    },
+    {
         "merged": "/Users/juliavankirk/Desktop/pathfinder/app/build/intermediates/res/merged/debug/drawable-hdpi_img_down.png.flat",
         "source": "/Users/juliavankirk/Desktop/pathfinder/app/build/generated/res/pngs/debug/drawable-hdpi/img_down.png"
     },
@@ -436,6 +516,10 @@
         "source": "/Users/juliavankirk/Desktop/pathfinder/app/build/generated/res/pngs/debug/drawable-hdpi/img_menu.png"
     },
     {
+        "merged": "/Users/juliavankirk/Desktop/pathfinder/app/build/intermediates/res/merged/debug/drawable-hdpi_img_camera.png.flat",
+        "source": "/Users/juliavankirk/Desktop/pathfinder/app/build/generated/res/pngs/debug/drawable-hdpi/img_camera.png"
+    },
+    {
         "merged": "/Users/juliavankirk/Desktop/pathfinder/app/build/intermediates/res/merged/debug/drawable-xxhdpi_img_menu.png.flat",
         "source": "/Users/juliavankirk/Desktop/pathfinder/app/build/generated/res/pngs/debug/drawable-xxhdpi/img_menu.png"
     },
@@ -454,6 +538,10 @@
     {
         "merged": "/Users/juliavankirk/Desktop/pathfinder/app/build/intermediates/res/merged/debug/drawable-ldpi_img_controller.png.flat",
         "source": "/Users/juliavankirk/Desktop/pathfinder/app/build/generated/res/pngs/debug/drawable-ldpi/img_controller.png"
+    },
+    {
+        "merged": "/Users/juliavankirk/Desktop/pathfinder/app/build/intermediates/res/merged/debug/drawable-xhdpi_img_camera.png.flat",
+        "source": "/Users/juliavankirk/Desktop/pathfinder/app/build/generated/res/pngs/debug/drawable-xhdpi/img_camera.png"
     },
     {
         "merged": "/Users/juliavankirk/Desktop/pathfinder/app/build/intermediates/res/merged/debug/drawable-anydpi-v24_img_controller.xml.flat",

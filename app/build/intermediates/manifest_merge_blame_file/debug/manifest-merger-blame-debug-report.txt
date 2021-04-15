@@ -38,36 +38,35 @@
 22-->/Users/juliavankirk/Desktop/pathfinder/app/src/main/AndroidManifest.xml:9:9-54
 23        android:supportsRtl="true"
 23-->/Users/juliavankirk/Desktop/pathfinder/app/src/main/AndroidManifest.xml:10:9-35
-24        android:testOnly="true"
-25        android:theme="@style/Theme.Pathfinder" >
-25-->/Users/juliavankirk/Desktop/pathfinder/app/src/main/AndroidManifest.xml:11:9-48
-26        <activity
-26-->/Users/juliavankirk/Desktop/pathfinder/app/src/main/AndroidManifest.xml:12:9-15:76
-27            android:name="com.example.pathfinder.Activities.Dashboard"
-27-->/Users/juliavankirk/Desktop/pathfinder/app/src/main/AndroidManifest.xml:13:13-49
-28            android:label="@string/title_activity_dashboard"
-28-->/Users/juliavankirk/Desktop/pathfinder/app/src/main/AndroidManifest.xml:14:13-61
-29            android:theme="@style/Theme.Pathfinder.NoActionBar" />
-29-->/Users/juliavankirk/Desktop/pathfinder/app/src/main/AndroidManifest.xml:15:13-64
-30        <activity android:name="com.example.pathfinder.Activities.MainActivity" >
-30-->/Users/juliavankirk/Desktop/pathfinder/app/src/main/AndroidManifest.xml:16:9-22:20
-30-->/Users/juliavankirk/Desktop/pathfinder/app/src/main/AndroidManifest.xml:16:19-58
-31            <intent-filter>
-31-->/Users/juliavankirk/Desktop/pathfinder/app/src/main/AndroidManifest.xml:17:13-21:29
-32                <action android:name="android.intent.action.MAIN" />
-32-->/Users/juliavankirk/Desktop/pathfinder/app/src/main/AndroidManifest.xml:18:17-69
-32-->/Users/juliavankirk/Desktop/pathfinder/app/src/main/AndroidManifest.xml:18:25-66
-33
-34                <category android:name="android.intent.category.LAUNCHER" />
-34-->/Users/juliavankirk/Desktop/pathfinder/app/src/main/AndroidManifest.xml:20:17-77
-34-->/Users/juliavankirk/Desktop/pathfinder/app/src/main/AndroidManifest.xml:20:27-74
-35            </intent-filter>
-36        </activity>
-37
-38        <service android:name="org.eclipse.paho.android.service.MqttService" >
-38-->/Users/juliavankirk/Desktop/pathfinder/app/src/main/AndroidManifest.xml:23:9-24:19
-38-->/Users/juliavankirk/Desktop/pathfinder/app/src/main/AndroidManifest.xml:23:18-77
-39        </service>
-40    </application>
-41
-42</manifest>
+24        android:theme="@style/Theme.Pathfinder" >
+24-->/Users/juliavankirk/Desktop/pathfinder/app/src/main/AndroidManifest.xml:11:9-48
+25        <activity
+25-->/Users/juliavankirk/Desktop/pathfinder/app/src/main/AndroidManifest.xml:12:9-15:76
+26            android:name="com.example.pathfinder.Activities.Dashboard"
+26-->/Users/juliavankirk/Desktop/pathfinder/app/src/main/AndroidManifest.xml:13:13-49
+27            android:label="@string/title_activity_dashboard"
+27-->/Users/juliavankirk/Desktop/pathfinder/app/src/main/AndroidManifest.xml:14:13-61
+28            android:theme="@style/Theme.Pathfinder.NoActionBar" />
+28-->/Users/juliavankirk/Desktop/pathfinder/app/src/main/AndroidManifest.xml:15:13-64
+29        <activity android:name="com.example.pathfinder.Activities.MainActivity" >
+29-->/Users/juliavankirk/Desktop/pathfinder/app/src/main/AndroidManifest.xml:16:9-22:20
+29-->/Users/juliavankirk/Desktop/pathfinder/app/src/main/AndroidManifest.xml:16:19-58
+30            <intent-filter>
+30-->/Users/juliavankirk/Desktop/pathfinder/app/src/main/AndroidManifest.xml:17:13-21:29
+31                <action android:name="android.intent.action.MAIN" />
+31-->/Users/juliavankirk/Desktop/pathfinder/app/src/main/AndroidManifest.xml:18:17-69
+31-->/Users/juliavankirk/Desktop/pathfinder/app/src/main/AndroidManifest.xml:18:25-66
+32
+33                <category android:name="android.intent.category.LAUNCHER" />
+33-->/Users/juliavankirk/Desktop/pathfinder/app/src/main/AndroidManifest.xml:20:17-77
+33-->/Users/juliavankirk/Desktop/pathfinder/app/src/main/AndroidManifest.xml:20:27-74
+34            </intent-filter>
+35        </activity>
+36
+37        <service android:name="org.eclipse.paho.android.service.MqttService" >
+37-->/Users/juliavankirk/Desktop/pathfinder/app/src/main/AndroidManifest.xml:23:9-24:19
+37-->/Users/juliavankirk/Desktop/pathfinder/app/src/main/AndroidManifest.xml:23:18-77
+38        </service>
+39    </application>
+40
+41</manifest>

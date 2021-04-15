@@ -132,26 +132,50 @@
             android:layout_height="wrap_content">
 
             <RelativeLayout
-                android:layout_width="150dp"
-                android:layout_height="100dp">
+                android:layout_width="130dp"
+                android:layout_height="100dp"
+                android:background="@drawable/card_1"
+                android:layout_marginRight="10dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/speed"
+                    android:fontFamily="@font/basic"
+                    android:textColor="@color/purple"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginLeft="10dp"/>
 
                 <ImageView
-                    android:layout_width="130dp"
-                    android:layout_height="100dp"
-                    android:src="@drawable/img_speed_log"
-                    android:layout_centerInParent="true"
-                    />
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/img_speed"
+                    android:layout_marginTop="40dp"
+                    android:layout_marginLeft="10dp"/>
             </RelativeLayout>
 
             <RelativeLayout
-                android:layout_width="150dp"
-                android:layout_height="100dp">
+                android:layout_width="130dp"
+                android:layout_height="100dp"
+                android:background="@drawable/card_1"
+                android:layout_marginLeft="10dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/distance"
+                    android:fontFamily="@font/basic"
+                    android:textColor="@color/purple"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginLeft="10dp"/>
 
                 <ImageView
-                    android:layout_width="130dp"
-                    android:layout_height="100dp"
-                    android:src="@drawable/img_distance_log"
-                    android:layout_centerInParent="true"/>
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/img_distance"
+                    android:layout_marginTop="40dp"
+                    android:layout_marginLeft="10dp"/>
+
             </RelativeLayout>
 
         </LinearLayout>
