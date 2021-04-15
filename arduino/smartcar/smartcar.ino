@@ -3,6 +3,7 @@
 //Pin definition and constants
 const int FRONT_STOP_DISTANCE = 100;
 const int BACK_STOP_DISTANCE = 50;
+const int SIDE_REACT_DISTANCE = 50;
 const int CLEAR_DISTANCE = 0;
 const int FRONT_PIN = 0;
 const int LEFT_PIN = 1;
@@ -60,6 +61,7 @@ void loop()
 {
         handleInput();
         emergencyBrake();
+        reactToSides();
 }
 
 void handleInput() {
@@ -115,62 +117,25 @@ void handleInput() {
 void emergencyBrake(){
     int leftDirection = leftOdometer.getDirection();
     int rightDirection = rightOdometer.getDirection();
-    bool direction = false;
 
     if(leftDirection == 1 && rightDirection == 1){
         int frontSensorDistance = frontUS.getDistance();
-        direction = true;
         reactToSensor(frontSensorDistance, FRONT_STOP_DISTANCE);
         }else{ //TODO: Make sure the situation where leftDirection and rightDirection are not equal that it we always want the behaviour described in the else part (following)
         int backSensorDistance = backIR.getDistance();
         reactToSensor(backSensorDistance, BACK_STOP_DISTANCE);
     }
-    reverseFunction(direction); //TODO: if we decide to keep this: check the following behaviour: the car seems not to stop when reversing -> could be because of the CLEAR_DISTANCE parameter not being properly coded or handled
 }
 
 void reactToSensor(int sensorDistance, int STOP_DISTANCE){
-    if (sensorDistance !=0 ){ // if the sensor has readings ..
+    if (sensorDistance != 0){ // if the sensor has readings ..
         if ( sensorDistance <= STOP_DISTANCE ){ // check if the sensor measurement is equal or less than the stopping distance
+            //TODO: Add call to Gimmy's method (slow down smoothly) here! Possibly call emergency break into Gimmy's also to cover obstacle popping while adjusting speed
             car.setSpeed(0);// stop the car.
             delay(2000);
         }
     }
 }
-
-void reverseFunction(bool direction){
-    int frontSensorDistance = frontUS.getDistance();
-    int backSensorDistance = backIR.getDistance();
-
-    if(direction){
-        while(frontSensorDistance < FRONT_STOP_DISTANCE && frontSensorDistance > CLEAR_DISTANCE){
-            car.setSpeed(-10);
-            frontSensorDistance = frontUS.getDistance();
-            if (frontSensorDistance >= FRONT_STOP_DISTANCE && frontSensorDistance > CLEAR_DISTANCE){
-                car.setSpeed(0);
-            }
-            // TODO: would it be better to do it with one method getting parameters : speed, sensorDistance and STOP_DISTANCE since the body of the if / else are the same?
-        }
-    }else{
-        while(backSensorDistance < BACK_STOP_DISTANCE && backSensorDistance > CLEAR_DISTANCE){
-            car.setSpeed(10);
-            backSensorDistance = backIR.getDistance();
-            if (backSensorDistance >= BACK_STOP_DISTANCE && backSensorDistance > CLEAR_DISTANCE){
-                car.setSpeed(0);
-            }
-        }
-    }
-}
-
-// UNUSED METHODS
-
-/*bool isClear() {
-    int backValue = backIR.getDistance();
-    int frontValue = frontIR.getDistance();
-    int rightValue = rightIR.getDistance();
-    int leftValue = leftIR.getDistance();
-    Serial.println(backValue);
-    return (backValue == 0 && frontValue == 0 && rightValue == 0 && leftValue == 0);
-}*/
 
 
 
