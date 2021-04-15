@@ -112,24 +112,108 @@
     </RelativeLayout>
 
     <RelativeLayout
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:paddingTop="60dp">
 
-        <ImageView
-            android:layout_width="335dp"
-            android:layout_height="85dp"
-            android:layout_centerHorizontal="true"
-            android:src="@drawable/img_status_bar"
-            android:onClick="stop"/>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <RelativeLayout
+                android:layout_width="70dp"
+                android:layout_height="85dp"
+                android:layout_gravity="center"
+                android:background="@drawable/card_1"
+                android:layout_marginRight="5dp"
+                >
+
+                <ImageView
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_marginTop="5dp"
+                    android:src="@drawable/img_cruise_control"
+                    android:layout_centerHorizontal="true"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:text="@string/cruise_control"
+                    android:textAlignment="center"
+                    android:gravity="center_horizontal"
+                    android:fontFamily="@font/basic"
+                    android:textColor="@color/purple"
+                    android:layout_marginTop="50dp"/>
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="70dp"
+                android:layout_height="85dp"
+                android:layout_gravity="center"
+                android:background="@drawable/card_1"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:onClick="stop">
+
+                <ImageView
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_marginTop="5dp"
+                    android:src="@drawable/img_brake"
+                    android:layout_centerHorizontal="true"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:text="@string/brake"
+                    android:textAlignment="center"
+                    android:gravity="center_horizontal"
+                    android:fontFamily="@font/basic"
+                    android:textColor="@color/purple"
+                    android:layout_marginTop="60dp"/>
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="70dp"
+                android:layout_height="85dp"
+                android:layout_gravity="center"
+                android:layout_marginLeft="5dp"
+                android:background="@drawable/card_1">
+
+                <ImageView
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_marginTop="5dp"
+                    android:src="@drawable/img_park"
+                    android:layout_centerHorizontal="true"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:text="@string/park"
+                    android:textAlignment="center"
+                    android:gravity="center_horizontal"
+                    android:fontFamily="@font/basic"
+                    android:textColor="@color/purple"
+                    android:layout_marginTop="60dp"/>
+
+            </RelativeLayout>
+
+        </LinearLayout>
+
     </RelativeLayout>
 
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:paddingTop="50dp">
+        android:paddingTop="40dp">
 
         <LinearLayout
             android:layout_width="wrap_content"
