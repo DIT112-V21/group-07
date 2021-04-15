@@ -24,7 +24,9 @@
             android:layout_height="35dp"
             android:src="@drawable/img_camera"
             android:layout_centerVertical="true"
-            android:layout_alignParentRight="true"/>
+            android:layout_alignParentRight="true"
+            android:id="@+id/cameraView"
+            android:contentDescription="cameraView"/>
 
     </RelativeLayout>
     
@@ -162,7 +164,8 @@
                     android:fontFamily="@font/basic"
                     android:textColor="@color/yellow"
                     android:layout_marginTop="70dp"
-                    android:layout_marginLeft="10dp"/>
+                    android:layout_marginLeft="10dp"
+                    android:id="@+id/speed_log"/>
 
             </RelativeLayout>
 
@@ -195,7 +198,8 @@
                     android:fontFamily="@font/basic"
                     android:textColor="@color/yellow"
                     android:layout_marginTop="70dp"
-                    android:layout_marginLeft="10dp"/>
+                    android:layout_marginLeft="10dp"
+                    android:id="@+id/distance_log"/>
 
             </RelativeLayout>
 

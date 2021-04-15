@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.pathfinder.Client.MqttClient;
@@ -27,6 +28,7 @@ public class Dashboard extends AppCompatActivity {
     private static final String MQTT_SERVER = "tcp://" + EXTERNAL_MQTT_BROKER + ":1883";
     private static final String THROTTLE_CONTROL = "/smartcar/control/speed";
     private static final String STEERING_CONTROL = "/smartcar/control/angle";
+    private static final String ODOMETER_LOG = "/smartcar/assess/odometer";
     private static final int MOVEMENT_SPEED = 50;
     private static final int IDLE_SPEED = 0;
     private static final int STRAIGHT_ANGLE = 0;
@@ -38,6 +40,7 @@ public class Dashboard extends AppCompatActivity {
     private MqttClient mMqttClient;
     private boolean isConnected = false;
     private ImageView mCameraView;
+    private TextView mSpeedLog, mDistanceLog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,8 +48,11 @@ public class Dashboard extends AppCompatActivity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_dashboard);
 
+        mSpeedLog = findViewById(R.id.speed_log) ;
+        mDistanceLog = findViewById(R.id.distance_log);
+
         mMqttClient = new MqttClient(getApplicationContext(), MQTT_SERVER, TAG);
-        //mCameraView = findViewById(R.id.imageView);
+        mCameraView = findViewById(R.id.cameraView);
 
         connectToMqttBroker();
     }
@@ -87,6 +93,7 @@ public class Dashboard extends AppCompatActivity {
 
                     mMqttClient.subscribe("/smartcar/ultrasound/front", QOS, null);
                     mMqttClient.subscribe("/smartcar/camera", QOS, null);
+                    mMqttClient.subscribe("/smartcar/odometer", QOS, null);
                 }
 
                 @Override
@@ -134,13 +141,17 @@ public class Dashboard extends AppCompatActivity {
         }
     }
 
-    void drive(int throttleSpeed, int steeringAngle, String actionDescription) {
+    void notConnected() {
         if (!isConnected) {
             final String notConnected = "Not connected (yet)";
             Log.e(TAG, notConnected);
             Toast.makeText(getApplicationContext(), notConnected, Toast.LENGTH_SHORT).show();
             return;
         }
+    }
+
+    void drive(int throttleSpeed, int steeringAngle, String actionDescription) {
+        notConnected();
         Log.i(TAG, actionDescription);
         mMqttClient.publish(THROTTLE_CONTROL, Integer.toString(throttleSpeed), QOS, null);
         mMqttClient.publish(STEERING_CONTROL, Integer.toString(steeringAngle), QOS, null);
@@ -165,4 +176,20 @@ public class Dashboard extends AppCompatActivity {
     public void moveBackward(View view) {
         drive(-MOVEMENT_SPEED, STRAIGHT_ANGLE, "Moving backward");
     }
+
+   void getDistance() {
+        notConnected();
+
+        mMqttClient.subscribe(THROTTLE_CONTROL, QOS, null);
+    }
+
+    public void getSpeed(View view) {
+        notConnected();
+        if ( MOVEMENT_SPEED != 0 ) {
+            mSpeedLog.setText(MOVEMENT_SPEED + " km/h");
+        } else {
+            mSpeedLog.setText(0 + " km/h");
+        }
+    }
+
 }
