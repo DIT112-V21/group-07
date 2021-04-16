@@ -23,4 +23,4 @@ jobs:
     - name: Build with Gradle
       run: |
         cd UI
-        ./gradlew build --stacktrace
+        bash ./gradlew build --stacktrace
