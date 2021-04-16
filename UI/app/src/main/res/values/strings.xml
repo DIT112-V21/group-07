@@ -1,0 +1,25 @@
+<resources>
+    <string name="app_name">pathfinder</string>
+    <string name="title_activity_dashboard">Dashboard</string>
+    <!-- Strings used for fragments for navigation -->
+    <string name="first_fragment_label">First Fragment</string>
+    <string name="second_fragment_label">Second Fragment</string>
+    <string name="next">Next</string>
+    <string name="previous">Previous</string>
+
+    <string name="hello_first_fragment">Hello first fragment</string>
+    <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
+
+    <!-- Status -->
+    <string name="brake">Brake</string>
+    <string name="park">Park</string>
+    <string name="cruise_control">Cruise Control</string>
+    <string name="speed">Speed</string>
+    <string name="distance">Distance</string>
+    <string name="speed_log">0 km/h</string>
+    <string name="distance_log">0 km</string>
+
+    <!-- About -->
+    <string name="about">About</string>
+
+</resources>
