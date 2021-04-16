@@ -3,7 +3,7 @@
 #include <MQTT.h>
 #include <WiFi.h>
 
-#ifndef __SMCE__
+#ifndef __SMCE__  // If the definition of SMCE then instantiate the WiFi client. 
 WiFiClient net;
 #endif
 MQTTClient mqtt;
@@ -16,9 +16,11 @@ const int RIGHT_PIN = 2;
 const int BACK_PIN = 3;
 const int TRIGGER_PIN = 6; // D6
 const int ECHO_PIN = 7; // D7
-const unsigned int MAX_DISTANCE = 1000;
+const unsigned int MAX_DISTANCE = 400;
 const auto pulsesPerMeter = 600;
 const float maxSpeedMs = 1.845;
+const float STOPPING_SPEED = 0.2; //m/s. used to decide when to stop in slowDownSmoothly
+const int SAFETY_RANGE_COEFF = 150; // multiply by car.getSpeed() to get a safety range
 
 //Runtime environment
 ArduinoRuntime arduinoRuntime;
@@ -60,8 +62,8 @@ SmartCar car(arduinoRuntime, control, gyroscope, leftOdometer, rightOdometer);
 void setup()
 {
     Serial.begin(9600);
-      //Ex: 
-  // chose to connect to localhost or external
+    //Example: 
+    // chose to connect to localhost or external
 
     connectHost(false); //choosing to connect to localhost.
   
@@ -70,12 +72,58 @@ void setup()
 
 void loop()
 {
-      if (mqtt.connected()) { // check if the mqtt is connected .. needed if you connect through MQTT
+  if (mqtt.connected() && isFrontClear()) { // check if the mqtt is connected .. needed if you connect through MQTT
         mqtt.loop();  // Also needed to keep soing the mqtt operations
      
         SR04sensorData(true, "/smartcar/ultrasound/front"); //publish sensor data every one second through MQTT
-      }
-  
+  }
+  else {slowDownSmoothly();}
+ 
+}
+
+//Serial input - will be adapted to work with the app
+void handleInput()
+{
+  if (Serial.available()) {
+
+    String input = Serial.readStringUntil('\n');
+
+    if (input.startsWith("s")) {
+
+      int inputSpeed = input.substring(1).toInt();
+      car.setSpeed(inputSpeed);
+
+    } else if (input.startsWith("a")) {
+
+      int inputAngle = input.substring(1).toInt();
+      car.setAngle(inputAngle);
+
+    }
+  }
+}
+
+//Returns true if frontUS is clear (depending on car speed) or car is moving backward
+boolean isFrontClear()
+{
+  float safetyDistance = car.getSpeed() * SAFETY_RANGE_COEFF;
+  float frontUSDistance = frontUS.getDistance();
+  return (frontUSDistance > safetyDistance || frontUSDistance == 0 
+          || leftOdometer.getDirection() == -1);
+}
+
+//Needs to be used together with isFrontClear. Slows down the car until full stop.
+void slowDownSmoothly()
+{
+  while (car.getSpeed() >= STOPPING_SPEED){//check constant for details
+    car.setSpeed(convertSpeed(car.getSpeed())/2);//cut speed down by 50%
+  }
+  car.setSpeed(0);
+}
+
+//parameter: car.getSpeed(). returns: percentage over maxSpeed
+float convertSpeed(float currentSpeedMs) 
+{
+    return (currentSpeedMs/maxSpeedMs)*100;
 }
 
 
@@ -95,15 +143,15 @@ if (ifLocalhost){
     #endif
      }
 }
-
-void SR04sensorData(boolean pubSensorData, String publishTopic){ // Method to publish SR04 sensor Data
+// Method to publish SR04 sensor Data
+void SR04sensorData(boolean pubSensorData, String publishTopic){ 
       
   if(pubSensorData){
 
-          //ex:
+  //example:
   // SR04 front(arduinoRuntime, TRIGGER_PIN, ECHO_PIN, MAX_DISTANCE);  this should be created in the header.
-
   // SR04sensorData (true, "/smartcar/ultrasound/front" , front); // ex how to use in loop method 
+    
       const auto currentTime = millis();
       static auto previousTransmission = 0UL;
 
@@ -116,7 +164,8 @@ void SR04sensorData(boolean pubSensorData, String publishTopic){ // Method to pu
     }
 }
 
-void MQTTMessageInput(){ // Subscribing emulator to topics to interact with the car.
+// Subscribing emulator to topics to interact with the car.
+void MQTTMessageInput(){ 
 
   if (mqtt.connect("arduino", "public", "public")) {
     mqtt.subscribe("/smartcar/control/#", 1);
@@ -132,7 +181,8 @@ void MQTTMessageInput(){ // Subscribing emulator to topics to interact with the 
   }
 }
 
-void noCPUoverload (){ // Avoid over-using the CPU if we are running in the emulator
+// Avoid over-using the CPU if we are running in the emulator
+void noCPUoverload (){ 
 #ifdef __SMCE__
   delay(35);
 #endif
