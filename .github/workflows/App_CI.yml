@@ -15,4 +15,8 @@ jobs:
       - name: Checkout the code
         uses: actions/checkout@v2
       - name: Build the App
-        run: ./gradlew build
+        run: |
+          cd UI 
+          touch local.properties
+          chmod +x gradlew 
+          export TERM=xterm &&./gradlew build --stacktrace
