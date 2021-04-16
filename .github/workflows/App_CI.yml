@@ -22,6 +22,5 @@ jobs:
       run: git update-index --chmod=+x gradlew
     - name: Build with Gradle
       run: |
-        cd group-07/tree/master/UI
+        cd group-07/tree/APP-CI/UI
         bash ./gradlew build --stacktrace
-        chmod +x gradlew && ./gradlew compileDebug --stacktrace
