@@ -12,11 +12,8 @@ jobs:
           java-version: 1.8
       - name: Clone Repo
         uses: actions/checkout@v2
-      - name: Checkout the code
-        uses: actions/checkout@v2
-      - name: Build the App
+      - name: Build app
         run: |
-          cd UI 
-          touch local.properties
-          chmod +x gradlew 
-          export TERM=xterm &&./gradlew build --stacktrace
+          cd UI
+          chmod +x ./gradlew
+          bash ./gradlew build --stacktrace
