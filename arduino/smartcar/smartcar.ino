@@ -1,18 +1,30 @@
+#include <vector>
+#ifdef __SMCE__
+#include <OV767X.h>
+#endif
 #include <Smartcar.h>
-
-//Pin definition and constants
+#include <MQTT.h>
+#include <WiFi.h>
+#ifndef __SMCE__ // If the definition of SMCE then instantiate the WiFi client.
+WiFiClient net;
+#endif
+MQTTClient mqtt;
 const int FRONT_STOP_DISTANCE = 100;
 const int BACK_STOP_DISTANCE = 50;
 const int SIDE_REACT_DISTANCE = 35;
 const int CLEAR_DISTANCE = 0;
+const auto ONE_SECOND = 1000UL;
 const int FRONT_PIN = 0;
 const int LEFT_PIN = 1;
 const int RIGHT_PIN = 2;
 const int BACK_PIN = 3;
-const int TRIGGER_PIN           = 6; // D6
-const int ECHO_PIN              = 7; // D7
+const int TRIGGER_PIN = 6; // D6
+const int ECHO_PIN = 7; // D7
 const unsigned int MAX_DISTANCE = 400;
 const auto PULSES_PER_METER = 600;
+const float MAX_SPEED = 1.845;
+const float STOPPING_SPEED = 0.2; //m/s. used to decide when to stop in slowDownSmoothly
+const int SAFETY_RANGE_COEFF = 150; // multiply by car.getSpeed() to get a safety range
 
 //Runtime environment
 ArduinoRuntime arduinoRuntime;
@@ -37,7 +49,8 @@ SR04 frontUS(arduinoRuntime, TRIGGER_PIN, ECHO_PIN, MAX_DISTANCE);
 GY50 gyroscope(arduinoRuntime, 37);
 
 //Directional odometers
-DirectionalOdometer leftOdometer{
+
+DirectionalOdometer leftOdometer{ // for MAC - use : () instead of {} -- windows use {}
         arduinoRuntime,
         smartcarlib::pins::v2::leftOdometerPins,
         []() { leftOdometer.update(); },
@@ -54,12 +67,27 @@ SmartCar car(arduinoRuntime, control, gyroscope, leftOdometer, rightOdometer);
 void setup()
 {
     Serial.begin(9600);
+  //Example: 
+    // chose to connect to localhost or external
+
+    connectHost(false); //choosing to connect to localhost.
+  
+    MQTTMessageInput();
+
 }
+
 /**
  * Main loop
  */
 void loop()
 {
+   if (mqtt.connected() && isFrontClear()) { // check if the mqtt is connected .. needed if you connect through MQTT
+        mqtt.loop();  // Also needed to keep soing the mqtt operations
+     
+        SR04sensorData(true, "/smartcar/ultrasound/front"); //publish sensor data every one second through MQTT
+  }
+  else {slowDownSmoothly();}
+  
         handleInput();
         emergencyBrake();
         reactToSides();
@@ -100,6 +128,7 @@ void handleInput() {
         }
     }
 }
+
 /**
  * handleInput helper method for speed
  */
@@ -110,6 +139,7 @@ void handleSpeedInput(float distance, int inputSpeed){
         car.setSpeed(inputSpeed);
     }
 }
+
 /**
  * handleInput helper method for angle
  */
@@ -202,29 +232,85 @@ void sideAvoidance(int newAngle){
 
 
 
+// Method to publish SR04 sensor Data
+//example:
+  // SR04 front(arduinoRuntime, TRIGGER_PIN, ECHO_PIN, MAX_DISTANCE);  this should be created in the header.
+  // SR04sensorData (true, "/smartcar/ultrasound/front" , front); // ex how to use in loop method 
+void SR04sensorData(boolean pubSensorData, String publishTopic){ 
+      
+  if(pubSensorData){
+      const auto currentTime = millis();
+      static auto previousTransmission = 0UL;
 
+      if (currentTime - previousTransmission >= oneSecond) {
+        previousTransmission = currentTime;
+        const auto distance = String(frontUS.getDistance());
+        mqtt.publish(publishTopic, distance);  
+      }
 
+    }
+}
 
+//Returns true if frontUS is clear (depending on car speed) or car is moving backward
+boolean isFrontClear()
+{
+  float safetyDistance = car.getSpeed() * SAFETY_RANGE_COEFF;
+  float frontUSDistance = frontUS.getDistance();
+  return (frontUSDistance > safetyDistance || frontUSDistance == 0 
+          || leftOdometer.getDirection() == -1);
+}
 
+//Needs to be used together with isFrontClear. Slows down the car until full stop.
+void slowDownSmoothly()
+{
+  while (car.getSpeed() >= STOPPING_SPEED){//check constant for details
+    car.setSpeed(convertSpeed(car.getSpeed())/2);//cut speed down by 50%
+  }
+  car.setSpeed(0);
+}
 
+//parameter: car.getSpeed(). returns: percentage over maxSpeed
+float convertSpeed(float currentSpeedMs) 
+{
+    return (currentSpeedMs/maxSpeedMs)*100;   // check max speed. 
+}
 
+// in case of other host just set the IP and the port, local host is false by default.
+void connectHost(boolean ifLocalhost){  
+if (ifLocalhost){
+    #ifdef __SMCE__
+      mqtt.begin(WiFi);
+    #else
+      mqtt.begin(net);
+    #endif
+}else{
+    #ifdef __SMCE__
+      mqtt.begin("test.mosquitto.org", 1883, WiFi);
+    #else
+      mqtt.begin(net);
+    #endif
+     }
+}
 
+// Subscribing emulator to topics to interact with the car.
+void MQTTMessageInput(){ 
+  if (mqtt.connect("arduino", "public", "public")) {
+    mqtt.subscribe("/smartcar/control/#", 1);
+    mqtt.onMessage([](String topic, String message) {
+      if (topic == "/smartcar/control/speed") {
+        car.setSpeed(message.toInt());
+      } else if (topic == "/smartcar/control/angle") {
+        car.setAngle(message.toInt());
+      } else {
+        Serial.println(topic + " " + message);
+      }
+    });
+  }
+}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+// Avoid over-using the CPU if we are running in the emulator
+void noCPUoverload (){ 
+#ifdef __SMCE__
+  delay(35);
+#endif
+}
