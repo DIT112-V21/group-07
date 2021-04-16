@@ -14,6 +14,7 @@ const int BACK_STOP_DISTANCE = 50;
 const int SIDE_REACT_DISTANCE = 35;
 const int CLEAR_DISTANCE = 0;
 const auto ONE_SECOND = 1000UL;
+const auto HAlF_SECOND = 500UL;
 const int FRONT_PIN = 0;
 const int LEFT_PIN = 1;
 const int RIGHT_PIN = 2;
@@ -85,6 +86,7 @@ void loop()
         mqtt.loop();  // Also needed to keep soing the mqtt operations
      
         SR04sensorData(true, "/smartcar/ultrasound/front"); //publish sensor data every one second through MQTT
+        measureDistance(true, "/smartcar/car/distance");
   }
   else {
       //If distance is greater 100
@@ -272,8 +274,6 @@ void sideAvoidance(int newAngle){
     car.setAngle(0);
 } //TODO : Need to be improved (can be simplified)
 
-
-
 // Method to publish SR04 sensor Data
 //example:
   // SR04 front(arduinoRuntime, TRIGGER_PIN, ECHO_PIN, MAX_DISTANCE);  this should be created in the header.
@@ -292,6 +292,24 @@ void SR04sensorData(boolean pubSensorData, String publishTopic){
 
     }
 }
+
+// Method to publish odometer sensor Data
+//ex:
+// measureDistance (true, "/smartcar/car/distance"); // ex how to use in loop method 
+void measureDistance(boolean pubCarDistance, String publishDistanceTopic){
+      
+  if(pubCarDistance){
+      const auto currentTime = millis();
+      static auto previousTransmission = 0UL;
+
+      if (currentTime - previousTransmission >= HAlF_SECOND) {
+        previousTransmission = currentTime;
+        const auto distance = String(car.getDistance());
+        mqtt.publish(publishDistanceTopic, distance);  
+      }
+    }
+}
+
 
 //Returns true if frontUS is clear (depending on car speed) or car is moving backward
 boolean isFrontClear()
