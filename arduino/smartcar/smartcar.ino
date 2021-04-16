@@ -3,7 +3,7 @@
 //Pin definition and constants
 const int FRONT_STOP_DISTANCE = 100;
 const int BACK_STOP_DISTANCE = 50;
-const int SIDE_REACT_DISTANCE = 50;
+const int SIDE_REACT_DISTANCE = 35;
 const int CLEAR_DISTANCE = 0;
 const int FRONT_PIN = 0;
 const int LEFT_PIN = 1;
@@ -54,9 +54,10 @@ SmartCar car(arduinoRuntime, control, gyroscope, leftOdometer, rightOdometer);
 void setup()
 {
     Serial.begin(9600);
-    // car.overrideMotorSpeed(100, -100);
 }
-
+/**
+ * Main loop
+ */
 void loop()
 {
         handleInput();
@@ -64,53 +65,9 @@ void loop()
         reactToSides();
 }
 
-void reactToSides() {
-    float currentHeading = car.getHeading();
-    float rightValue = rightIR.getDistance();
-    float leftValue = leftIR.getDistance();
-    if (currentHeading > 0) {
-        if (rightValue < SIDE_REACT_DISTANCE) {
-            delay(300);
-            float newValue = rightIR.getDistance();
-            if (newValue < rightValue) {
-                sideAvoidance(-30);
-            }
-        }
-    } else if (currentHeading < 0) {
-        if (leftValue < SIDE_REACT_DISTANCE) {
-            delay(300);
-            float newValue = leftIR.getDistance();
-            if (newValue < leftValue) {
-                sideAvoidance(30);
-            }
-        }
-    } else {
-        if(rightValue < SIDE_REACT_DISTANCE && leftValue < SIDE_REACT_DISTANCE){
-            car.setSpeed(0);
-            Serial.println("Obstacle detected in the right and left direction, car stopped for safety");
-        }
-    }
-}
-
-void sideAvoidance(int newAngle){
-    if (newAngle < 0){
-        while(rightIR.getDistance() < 60){
-            car.setAngle(newAngle);
-            emergencyBrake();
-            car.update();
-            //for distance x, then turn back
-        }
-    }else{
-        while(leftIR.getDistance() < 60){
-            car.setAngle(newAngle);
-            emergencyBrake();
-            car.update();
-        }
-    }
-    car.setAngle(0 - newAngle);
-
-}
-
+/**
+ * Handle user input/restrict movement into an obstacle
+ */
 void handleInput() {
     if (Serial.available()) {
         String input = Serial.readStringUntil('\n');
@@ -120,43 +77,55 @@ void handleInput() {
             int inputSpeed = input.substring(1).toInt();
             if (inputSpeed > 0) {
                 float frontValue = frontIR.getDistance();
-                handleSpeedInput(frontValue);
+                handleSpeedInput(frontValue, inputSpeed);
             } else if (inputSpeed < 0) {
                 float backValue = backIR.getDistance();
-                handleSpeedInput(backValue);
+                handleSpeedInput(backValue, inputSpeed);
+            } else {
+                car.setSpeed(0);
             }
         } else if (input.startsWith("a")) {
             // look at the angle + or - :  + -> right and - -> left
-            // int inputAngle = input.substring(1).toInt();
+            int inputAngle = input.substring(1).toInt();
             if (inputAngle > 0) {
                 float rightValue = rightIR.getDistance();
-                handleAngleInput(rightValue)
+                handleAngleInput(rightValue, inputAngle);
             } else if (inputAngle < 0) {//get left sensor
                 float leftValue = leftIR.getDistance();
-                handlehandleAngleInput(leftValue);
+                handleAngleInput(leftValue, inputAngle);
+            } else {
+                car.setAngle(0);
             }
             car.update();
         }
     }
 }
-
-void handleSpeedInput(float distance){
+/**
+ * handleInput helper method for speed
+ */
+private void handleSpeedInput(float distance, int inputSpeed){
     if(distance != 0){
         Serial.println("Obstacle detected in the direction you are trying to move");
     }else{
         car.setSpeed(inputSpeed);
     }
 }
-
-void handleAngleInput(float angle){
+/**
+ * handleInput helper method for angle
+ */
+private void handleAngleInput(float angle, int inputAngle){
     if (angle != 0) {
         Serial.println("Obstacle detected in the direction you are trying to move");
     } else {
         car.setAngle(inputAngle);
     }
 }
-
-void emergencyBrake(){
+ /**
+  * Brakes in case of emergency. Looks at the direction and reacts to the relevant sensors.
+  * @return true if a reaction to sensor has been needed. False if no reaction.
+  */
+//TODO for the future: Make sure the situation where leftDirection and rightDirection are not equal that it we always want the behaviour described in the else part (following)
+bool emergencyBrake(){
     int leftDirection = leftOdometer.getDirection();
     int rightDirection = rightOdometer.getDirection();
 
@@ -165,14 +134,16 @@ void emergencyBrake(){
         reactToSensor(frontSensorDistance, FRONT_STOP_DISTANCE);
     }else{ //TODO for the future: Make sure the situation where leftDirection and rightDirection are not equal that it we always want the behaviour described in the else part (following)
         int backSensorDistance = backIR.getDistance();
-        reactToSensor(backSensorDistance, BACK_STOP_DISTANCE);
+        if(reactToSensor(backSensorDistance, BACK_STOP_DISTANCE)){
+        return true;}
+    }else{
+        return false;
     }
 }
 
 void reactToSensor(int sensorDistance, int STOP_DISTANCE){
     if (sensorDistance != 0){ // if the sensor has readings ..
         if ( sensorDistance <= STOP_DISTANCE ){ // check if the sensor measurement is equal or less than the stopping distance
-            //TODO: Add call to Gimmy's method (slow down smoothly) here! Possibly call emergency break into Gimmy's also to cover obstacle popping while adjusting speed
             car.setSpeed(0);// stop the car.
             delay(2000);
         }
