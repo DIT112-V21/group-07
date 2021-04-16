@@ -128,11 +128,11 @@ private void handleAngleInput(float angle, int inputAngle){
 bool emergencyBrake(){
     int leftDirection = leftOdometer.getDirection();
     int rightDirection = rightOdometer.getDirection();
-
     if(leftDirection == 1 && rightDirection == 1){
         int frontSensorDistance = frontUS.getDistance();
-        reactToSensor(frontSensorDistance, FRONT_STOP_DISTANCE);
-    }else{ //TODO for the future: Make sure the situation where leftDirection and rightDirection are not equal that it we always want the behaviour described in the else part (following)
+        if(reactToSensor(frontSensorDistance, FRONT_STOP_DISTANCE)){
+        return true;}
+    }else if (leftDirection == -1 && rightDirection == -1){
         int backSensorDistance = backIR.getDistance();
         if(reactToSensor(backSensorDistance, BACK_STOP_DISTANCE)){
         return true;}
@@ -140,15 +140,68 @@ bool emergencyBrake(){
         return false;
     }
 }
-
-void reactToSensor(int sensorDistance, int STOP_DISTANCE){
+/**
+ * EmergencyBrake() helper method to react to sensor value
+ * @return true if a reaction to sensor was engaged. False otherwise
+ */
+private bool reactToSensor(int sensorDistance, int STOP_DISTANCE){
     if (sensorDistance != 0){ // if the sensor has readings ..
         if ( sensorDistance <= STOP_DISTANCE ){ // check if the sensor measurement is equal or less than the stopping distance
             car.setSpeed(0);// stop the car.
-            delay(2000);
+            return true;
+        }
+    }
+    return false;
+}
+/**
+ * Method to look and compare two sensor values (100ms apart) to know if an obstacle is coming towards the car
+ */
+void reactToSides() {
+    float currentHeading = car.getHeading();
+    float rightValue = rightIR.getDistance();
+    float leftValue = leftIR.getDistance();
+    if (rightValue < SIDE_REACT_DISTANCE && rightValue > 0) {
+        delay(100);
+        float newValue = rightIR.getDistance();
+        if (newValue < rightValue && newValue > 0) {
+            sideAvoidance(-45);
+        }
+    }
+    if (leftValue < SIDE_REACT_DISTANCE && leftValue > 0) {
+        delay(100);
+        float newValue = leftIR.getDistance();
+        if (newValue < leftValue && newValue > 0) {
+            sideAvoidance(45);
         }
     }
 }
+/**
+ * reactToSides() helper method that set the angle of the car at the opposite direction
+ * if an obstacle is detected coming towards the car.
+ */
+private void sideAvoidance(int newAngle){
+    if (newAngle < 0){
+        while(rightIR.getDistance() < 35 && rightIR.getDistance() > 0) {
+            car.setAngle(newAngle);
+            bool emergencyBeak = emergencyBrake();
+            if(emergencyBrake){
+                return;
+            }
+        }
+    }else{
+        while(leftIR.getDistance() < 35 && leftIR.getDistance() > 0){
+            car.setAngle(newAngle);
+            bool emergencyBeak = emergencyBrake();
+            if(emergencyBrake()){
+                return;
+            }
+        }
+    }
+    car.setAngle(0);
+} //TODO : Need to be improved (can be simplified)
+
+
+
 
 
 
