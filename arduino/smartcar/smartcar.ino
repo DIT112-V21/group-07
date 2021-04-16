@@ -102,8 +102,6 @@ void loop()
       }else{
           emergencyBrake();
       }
-
-
   }
 }
 
@@ -309,7 +307,6 @@ void measureDistance(boolean pubCarDistance, String publishDistanceTopic){
       }
     }
 }
-
 
 //Returns true if frontUS is clear (depending on car speed) or car is moving backward
 boolean isFrontClear()
