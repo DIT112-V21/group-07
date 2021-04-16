@@ -1,14 +1,14 @@
-  
+#include <vector>
+#ifdef __SMCE__
+#include <OV767X.h>
+#endif
 #include <Smartcar.h>
 #include <MQTT.h>
 #include <WiFi.h>
-
-#ifndef __SMCE__  // If the definition of SMCE then instantiate the WiFi client. 
+#ifndef __SMCE__ // If the definition of SMCE then instantiate the WiFi client.
 WiFiClient net;
 #endif
 MQTTClient mqtt;
-
-//Pin definition and constants
 const auto oneSecond = 1000UL;
 const int FRONT_PIN = 0;
 const int LEFT_PIN = 1;
@@ -81,25 +81,23 @@ void loop()
  
 }
 
-//Serial input - will be adapted to work with the app
-void handleInput()
-{
-  if (Serial.available()) {
+// Method to publish SR04 sensor Data
+//example:
+  // SR04 front(arduinoRuntime, TRIGGER_PIN, ECHO_PIN, MAX_DISTANCE);  this should be created in the header.
+  // SR04sensorData (true, "/smartcar/ultrasound/front" , front); // ex how to use in loop method 
+void SR04sensorData(boolean pubSensorData, String publishTopic){ 
+      
+  if(pubSensorData){
+      const auto currentTime = millis();
+      static auto previousTransmission = 0UL;
 
-    String input = Serial.readStringUntil('\n');
-
-    if (input.startsWith("s")) {
-
-      int inputSpeed = input.substring(1).toInt();
-      car.setSpeed(inputSpeed);
-
-    } else if (input.startsWith("a")) {
-
-      int inputAngle = input.substring(1).toInt();
-      car.setAngle(inputAngle);
+      if (currentTime - previousTransmission >= oneSecond) {
+        previousTransmission = currentTime;
+        const auto distance = String(frontUS.getDistance());
+        mqtt.publish(publishTopic, distance);  
+      }
 
     }
-  }
 }
 
 //Returns true if frontUS is clear (depending on car speed) or car is moving backward
@@ -126,9 +124,8 @@ float convertSpeed(float currentSpeedMs)
     return (currentSpeedMs/maxSpeedMs)*100;
 }
 
-
-void connectHost(boolean ifLocalhost){ // in case of other host just set the IP and the port, local host is false by default. 
-
+// in case of other host just set the IP and the port, local host is false by default.
+void connectHost(boolean ifLocalhost){  
 if (ifLocalhost){
     #ifdef __SMCE__
       mqtt.begin(WiFi);
@@ -143,30 +140,9 @@ if (ifLocalhost){
     #endif
      }
 }
-// Method to publish SR04 sensor Data
-void SR04sensorData(boolean pubSensorData, String publishTopic){ 
-      
-  if(pubSensorData){
-
-  //example:
-  // SR04 front(arduinoRuntime, TRIGGER_PIN, ECHO_PIN, MAX_DISTANCE);  this should be created in the header.
-  // SR04sensorData (true, "/smartcar/ultrasound/front" , front); // ex how to use in loop method 
-    
-      const auto currentTime = millis();
-      static auto previousTransmission = 0UL;
-
-      if (currentTime - previousTransmission >= oneSecond) {
-        previousTransmission = currentTime;
-        const auto distance = String(frontUS.getDistance());
-        mqtt.publish(publishTopic, distance);  
-      }
-
-    }
-}
 
 // Subscribing emulator to topics to interact with the car.
 void MQTTMessageInput(){ 
-
   if (mqtt.connect("arduino", "public", "public")) {
     mqtt.subscribe("/smartcar/control/#", 1);
     mqtt.onMessage([](String topic, String message) {
