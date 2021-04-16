@@ -22,5 +22,5 @@ jobs:
       run: chmod +x gradlew
     - name: Build with Gradle
       run: |
-        cd UI
+        cd tree/UI/UI
         ./gradlew build --stacktrace     
