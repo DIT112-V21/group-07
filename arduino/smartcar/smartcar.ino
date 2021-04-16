@@ -88,17 +88,27 @@ void loop()
         SR04sensorData(true, "/smartcar/ultrasound/front"); //publish sensor data every one second through MQTT
         measureDistance(true, "/smartcar/car/distance");
   }
-  else {slowDownSmoothly();}
-  
-        handleInput();
-        emergencyBrake();
-        reactToSides();
+  else {
+      //If distance is greater 100
+      int frontSensor = frontUS.getDistance();
+      int backSensor = backIR.getDistance();
+      int rightSensor = rightIR.getDistance();
+      int leftSensor = leftIR.getDistance();
+
+      if(frontSensor > 100 || backSensor > 35 ){
+          slowDownSmoothly();
+      }else if(rightSensor < 35 && rightSensor > 0 || leftSensor < 35 && leftSensor > 0){
+          reactToSides();
+      }else{
+          emergencyBrake();
+      }
+  }
 }
 
 /**
  * Handle user input/restrict movement into an obstacle
  */
-void handleInput() {
+/*void handleInput() {
     if (Serial.available()) {
         String input = Serial.readStringUntil('\n');
         //TODO: Look at how the mqtt com has been implemented and how it impacts this method
@@ -129,6 +139,36 @@ void handleInput() {
             car.update();
         }
     }
+}*/
+
+void handleSpeedTopic(int input){
+    // front and back sensors and we look at the + or - for direction
+    //int inputSpeed = input.substring(1).toInt();
+    if (input > 0) {
+        float frontValue = frontIR.getDistance();
+        handleSpeedInput(frontValue, input);
+    } else if (input < 0) {
+        float backValue = backIR.getDistance();
+        handleSpeedInput(backValue, input);
+    } else {
+        car.setSpeed(0);
+    }
+    car.update();
+}
+
+void handleAngleTopic(int input){
+    // look at the angle + or - :  + -> right and - -> left
+    //int inputAngle = input.substring(1).toInt();
+    if (input > 0) {
+        float rightValue = rightIR.getDistance();
+        handleAngleInput(rightValue, input);
+    } else if (input < 0) {//get left sensor
+        float leftValue = leftIR.getDistance();
+        handleAngleInput(leftValue, input);
+    } else {
+        car.setAngle(0);
+    }
+    car.update();
 }
 
 /**
@@ -268,7 +308,6 @@ void measureDistance(boolean pubCarDistance, String publishDistanceTopic){
     }
 }
 
-
 //Returns true if frontUS is clear (depending on car speed) or car is moving backward
 boolean isFrontClear()
 {
@@ -316,9 +355,11 @@ void MQTTMessageInput(){
     mqtt.subscribe("/smartcar/control/#", 1);
     mqtt.onMessage([](String topic, String message) {
       if (topic == "/smartcar/control/speed") {
-        car.setSpeed(message.toInt());
+        //car.setSpeed(message.toInt());
+          handleSpeedTopic(message.toInt());
       } else if (topic == "/smartcar/control/angle") {
-        car.setAngle(message.toInt());
+        //car.setAngle(message.toInt());
+          handleAngleTopic(message.toInt());
       } else {
         Serial.println(topic + " " + message);
       }
