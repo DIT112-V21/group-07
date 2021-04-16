@@ -103,7 +103,7 @@ void handleInput() {
 /**
  * handleInput helper method for speed
  */
-private void handleSpeedInput(float distance, int inputSpeed){
+void handleSpeedInput(float distance, int inputSpeed){
     if(distance != 0){
         Serial.println("Obstacle detected in the direction you are trying to move");
     }else{
@@ -113,7 +113,7 @@ private void handleSpeedInput(float distance, int inputSpeed){
 /**
  * handleInput helper method for angle
  */
-private void handleAngleInput(float angle, int inputAngle){
+void handleAngleInput(float angle, int inputAngle){
     if (angle != 0) {
         Serial.println("Obstacle detected in the direction you are trying to move");
     } else {
@@ -144,7 +144,7 @@ bool emergencyBrake(){
  * EmergencyBrake() helper method to react to sensor value
  * @return true if a reaction to sensor was engaged. False otherwise
  */
-private bool reactToSensor(int sensorDistance, int STOP_DISTANCE){
+bool reactToSensor(int sensorDistance, int STOP_DISTANCE){
     if (sensorDistance != 0){ // if the sensor has readings ..
         if ( sensorDistance <= STOP_DISTANCE ){ // check if the sensor measurement is equal or less than the stopping distance
             car.setSpeed(0);// stop the car.
@@ -179,7 +179,7 @@ void reactToSides() {
  * reactToSides() helper method that set the angle of the car at the opposite direction
  * if an obstacle is detected coming towards the car.
  */
-private void sideAvoidance(int newAngle){
+void sideAvoidance(int newAngle){
     if (newAngle < 0){
         while(rightIR.getDistance() < 35 && rightIR.getDistance() > 0) {
             car.setAngle(newAngle);
