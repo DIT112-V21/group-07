@@ -24,3 +24,4 @@ jobs:
       run: |
         cd UI
         bash ./gradlew build --stacktrace
+        chmod +x gradlew && ./gradlew compileDebug --stacktrace
