@@ -242,7 +242,7 @@ void SR04sensorData(boolean pubSensorData, String publishTopic){
       const auto currentTime = millis();
       static auto previousTransmission = 0UL;
 
-      if (currentTime - previousTransmission >= oneSecond) {
+      if (currentTime - previousTransmission >= ONE_SECOND) {
         previousTransmission = currentTime;
         const auto distance = String(frontUS.getDistance());
         mqtt.publish(publishTopic, distance);  
@@ -272,7 +272,7 @@ void slowDownSmoothly()
 //parameter: car.getSpeed(). returns: percentage over maxSpeed
 float convertSpeed(float currentSpeedMs) 
 {
-    return (currentSpeedMs/maxSpeedMs)*100;   // check max speed. 
+    return (currentSpeedMs/MAX_SPEED)*100;   // check max speed. 
 }
 
 // in case of other host just set the IP and the port, local host is false by default.
