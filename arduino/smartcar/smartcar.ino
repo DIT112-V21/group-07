@@ -247,7 +247,8 @@ void reactToSides() {
 void sideAvoidance(int newAngle){
     //Serial.println(newAngle);
     if (newAngle < 0){
-        while(rightIR.getDistance() < 35 && rightIR.getDistance() > 0) {
+        float rightIRDistance = rightIR.getDistance();
+        while(rightIRDistance < 35 && rightIRDistance > 0) {
             car.setAngle(newAngle);
             rightIRDistance = rightIR.getDistance();
             car.update();
@@ -256,7 +257,8 @@ void sideAvoidance(int newAngle){
             }
         }
     }else{
-        while(leftIR.getDistance() < 35 && leftIR.getDistance() > 0){
+        float leftIRDistance = leftIR.getDistance();
+        while(leftIRDistance < 35 && leftIRDistance > 0){
             car.setAngle(newAngle);
             leftIRDistance = leftIR.getDistance();
             car.update();
