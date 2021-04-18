@@ -24,8 +24,8 @@ const int ECHO_PIN = 7; // D7
 const unsigned int MAX_DISTANCE = 400;
 const auto PULSES_PER_METER = 600;
 const float MAX_SPEED = 1.845;
-const float STOPPING_SPEED = 0.2; //m/s. used to decide when to stop in slowDownSmoothly
-const int SAFETY_RANGE_COEFF = 150; // multiply by car.getSpeed() to get a safety range
+const float STOPPING_SPEED = 0.3; //m/s. used to decide when to stop in slowDownSmoothly
+const int SAFETY_RANGE_COEFF = 130; // multiply by car.getSpeed() to get a safety range
 
 //Runtime environment
 ArduinoRuntime arduinoRuntime;
@@ -82,27 +82,15 @@ void setup()
  */
 void loop()
 {
-   if (mqtt.connected() && isFrontClear()) { // check if the mqtt is connected .. needed if you connect through MQTT
+   if (mqtt.connected()) { // check if the mqtt is connected .. needed if you connect through MQTT
         mqtt.loop();  // Also needed to keep soing the mqtt operations
-     
         SR04sensorData(true, "/smartcar/ultrasound/front"); //publish sensor data every one second through MQTT
         measureDistance(true, "/smartcar/car/distance");
   }
-  else {
-      //If distance is greater 100
-      int frontSensor = frontUS.getDistance();
-      int backSensor = backIR.getDistance();
-      int rightSensor = rightIR.getDistance();
-      int leftSensor = leftIR.getDistance();
+   Serial.println(car.getSpeed());
+    emergencyBrake();
+    reactToSides();
 
-      if(frontSensor > 100 || backSensor > 35 ){
-          slowDownSmoothly();
-      }else if(rightSensor < 35 && rightSensor > 0 || leftSensor < 35 && leftSensor > 0){
-          reactToSides();
-      }else{
-          emergencyBrake();
-      }
-  }
 }
 
 /**
@@ -178,7 +166,11 @@ void handleSpeedInput(float distance, int inputSpeed){
     if(distance != 0){
         Serial.println("Obstacle detected in the direction you are trying to move");
     }else{
-        car.setSpeed(inputSpeed);
+        if(inputSpeed < 0) {
+            car.setSpeed(inputSpeed/2);
+        }else{
+            car.setSpeed(inputSpeed);
+        }
     }
 }
 
@@ -200,11 +192,12 @@ void handleAngleInput(float angle, int inputAngle){
 bool emergencyBrake(){
     int leftDirection = leftOdometer.getDirection();
     int rightDirection = rightOdometer.getDirection();
-    if(leftDirection == 1 && rightDirection == 1){
+    float currentSpeed = car.getSpeed();
+    if(leftDirection == 1 && rightDirection == 1 && currentSpeed > 0){
         int frontSensorDistance = frontUS.getDistance();
         if(reactToSensor(frontSensorDistance, FRONT_STOP_DISTANCE)){
         return true;}
-    }else if (leftDirection == -1 && rightDirection == -1){
+    }else if (leftDirection == -1 && rightDirection == -1 && currentSpeed > 0){
         int backSensorDistance = backIR.getDistance();
         if(reactToSensor(backSensorDistance, BACK_STOP_DISTANCE)){
         return true;}
@@ -218,7 +211,9 @@ bool emergencyBrake(){
  */
 bool reactToSensor(int sensorDistance, int STOP_DISTANCE){
     if (sensorDistance != 0){ // if the sensor has readings ..
-        if ( sensorDistance <= STOP_DISTANCE ){ // check if the sensor measurement is equal or less than the stopping distance
+        if(sensorDistance > 100 && sensorDistance <= 130){
+            slowDownSmoothly();
+        }else if ( sensorDistance <= STOP_DISTANCE ){ // check if the sensor measurement is equal or less than the stopping distance
             car.setSpeed(0);// stop the car.
             return true;
         }
@@ -252,24 +247,30 @@ void reactToSides() {
  * if an obstacle is detected coming towards the car.
  */
 void sideAvoidance(int newAngle){
+    //Serial.println(newAngle);
     if (newAngle < 0){
-        while(rightIR.getDistance() < 35 && rightIR.getDistance() > 0) {
+        float rightIRDistance = rightIR.getDistance();
+        while(rightIRDistance < 35 && rightIRDistance > 0) {
             car.setAngle(newAngle);
-            bool emergencyBeak = emergencyBrake();
-            if(emergencyBrake){
+            rightIRDistance = rightIR.getDistance();
+            car.update();
+            if(emergencyBrake()){
                 return;
             }
         }
     }else{
-        while(leftIR.getDistance() < 35 && leftIR.getDistance() > 0){
+        float leftIRDistance = leftIR.getDistance();
+        while(leftIRDistance < 35 && leftIRDistance > 0){
             car.setAngle(newAngle);
-            bool emergencyBeak = emergencyBrake();
+            leftIRDistance = leftIR.getDistance();
+            car.update();
             if(emergencyBrake()){
                 return;
             }
         }
     }
     car.setAngle(0);
+    car.update();
 } //TODO : Need to be improved (can be simplified)
 
 // Method to publish SR04 sensor Data
@@ -309,7 +310,7 @@ void measureDistance(boolean pubCarDistance, String publishDistanceTopic){
 }
 
 //Returns true if frontUS is clear (depending on car speed) or car is moving backward
-boolean isFrontClear()
+bool isFrontClear()
 {
   float safetyDistance = car.getSpeed() * SAFETY_RANGE_COEFF;
   float frontUSDistance = frontUS.getDistance();
@@ -321,7 +322,7 @@ boolean isFrontClear()
 void slowDownSmoothly()
 {
   while (car.getSpeed() >= STOPPING_SPEED){//check constant for details
-    car.setSpeed(convertSpeed(car.getSpeed())/2);//cut speed down by 50%
+    car.setSpeed(convertSpeed(car.getSpeed())/3);//cut speed down by 50%
   }
   car.setSpeed(0);
 }
