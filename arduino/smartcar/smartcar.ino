@@ -87,6 +87,7 @@ void loop()
         SR04sensorData(true, "/smartcar/ultrasound/front"); //publish sensor data every one second through MQTT
         measureDistance(true, "/smartcar/car/distance");
   }
+   Serial.println(car.getSpeed());
     emergencyBrake();
     reactToSides();
 
@@ -191,11 +192,12 @@ void handleAngleInput(float angle, int inputAngle){
 bool emergencyBrake(){
     int leftDirection = leftOdometer.getDirection();
     int rightDirection = rightOdometer.getDirection();
-    if(leftDirection == 1 && rightDirection == 1){
+    float currentSpeed = car.getSpeed();
+    if(leftDirection == 1 && rightDirection == 1 && currentSpeed > 0){
         int frontSensorDistance = frontUS.getDistance();
         if(reactToSensor(frontSensorDistance, FRONT_STOP_DISTANCE)){
         return true;}
-    }else if (leftDirection == -1 && rightDirection == -1){
+    }else if (leftDirection == -1 && rightDirection == -1 && currentSpeed > 0){
         int backSensorDistance = backIR.getDistance();
         if(reactToSensor(backSensorDistance, BACK_STOP_DISTANCE)){
         return true;}
