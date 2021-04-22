@@ -11,6 +11,8 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ProgressBar;
+import android.widget.SeekBar;
 
 import com.example.pathfinder.Client.MqttClient;
 import com.example.pathfinder.R;
@@ -41,6 +43,8 @@ public class Dashboard extends AppCompatActivity {
     private boolean isConnected = false;
     private ImageView mCameraView;
     private TextView mSpeedLog, mDistanceLog;
+    private TextView textView;
+    private SeekBar seekBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,7 +58,27 @@ public class Dashboard extends AppCompatActivity {
         mMqttClient = new MqttClient(getApplicationContext(), MQTT_SERVER, TAG);
         mCameraView = findViewById(R.id.cameraView);
 
+        textView = (TextView) findViewById(R.id.textView);
+        seekBar = (SeekBar) findViewById(R.id.seekBar);
+
         connectToMqttBroker();
+
+        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                textView.setText("" + progress + "%");
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
     }
 
     @Override
@@ -176,6 +200,8 @@ public class Dashboard extends AppCompatActivity {
     public void moveBackward(View view) {
         drive(-MOVEMENT_SPEED, STRAIGHT_ANGLE, "Moving backward");
     }
+
+
 
    void getDistance() {
         notConnected();
