@@ -9,6 +9,7 @@
 WiFiClient net;
 #endif
 MQTTClient mqtt;
+const int NO_OBSTACLE_VALUE = 0;
 const int FRONT_STOP_DISTANCE = 100;
 const int BACK_STOP_DISTANCE = 50;
 const int SIDE_REACT_DISTANCE = 35;
@@ -87,7 +88,6 @@ void loop()
         SR04sensorData(true, "/smartcar/ultrasound/front"); //publish sensor data every one second through MQTT
         measureDistance(true, "/smartcar/car/distance");
   }
-   Serial.println(car.getSpeed());
     emergencyBrake();
     reactToSides();
 
@@ -227,17 +227,17 @@ void reactToSides() {
     float currentHeading = car.getHeading();
     float rightValue = rightIR.getDistance();
     float leftValue = leftIR.getDistance();
-    if (rightValue < SIDE_REACT_DISTANCE && rightValue > 0) {
+    if (rightValue < SIDE_REACT_DISTANCE && rightValue > NO_OBSTACLE_VALUE) {
         delay(100);
         float newValue = rightIR.getDistance();
-        if (newValue < rightValue && newValue > 0) {
+        if (newValue < rightValue && newValue > NO_OBSTACLE_VALUE) {
             sideAvoidance(-45);
         }
     }
-    if (leftValue < SIDE_REACT_DISTANCE && leftValue > 0) {
+    if (leftValue < SIDE_REACT_DISTANCE && leftValue > NO_OBSTACLE_VALUE) {
         delay(100);
         float newValue = leftIR.getDistance();
-        if (newValue < leftValue && newValue > 0) {
+        if (newValue < leftValue && newValue > NO_OBSTACLE_VALUE) {
             sideAvoidance(45);
         }
     }
@@ -250,17 +250,17 @@ void sideAvoidance(int newAngle){
     //Serial.println(newAngle);
     if (newAngle < 0){
         float rightIRDistance = rightIR.getDistance();
-        while(rightIRDistance < 35 && rightIRDistance > 0) {
+        while(rightIRDistance < SIDE_REACT_DISTANCE && rightIRDistance > NO_OBSTACLE_VALUE) {
             car.setAngle(newAngle);
             rightIRDistance = rightIR.getDistance();
             car.update();
-            if(emergencyBrake()){
+            /*if(emergencyBrake()){
                 return;
-            }
+            }*/
         }
     }else{
         float leftIRDistance = leftIR.getDistance();
-        while(leftIRDistance < 35 && leftIRDistance > 0){
+        while(leftIRDistance < SIDE_REACT_DISTANCE && leftIRDistance > NO_OBSTACLE_VALUE){
             car.setAngle(newAngle);
             leftIRDistance = leftIR.getDistance();
             car.update();
