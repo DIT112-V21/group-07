@@ -227,17 +227,17 @@ void reactToSides() {
     float currentHeading = car.getHeading();
     float rightValue = rightIR.getDistance();
     float leftValue = leftIR.getDistance();
-    if (rightValue < SIDE_REACT_DISTANCE && rightValue > NO_OBSTACLE_VALUE) {
+    if (rightValue < SIDE_REACT_DISTANCE && !isClear("rightIR")) {
         delay(100);
         float newValue = rightIR.getDistance();
-        if (newValue < rightValue && newValue > NO_OBSTACLE_VALUE) {
+        if (newValue < rightValue && !isClear("rightIR")) {
             sideAvoidance(-45);
         }
     }
-    if (leftValue < SIDE_REACT_DISTANCE && leftValue > NO_OBSTACLE_VALUE) {
+    if (leftValue < SIDE_REACT_DISTANCE && !isClear("leftIR")) {
         delay(100);
         float newValue = leftIR.getDistance();
-        if (newValue < leftValue && newValue > NO_OBSTACLE_VALUE) {
+        if (newValue < leftValue && !isClear("leftIR")) {
             sideAvoidance(45);
         }
     }
@@ -250,17 +250,18 @@ void sideAvoidance(int newAngle){
     //Serial.println(newAngle);
     if (newAngle < 0){
         float rightIRDistance = rightIR.getDistance();
-        while(rightIRDistance < SIDE_REACT_DISTANCE && rightIRDistance > NO_OBSTACLE_VALUE) {
+        while(rightIRDistance < SIDE_REACT_DISTANCE && !isClear("rightIR")) {
             car.setAngle(newAngle);
             rightIRDistance = rightIR.getDistance();
+            Serial.println(rightIRDistance);
             car.update();
-            /*if(emergencyBrake()){
+            if(emergencyBrake()){
                 return;
-            }*/
+            }
         }
     }else{
         float leftIRDistance = leftIR.getDistance();
-        while(leftIRDistance < SIDE_REACT_DISTANCE && leftIRDistance > NO_OBSTACLE_VALUE){
+        while(leftIRDistance < SIDE_REACT_DISTANCE && !isClear("leftIR")){
             car.setAngle(newAngle);
             leftIRDistance = leftIR.getDistance();
             car.update();
@@ -309,13 +310,28 @@ void measureDistance(boolean pubCarDistance, String publishDistanceTopic){
     }
 }
 
-//Returns true if frontUS is clear (depending on car speed) or car is moving backward
-bool isFrontClear()
+/**
+ * @Returns true if frontUS is clear (depending on car speed) or car is moving backward
+ */
+bool isClear(String sensor)
 {
-  float safetyDistance = car.getSpeed() * SAFETY_RANGE_COEFF;
+    if (sensor == "frontUS"){
+        return (frontUS.getDistance() == NO_OBSTACLE_VALUE);
+    } else if(sensor == "frontIR") {
+        return (frontIR.getDistance() == NO_OBSTACLE_VALUE);
+    }else if(sensor == "backIR"){
+        return (backIR.getDistance() == NO_OBSTACLE_VALUE);
+    }else if(sensor == "rightIR"){
+        return (rightIR.getDistance() == NO_OBSTACLE_VALUE);
+    }else if(sensor == "leftIR"){
+        return (leftIR.getDistance() == NO_OBSTACLE_VALUE);
+    }else{
+        return false;
+    }
+/*  float safetyDistance = car.getSpeed() * SAFETY_RANGE_COEFF;
   float frontUSDistance = frontUS.getDistance();
   return (frontUSDistance > safetyDistance || frontUSDistance == 0 
-          || leftOdometer.getDirection() == -1);
+          || leftOdometer.getDirection() == -1);*/
 }
 
 //Needs to be used together with isFrontClear. Slows down the car until full stop.
