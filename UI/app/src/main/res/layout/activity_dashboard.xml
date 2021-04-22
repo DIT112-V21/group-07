@@ -112,6 +112,44 @@
     </RelativeLayout>
 
     <RelativeLayout
+        android:paddingTop="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/set_speed"
+        android:fontFamily="@font/basic"
+        android:textColor="@color/purple"
+        android:layout_paddingBottom="10dp"
+        android:layout_paddingLeft="10dp"
+        android:layout_marginLeft="30dp">
+
+        </TextView>
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="100dp"
+            android:layout_marginBottom="24dp"
+            android:text="0%"
+            android:textSize="13dp">
+
+        </TextView>
+
+        <SeekBar
+        android:id="@+id/seekBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="30dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
