@@ -134,17 +134,20 @@
             android:layout_marginLeft="100dp"
             android:layout_marginBottom="24dp"
             android:text="0%"
-            android:textSize="13dp">
+            android:textSize="13dp"
+            android:textColor="@color/yellow">
 
         </TextView>
 
         <SeekBar
-        android:id="@+id/seekBar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingTop="30dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginLeft="16dp" />
+            android:id="@+id/seekBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="30dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginLeft="16dp"
+            android:thumbTint="@color/yellow"
+            android:onClick="setSpeed"/>
 
     </RelativeLayout>
 
