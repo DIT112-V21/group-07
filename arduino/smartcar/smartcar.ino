@@ -311,7 +311,8 @@ void measureDistance(boolean pubCarDistance, String publishDistanceTopic){
 }
 
 /**
- * @Returns true if frontUS is clear (depending on car speed) or car is moving backward
+ * @param sensor : takes the name of the sensor to be checked  as a String.
+ * @Returns true if sensor does not detect an obstacle or if it is too close to be detected. False if an obstacle is detected within the range of the sensor.
  */
 bool isClear(String sensor)
 {
@@ -328,13 +329,12 @@ bool isClear(String sensor)
     }else{
         return false;
     }
-/*  float safetyDistance = car.getSpeed() * SAFETY_RANGE_COEFF;
-  float frontUSDistance = frontUS.getDistance();
-  return (frontUSDistance > safetyDistance || frontUSDistance == 0 
-          || leftOdometer.getDirection() == -1);*/
 }
 
-//Needs to be used together with isFrontClear. Slows down the car until full stop.
+/**
+ * Slows down the car smoothly by dividing the speed by 3 until it reaches a safe speed to stop.
+ */
+
 void slowDownSmoothly()
 {
   while (car.getSpeed() >= STOPPING_SPEED){//check constant for details
