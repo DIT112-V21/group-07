@@ -9,6 +9,7 @@
 WiFiClient net;
 #endif
 MQTTClient mqtt;
+const int NO_OBSTACLE_VALUE = 0;
 const int FRONT_STOP_DISTANCE = 100;
 const int BACK_STOP_DISTANCE = 50;
 const int SIDE_REACT_DISTANCE = 35;
@@ -87,7 +88,6 @@ void loop()
         SR04sensorData(true, "/smartcar/ultrasound/front"); //publish sensor data every one second through MQTT
         measureDistance(true, "/smartcar/car/distance");
   }
-   Serial.println(car.getSpeed());
     emergencyBrake();
     reactToSides();
 
@@ -227,17 +227,17 @@ void reactToSides() {
     float currentHeading = car.getHeading();
     float rightValue = rightIR.getDistance();
     float leftValue = leftIR.getDistance();
-    if (rightValue < SIDE_REACT_DISTANCE && rightValue > 0) {
+    if (rightValue < SIDE_REACT_DISTANCE && !isClear("rightIR")) {
         delay(100);
         float newValue = rightIR.getDistance();
-        if (newValue < rightValue && newValue > 0) {
+        if (newValue < rightValue && !isClear("rightIR")) {
             sideAvoidance(-45);
         }
     }
-    if (leftValue < SIDE_REACT_DISTANCE && leftValue > 0) {
+    if (leftValue < SIDE_REACT_DISTANCE && !isClear("leftIR")) {
         delay(100);
         float newValue = leftIR.getDistance();
-        if (newValue < leftValue && newValue > 0) {
+        if (newValue < leftValue && !isClear("leftIR")) {
             sideAvoidance(45);
         }
     }
@@ -250,9 +250,10 @@ void sideAvoidance(int newAngle){
     //Serial.println(newAngle);
     if (newAngle < 0){
         float rightIRDistance = rightIR.getDistance();
-        while(rightIRDistance < 35 && rightIRDistance > 0) {
+        while(rightIRDistance < SIDE_REACT_DISTANCE && !isClear("rightIR")) {
             car.setAngle(newAngle);
             rightIRDistance = rightIR.getDistance();
+            Serial.println(rightIRDistance);
             car.update();
             if(emergencyBrake()){
                 return;
@@ -260,7 +261,7 @@ void sideAvoidance(int newAngle){
         }
     }else{
         float leftIRDistance = leftIR.getDistance();
-        while(leftIRDistance < 35 && leftIRDistance > 0){
+        while(leftIRDistance < SIDE_REACT_DISTANCE && !isClear("leftIR")){
             car.setAngle(newAngle);
             leftIRDistance = leftIR.getDistance();
             car.update();
@@ -309,16 +310,31 @@ void measureDistance(boolean pubCarDistance, String publishDistanceTopic){
     }
 }
 
-//Returns true if frontUS is clear (depending on car speed) or car is moving backward
-bool isFrontClear()
+/**
+ * @param sensor : takes the name of the sensor to be checked  as a String.
+ * @Returns true if sensor does not detect an obstacle or if it is too close to be detected. False if an obstacle is detected within the range of the sensor.
+ */
+bool isClear(String sensor)
 {
-  float safetyDistance = car.getSpeed() * SAFETY_RANGE_COEFF;
-  float frontUSDistance = frontUS.getDistance();
-  return (frontUSDistance > safetyDistance || frontUSDistance == 0 
-          || leftOdometer.getDirection() == -1);
+    if (sensor == "frontUS"){
+        return (frontUS.getDistance() == NO_OBSTACLE_VALUE);
+    } else if(sensor == "frontIR") {
+        return (frontIR.getDistance() == NO_OBSTACLE_VALUE);
+    }else if(sensor == "backIR"){
+        return (backIR.getDistance() == NO_OBSTACLE_VALUE);
+    }else if(sensor == "rightIR"){
+        return (rightIR.getDistance() == NO_OBSTACLE_VALUE);
+    }else if(sensor == "leftIR"){
+        return (leftIR.getDistance() == NO_OBSTACLE_VALUE);
+    }else{
+        return false;
+    }
 }
 
-//Needs to be used together with isFrontClear. Slows down the car until full stop.
+/**
+ * Slows down the car smoothly by dividing the speed by 3 until it reaches a safe speed to stop.
+ */
+
 void slowDownSmoothly()
 {
   while (car.getSpeed() >= STOPPING_SPEED){//check constant for details
