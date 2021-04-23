@@ -122,8 +122,7 @@
         android:text="@string/set_speed"
         android:fontFamily="@font/basic"
         android:textColor="@color/purple"
-        android:layout_paddingBottom="10dp"
-        android:layout_paddingLeft="10dp"
+        android:layout_marginBottom="10dp"
         android:layout_marginLeft="30dp">
 
         </TextView>
