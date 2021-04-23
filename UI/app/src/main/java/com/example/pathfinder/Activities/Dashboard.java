@@ -201,7 +201,9 @@ public class Dashboard extends AppCompatActivity {
         drive(-MOVEMENT_SPEED, STRAIGHT_ANGLE, "Moving backward");
     }
 
-
+    public void setSpeed(View view){
+        drive(seekBar.getProgress(), STRAIGHT_ANGLE, "Setting Speed");
+    }
 
    void getDistance() {
         notConnected();
