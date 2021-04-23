@@ -65,17 +65,22 @@ DirectionalOdometer rightOdometer{
 
 //Constructor of the SmartCar
 SmartCar car(arduinoRuntime, control, gyroscope, leftOdometer, rightOdometer);
-
+/**
+ * Setup the car:
+ * - Activate the serial
+ * - Connect the mqtt server (true for local, false for external. Check the Dashboard.java to make sure the app connect to the same server as the car
+ * - Takes input from the app
+ *
+ * For testing, it is recommended using a local host when trying the app and using the serial when testing the car's behaviours.
+ * To use the serial, comment out the connectHost() and MQTTMessageInput() methods in the setup().
+ */
 void setup()
 {
     Serial.begin(9600);
   //Example: 
     // chose to connect to localhost or external
-
     connectHost(false); //choosing to connect to localhost.
-  
     MQTTMessageInput();
-
 }
 
 /**
@@ -87,16 +92,73 @@ void loop()
         mqtt.loop();  // Also needed to keep soing the mqtt operations
         SR04sensorData(true, "/smartcar/ultrasound/front"); //publish sensor data every one second through MQTT
         measureDistance(true, "/smartcar/car/distance");
-  }
+  }else{
+       handleInput();
+   }
     emergencyBrake();
     reactToSides();
-
 }
 
 /**
- * Handle user input/restrict movement into an obstacle
+ * Subscribing the car with the app so it can react to the different input from the app.
+ * Used when connected to MQTT server.
  */
-/*void handleInput() {
+void MQTTMessageInput(){
+    if (mqtt.connect("arduino", "public", "public")) {
+        mqtt.subscribe("/smartcar/control/#", 1);
+        mqtt.onMessage([](String topic, String message) {
+            if (topic == "/smartcar/control/speed") {
+                //car.setSpeed(message.toInt());
+                handleSpeedTopic(message.toInt());
+            } else if (topic == "/smartcar/control/angle") {
+                //car.setAngle(message.toInt());
+                handleAngleTopic(message.toInt());
+            } else {
+                Serial.println(topic + " " + message);
+            }
+        });
+    }
+}
+/**
+ * Helper method for MQTTMessageinput() that handles the input from the app received via MQTT.
+ * @param input: takes the speed as an input
+ */
+void handleSpeedTopic(int input){
+    // front and back sensors and we look at the + or - for direction
+    //int inputSpeed = input.substring(1).toInt();
+    if (input > 0) {
+        float frontValue = frontIR.getDistance();
+        handleSpeedInput(frontValue, input);
+    } else if (input < 0) {
+        float backValue = backIR.getDistance();
+        handleSpeedInput(backValue, input);
+    } else {
+        car.setSpeed(0);
+    }
+    car.update();
+}
+/**
+ * Helper method for MQTTMessageinput() that handles the input from the app received via MQTT.
+ * @param input : takes the speed as an input
+ */
+void handleAngleTopic(int input){
+    // look at the angle + or - :  + -> right and - -> left
+    //int inputAngle = input.substring(1).toInt();
+    if (input > 0) {
+        float rightValue = rightIR.getDistance();
+        handleAngleInput(rightValue, input);
+    } else if (input < 0) {//get left sensor
+        float leftValue = leftIR.getDistance();
+        handleAngleInput(leftValue, input);
+    } else {
+        car.setAngle(0);
+    }
+    car.update();
+}
+/**
+ * Method to control the car directly from the serial in the emulator.
+ */
+void handleInput() {
     if (Serial.available()) {
         String input = Serial.readStringUntil('\n');
         //TODO: Look at how the mqtt com has been implemented and how it impacts this method
@@ -127,40 +189,10 @@ void loop()
             car.update();
         }
     }
-}*/
-
-void handleSpeedTopic(int input){
-    // front and back sensors and we look at the + or - for direction
-    //int inputSpeed = input.substring(1).toInt();
-    if (input > 0) {
-        float frontValue = frontIR.getDistance();
-        handleSpeedInput(frontValue, input);
-    } else if (input < 0) {
-        float backValue = backIR.getDistance();
-        handleSpeedInput(backValue, input);
-    } else {
-        car.setSpeed(0);
-    }
-    car.update();
-}
-
-void handleAngleTopic(int input){
-    // look at the angle + or - :  + -> right and - -> left
-    //int inputAngle = input.substring(1).toInt();
-    if (input > 0) {
-        float rightValue = rightIR.getDistance();
-        handleAngleInput(rightValue, input);
-    } else if (input < 0) {//get left sensor
-        float leftValue = leftIR.getDistance();
-        handleAngleInput(leftValue, input);
-    } else {
-        car.setAngle(0);
-    }
-    car.update();
 }
 
 /**
- * handleInput helper method for speed
+ * helper for MQTT and Serial inputs taking care of the speed
  */
 void handleSpeedInput(float distance, int inputSpeed){
     if(distance != 0){
@@ -175,7 +207,7 @@ void handleSpeedInput(float distance, int inputSpeed){
 }
 
 /**
- * handleInput helper method for angle
+ * helper for MQTT and Serial inputs taking care of the speed
  */
 void handleAngleInput(float angle, int inputAngle){
     if (angle != 0) {
@@ -184,6 +216,7 @@ void handleAngleInput(float angle, int inputAngle){
         car.setAngle(inputAngle);
     }
 }
+
  /**
   * Brakes in case of emergency. Looks at the direction and reacts to the relevant sensors.
   * @return true if a reaction to sensor has been needed. False if no reaction.
@@ -205,13 +238,14 @@ bool emergencyBrake(){
         return false;
     }
 }
+
 /**
  * EmergencyBrake() helper method to react to sensor value
  * @return true if a reaction to sensor was engaged. False otherwise
  */
 bool reactToSensor(int sensorDistance, int STOP_DISTANCE){
     if (sensorDistance != 0){ // if the sensor has readings ..
-        if(sensorDistance > 100 && sensorDistance <= 130){
+        if(sensorDistance > 50 && sensorDistance <= 250){
             slowDownSmoothly();
         }else if ( sensorDistance <= STOP_DISTANCE ){ // check if the sensor measurement is equal or less than the stopping distance
             car.setSpeed(0);// stop the car.
@@ -220,11 +254,43 @@ bool reactToSensor(int sensorDistance, int STOP_DISTANCE){
     }
     return false;
 }
+
+/**
+ * @param sensor : takes the name of the sensor to be checked  as a String.
+ * @Returns true if sensor does not detect an obstacle or if it is too close to be detected. False if an obstacle is detected within the range of the sensor.
+ */
+bool isClear(String sensor)
+{
+    if (sensor == "frontUS"){
+        return (frontUS.getDistance() == NO_OBSTACLE_VALUE);
+    } else if(sensor == "frontIR") {
+        return (frontIR.getDistance() == NO_OBSTACLE_VALUE);
+    }else if(sensor == "backIR"){
+        return (backIR.getDistance() == NO_OBSTACLE_VALUE);
+    }else if(sensor == "rightIR"){
+        return (rightIR.getDistance() == NO_OBSTACLE_VALUE);
+    }else if(sensor == "leftIR"){
+        return (leftIR.getDistance() == NO_OBSTACLE_VALUE);
+    }else{
+        return false;
+    }
+}
+
+/**
+ * Slows down the car smoothly by dividing the speed by 3 until it reaches a safe speed to stop.
+ */
+void slowDownSmoothly()
+{
+    Serial.println("Slowing down");
+    if (car.getSpeed() >= STOPPING_SPEED){//check constant for details
+        car.setSpeed(convertSpeed(car.getSpeed()) * 0.7);
+    }
+}
+
 /**
  * Method to look and compare two sensor values (100ms apart) to know if an obstacle is coming towards the car
  */
 void reactToSides() {
-    float currentHeading = car.getHeading();
     float rightValue = rightIR.getDistance();
     float leftValue = leftIR.getDistance();
     if (rightValue < SIDE_REACT_DISTANCE && !isClear("rightIR")) {
@@ -242,6 +308,7 @@ void reactToSides() {
         }
     }
 }
+
 /**
  * reactToSides() helper method that set the angle of the car at the opposite direction
  * if an obstacle is detected coming towards the car.
@@ -274,12 +341,13 @@ void sideAvoidance(int newAngle){
     car.update();
 } //TODO : Need to be improved (can be simplified)
 
-// Method to publish SR04 sensor Data
-//example:
-  // SR04 front(arduinoRuntime, TRIGGER_PIN, ECHO_PIN, MAX_DISTANCE);  this should be created in the header.
-  // SR04sensorData (true, "/smartcar/ultrasound/front" , front); // ex how to use in loop method 
-void SR04sensorData(boolean pubSensorData, String publishTopic){ 
-      
+/**
+ * Method to publish SR04 sensor Data
+ * example:
+ * SR04 front(arduinoRuntime, TRIGGER_PIN, ECHO_PIN, MAX_DISTANCE);  this should be created in the header.
+ * SR04sensorData (true, "/smartcar/ultrasound/front" , front); // ex how to use in loop method
+ */
+void SR04sensorData(boolean pubSensorData, String publishTopic){
   if(pubSensorData){
       const auto currentTime = millis();
       static auto previousTransmission = 0UL;
@@ -289,13 +357,14 @@ void SR04sensorData(boolean pubSensorData, String publishTopic){
         const auto distance = String(frontUS.getDistance());
         mqtt.publish(publishTopic, distance);  
       }
-
     }
 }
 
-// Method to publish odometer sensor Data
-//ex:
-// measureDistance (true, "/smartcar/car/distance"); // ex how to use in loop method 
+/**
+ * Method to publish odometer sensor Data
+ * ex:
+ * measureDistance (true, "/smartcar/car/distance"); // ex how to use in loop method
+ */
 void measureDistance(boolean pubCarDistance, String publishDistanceTopic){
       
   if(pubCarDistance){
@@ -311,45 +380,18 @@ void measureDistance(boolean pubCarDistance, String publishDistanceTopic){
 }
 
 /**
- * @param sensor : takes the name of the sensor to be checked  as a String.
- * @Returns true if sensor does not detect an obstacle or if it is too close to be detected. False if an obstacle is detected within the range of the sensor.
+ * @param : car.getSpeed()
+ * @return : percentage over maxSpeed
  */
-bool isClear(String sensor)
-{
-    if (sensor == "frontUS"){
-        return (frontUS.getDistance() == NO_OBSTACLE_VALUE);
-    } else if(sensor == "frontIR") {
-        return (frontIR.getDistance() == NO_OBSTACLE_VALUE);
-    }else if(sensor == "backIR"){
-        return (backIR.getDistance() == NO_OBSTACLE_VALUE);
-    }else if(sensor == "rightIR"){
-        return (rightIR.getDistance() == NO_OBSTACLE_VALUE);
-    }else if(sensor == "leftIR"){
-        return (leftIR.getDistance() == NO_OBSTACLE_VALUE);
-    }else{
-        return false;
-    }
-}
-
-/**
- * Slows down the car smoothly by dividing the speed by 3 until it reaches a safe speed to stop.
- */
-
-void slowDownSmoothly()
-{
-  while (car.getSpeed() >= STOPPING_SPEED){//check constant for details
-    car.setSpeed(convertSpeed(car.getSpeed())/3);//cut speed down by 50%
-  }
-  car.setSpeed(0);
-}
-
-//parameter: car.getSpeed(). returns: percentage over maxSpeed
 float convertSpeed(float currentSpeedMs) 
 {
     return (currentSpeedMs/MAX_SPEED)*100;   // check max speed. 
 }
 
-// in case of other host just set the IP and the port, local host is false by default.
+/**
+ * in case of other host just set the IP and the port, local host is false by default.
+ * @param ifLocalhost : boolean checking if the the MQTT server is local or not
+ */
 void connectHost(boolean ifLocalhost){  
 if (ifLocalhost){
     #ifdef __SMCE__
@@ -366,25 +408,9 @@ if (ifLocalhost){
      }
 }
 
-// Subscribing emulator to topics to interact with the car.
-void MQTTMessageInput(){ 
-  if (mqtt.connect("arduino", "public", "public")) {
-    mqtt.subscribe("/smartcar/control/#", 1);
-    mqtt.onMessage([](String topic, String message) {
-      if (topic == "/smartcar/control/speed") {
-        //car.setSpeed(message.toInt());
-          handleSpeedTopic(message.toInt());
-      } else if (topic == "/smartcar/control/angle") {
-        //car.setAngle(message.toInt());
-          handleAngleTopic(message.toInt());
-      } else {
-        Serial.println(topic + " " + message);
-      }
-    });
-  }
-}
-
-// Avoid over-using the CPU if we are running in the emulator
+/**
+ * Avoid over-using the CPU if we are running in the emulator
+ */
 void noCPUoverload (){ 
 #ifdef __SMCE__
   delay(35);
