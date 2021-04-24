@@ -10,10 +10,9 @@ WiFiClient net;
 #endif
 MQTTClient mqtt;
 const int NO_OBSTACLE_VALUE = 0;
-const int FRONT_STOP_DISTANCE = 100;
+const int FRONT_STOP_DISTANCE = 70;
 const int BACK_STOP_DISTANCE = 50;
 const int SIDE_REACT_DISTANCE = 35;
-const int CLEAR_DISTANCE = 0;
 const auto ONE_SECOND = 1000UL;
 const auto HAlF_SECOND = 500UL;
 const int FRONT_PIN = 0;
@@ -26,7 +25,6 @@ const unsigned int MAX_DISTANCE = 400;
 const auto PULSES_PER_METER = 600;
 const float MAX_SPEED = 1.845;
 const float STOPPING_SPEED = 0.3; //m/s. used to decide when to stop in slowDownSmoothly
-const int SAFETY_RANGE_COEFF = 130; // multiply by car.getSpeed() to get a safety range
 
 //Runtime environment
 ArduinoRuntime arduinoRuntime;
@@ -79,7 +77,7 @@ void setup()
     Serial.begin(9600);
   //Example: 
     // chose to connect to localhost or external
-    connectHost(false); //choosing to connect to localhost.
+    connectHost(true); //choosing to connect to localhost.
     MQTTMessageInput();
 }
 
@@ -127,10 +125,10 @@ void handleSpeedTopic(int input){
     // front and back sensors and we look at the + or - for direction
     //int inputSpeed = input.substring(1).toInt();
     if (input > 0) {
-        float frontValue = frontIR.getDistance();
+        int frontValue = frontIR.getDistance();
         handleSpeedInput(frontValue, input);
     } else if (input < 0) {
-        float backValue = backIR.getDistance();
+        int backValue = backIR.getDistance();
         handleSpeedInput(backValue, input);
     } else {
         car.setSpeed(0);
@@ -145,10 +143,10 @@ void handleAngleTopic(int input){
     // look at the angle + or - :  + -> right and - -> left
     //int inputAngle = input.substring(1).toInt();
     if (input > 0) {
-        float rightValue = rightIR.getDistance();
+        int rightValue = rightIR.getDistance();
         handleAngleInput(rightValue, input);
     } else if (input < 0) {//get left sensor
-        float leftValue = leftIR.getDistance();
+        int leftValue = leftIR.getDistance();
         handleAngleInput(leftValue, input);
     } else {
         car.setAngle(0);
@@ -166,10 +164,10 @@ void handleInput() {
             // front and back sensors and we look at the + or - for direction
             int inputSpeed = input.substring(1).toInt();
             if (inputSpeed > 0) {
-                float frontValue = frontIR.getDistance();
+                int frontValue = frontIR.getDistance();
                 handleSpeedInput(frontValue, inputSpeed);
             } else if (inputSpeed < 0) {
-                float backValue = backIR.getDistance();
+                int backValue = backIR.getDistance();
                 handleSpeedInput(backValue, inputSpeed);
             } else {
                 car.setSpeed(0);
@@ -178,10 +176,10 @@ void handleInput() {
             // look at the angle + or - :  + -> right and - -> left
             int inputAngle = input.substring(1).toInt();
             if (inputAngle > 0) {
-                float rightValue = rightIR.getDistance();
+                int rightValue = rightIR.getDistance();
                 handleAngleInput(rightValue, inputAngle);
             } else if (inputAngle < 0) {//get left sensor
-                float leftValue = leftIR.getDistance();
+                int leftValue = leftIR.getDistance();
                 handleAngleInput(leftValue, inputAngle);
             } else {
                 car.setAngle(0);
@@ -194,7 +192,7 @@ void handleInput() {
 /**
  * helper for MQTT and Serial inputs taking care of the speed
  */
-void handleSpeedInput(float distance, int inputSpeed){
+void handleSpeedInput(int distance, int inputSpeed){
     if(distance != 0){
         Serial.println("Obstacle detected in the direction you are trying to move");
     }else{
@@ -209,8 +207,8 @@ void handleSpeedInput(float distance, int inputSpeed){
 /**
  * helper for MQTT and Serial inputs taking care of the speed
  */
-void handleAngleInput(float angle, int inputAngle){
-    if (angle != 0) {
+void handleAngleInput(int distance, int inputAngle){
+    if (distance != 0) {
         Serial.println("Obstacle detected in the direction you are trying to move");
     } else {
         car.setAngle(inputAngle);
@@ -228,15 +226,18 @@ bool emergencyBrake(){
     float currentSpeed = car.getSpeed();
     if(leftDirection == 1 && rightDirection == 1 && currentSpeed > 0){
         int frontSensorDistance = frontUS.getDistance();
-        if(reactToSensor(frontSensorDistance, FRONT_STOP_DISTANCE)){
-        return true;}
+        if(isClear("frontIR")){
+            if(reactToSensor(frontSensorDistance, FRONT_STOP_DISTANCE)){
+                return true;}
+        }else{
+            car.setSpeed(0);
+        }
     }else if (leftDirection == -1 && rightDirection == -1 && currentSpeed > 0){
         int backSensorDistance = backIR.getDistance();
         if(reactToSensor(backSensorDistance, BACK_STOP_DISTANCE)){
         return true;}
-    }else{
-        return false;
     }
+    return false;
 }
 
 /**
@@ -245,7 +246,7 @@ bool emergencyBrake(){
  */
 bool reactToSensor(int sensorDistance, int STOP_DISTANCE){
     if (sensorDistance != 0){ // if the sensor has readings ..
-        if(sensorDistance > 50 && sensorDistance <= 250){
+        if(sensorDistance > STOP_DISTANCE && sensorDistance <= 250){
             slowDownSmoothly();
         }else if ( sensorDistance <= STOP_DISTANCE ){ // check if the sensor measurement is equal or less than the stopping distance
             car.setSpeed(0);// stop the car.
@@ -281,7 +282,6 @@ bool isClear(String sensor)
  */
 void slowDownSmoothly()
 {
-    Serial.println("Slowing down");
     if (car.getSpeed() >= STOPPING_SPEED){//check constant for details
         car.setSpeed(convertSpeed(car.getSpeed()) * 0.7);
     }
@@ -291,8 +291,8 @@ void slowDownSmoothly()
  * Method to look and compare two sensor values (100ms apart) to know if an obstacle is coming towards the car
  */
 void reactToSides() {
-    float rightValue = rightIR.getDistance();
-    float leftValue = leftIR.getDistance();
+    int rightValue = rightIR.getDistance();
+    int leftValue = leftIR.getDistance();
     if (rightValue < SIDE_REACT_DISTANCE && !isClear("rightIR")) {
         delay(100);
         float newValue = rightIR.getDistance();
@@ -302,7 +302,7 @@ void reactToSides() {
     }
     if (leftValue < SIDE_REACT_DISTANCE && !isClear("leftIR")) {
         delay(100);
-        float newValue = leftIR.getDistance();
+        int newValue = leftIR.getDistance();
         if (newValue < leftValue && !isClear("leftIR")) {
             sideAvoidance(45);
         }
@@ -316,18 +316,17 @@ void reactToSides() {
 void sideAvoidance(int newAngle){
     //Serial.println(newAngle);
     if (newAngle < 0){
-        float rightIRDistance = rightIR.getDistance();
+        int rightIRDistance = rightIR.getDistance();
         while(rightIRDistance < SIDE_REACT_DISTANCE && !isClear("rightIR")) {
             car.setAngle(newAngle);
             rightIRDistance = rightIR.getDistance();
-            Serial.println(rightIRDistance);
             car.update();
             if(emergencyBrake()){
                 return;
             }
         }
     }else{
-        float leftIRDistance = leftIR.getDistance();
+        int leftIRDistance = leftIR.getDistance();
         while(leftIRDistance < SIDE_REACT_DISTANCE && !isClear("leftIR")){
             car.setAngle(newAngle);
             leftIRDistance = leftIR.getDistance();
