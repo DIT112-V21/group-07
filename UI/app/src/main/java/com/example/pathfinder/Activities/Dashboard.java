@@ -162,6 +162,19 @@ public class Dashboard extends AppCompatActivity implements ThumbstickView.Thumb
         Log.i(TAG, actionDescription);
         mMqttClient.publish(THROTTLE_CONTROL, Integer.toString(throttleSpeed), QOS, null);
         mMqttClient.publish(STEERING_CONTROL, Integer.toString(steeringAngle), QOS, null);
+        speedLog(Math.abs(throttleSpeed));
+    }
+
+    void speedLog(int speed) {
+        notConnected();
+        mMqttClient.subscribe(THROTTLE_CONTROL, QOS, null);
+        mSpeedLog.setText(String.valueOf(speed) + " km/h");
+    }
+
+    void distanceLog(int distance) {
+        notConnected();
+        mMqttClient.subscribe(STEERING_CONTROL, QOS, null);
+        mDistanceLog.setText(String.valueOf(distance));
     }
 
 

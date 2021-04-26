@@ -71,7 +71,7 @@ public class ThumbstickView extends SurfaceView implements SurfaceHolder.Callbac
             float cos = ( newX - centerX ) / hypotenuse;
 
 
-            colors.setARGB(255, 13, 17, 23); //stroke
+            colors.setARGB(255, 0, 0, 0); //stroke
             myCanvas.drawCircle(centerX, centerY, (baseRadius + 10), colors);
             colors.setARGB(255, 255, 255, 255); //fill
             myCanvas.drawCircle(centerX, centerY, baseRadius, colors);
@@ -81,7 +81,7 @@ public class ThumbstickView extends SurfaceView implements SurfaceHolder.Callbac
                         newY - sin * hypotenuse * (ratio/baseRadius) * i, i * (hatRadius * ratio / baseRadius), colors);
             }
 
-            colors.setARGB(255, 13, 17, 23); //stroke
+            colors.setARGB(255, 0, 0, 0); //stroke
             myCanvas.drawCircle(newX, newY, (hatRadius + 10), colors);
             colors.setARGB(255, 179, 128, 217); //fill
             myCanvas.drawCircle(newX, newY, hatRadius, colors);
