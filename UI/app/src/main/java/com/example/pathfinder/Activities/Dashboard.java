@@ -11,8 +11,6 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.ProgressBar;
-import android.widget.SeekBar;
 
 import com.example.pathfinder.Client.MqttClient;
 import com.example.pathfinder.R;
@@ -23,7 +21,7 @@ import org.eclipse.paho.client.mqttv3.IMqttToken;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 
-public class Dashboard extends AppCompatActivity {
+public class Dashboard extends AppCompatActivity implements ThumbstickView.ThumbstickListener {
     private static final String TAG = "PathfinderController";
     private static final String EXTERNAL_MQTT_BROKER = "test.mosquitto.org";
     private static final String LOCALHOST = "10.0.2.2";
@@ -43,8 +41,6 @@ public class Dashboard extends AppCompatActivity {
     private boolean isConnected = false;
     private ImageView mCameraView;
     private TextView mSpeedLog, mDistanceLog;
-    private TextView textView;
-    private SeekBar seekBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,27 +54,12 @@ public class Dashboard extends AppCompatActivity {
         mMqttClient = new MqttClient(getApplicationContext(), MQTT_SERVER, TAG);
         mCameraView = findViewById(R.id.cameraView);
 
-        textView = (TextView) findViewById(R.id.textView);
-        seekBar = (SeekBar) findViewById(R.id.seekBar);
-
         connectToMqttBroker();
+    }
 
-        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                textView.setText("" + progress + "%");
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-
-            }
-        });
+    @Override
+    public void onThumbstickMoved(float xPercent, float yPercent, int id) {
+        Log.d("Main Method", "X percent: " + xPercent + " Y percent: " + yPercent);
     }
 
     @Override
@@ -179,45 +160,6 @@ public class Dashboard extends AppCompatActivity {
         Log.i(TAG, actionDescription);
         mMqttClient.publish(THROTTLE_CONTROL, Integer.toString(throttleSpeed), QOS, null);
         mMqttClient.publish(STEERING_CONTROL, Integer.toString(steeringAngle), QOS, null);
-    }
-
-    public void moveForward(View view) {
-        drive(MOVEMENT_SPEED, STRAIGHT_ANGLE, "Moving forward");
-    }
-
-    public void moveForwardLeft(View view) {
-        drive(MOVEMENT_SPEED, -STEERING_ANGLE, "Moving forward left");
-    }
-
-    public void stop(View view) {
-        drive(IDLE_SPEED, STRAIGHT_ANGLE, "Stopping");
-    }
-
-    public void moveForwardRight(View view) {
-        drive(MOVEMENT_SPEED, STEERING_ANGLE, "Moving forward left");
-    }
-
-    public void moveBackward(View view) {
-        drive(-MOVEMENT_SPEED, STRAIGHT_ANGLE, "Moving backward");
-    }
-
-    public void setSpeed(View view){
-        drive(seekBar.getProgress(), STRAIGHT_ANGLE, "Setting Speed");
-    }
-
-   void getDistance() {
-        notConnected();
-
-        mMqttClient.subscribe(THROTTLE_CONTROL, QOS, null);
-    }
-
-    public void getSpeed(View view) {
-        notConnected();
-        if ( MOVEMENT_SPEED != 0 ) {
-            mSpeedLog.setText(MOVEMENT_SPEED + " km/h");
-        } else {
-            mSpeedLog.setText(0 + " km/h");
-        }
     }
 
 }
