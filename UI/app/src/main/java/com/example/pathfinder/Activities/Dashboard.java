@@ -21,7 +21,7 @@ import org.eclipse.paho.client.mqttv3.IMqttToken;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 
-public class Dashboard extends AppCompatActivity {
+public class Dashboard extends AppCompatActivity implements ThumbstickView.ThumbstickListener {
     private static final String TAG = "PathfinderController";
     private static final String EXTERNAL_MQTT_BROKER = "test.mosquitto.org";
     private static final String LOCALHOST = "10.0.2.2";
@@ -55,6 +55,11 @@ public class Dashboard extends AppCompatActivity {
         mCameraView = findViewById(R.id.cameraView);
 
         connectToMqttBroker();
+    }
+
+    @Override
+    public void onThumbstickMoved(float xPercent, float yPercent, int id) {
+        Log.d("Main Method", "X percent: " + xPercent + " Y percent: " + yPercent);
     }
 
     @Override
@@ -155,41 +160,6 @@ public class Dashboard extends AppCompatActivity {
         Log.i(TAG, actionDescription);
         mMqttClient.publish(THROTTLE_CONTROL, Integer.toString(throttleSpeed), QOS, null);
         mMqttClient.publish(STEERING_CONTROL, Integer.toString(steeringAngle), QOS, null);
-    }
-
-    public void moveForward(View view) {
-        drive(MOVEMENT_SPEED, STRAIGHT_ANGLE, "Moving forward");
-    }
-
-    public void moveForwardLeft(View view) {
-        drive(MOVEMENT_SPEED, -STEERING_ANGLE, "Moving forward left");
-    }
-
-    public void stop(View view) {
-        drive(IDLE_SPEED, STRAIGHT_ANGLE, "Stopping");
-    }
-
-    public void moveForwardRight(View view) {
-        drive(MOVEMENT_SPEED, STEERING_ANGLE, "Moving forward left");
-    }
-
-    public void moveBackward(View view) {
-        drive(-MOVEMENT_SPEED, STRAIGHT_ANGLE, "Moving backward");
-    }
-
-   void getDistance() {
-        notConnected();
-
-        mMqttClient.subscribe(THROTTLE_CONTROL, QOS, null);
-    }
-
-    public void getSpeed(View view) {
-        notConnected();
-        if ( MOVEMENT_SPEED != 0 ) {
-            mSpeedLog.setText(MOVEMENT_SPEED + " km/h");
-        } else {
-            mSpeedLog.setText(0 + " km/h");
-        }
     }
 
 }
