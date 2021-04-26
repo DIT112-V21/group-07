@@ -53,9 +53,9 @@ public class ThumbstickView extends SurfaceView implements SurfaceHolder.Callbac
         if ( getHolder().getSurface().isValid() ) {
             Canvas myCanvas = this.getHolder().lockCanvas();
             Paint colors = new Paint();
-            colors.setARGB(255, 50, 50, 50);
+            colors.setARGB(255, 255, 255, 255);
             myCanvas.drawCircle(centerX, centerY, baseRadius, colors);
-            colors.setARGB(255, 0, 0, 255);
+            colors.setARGB(255, 179, 128, 217);
             myCanvas.drawCircle(newX, newY, hatRadius, colors);
             getHolder().unlockCanvasAndPost(myCanvas);
         }

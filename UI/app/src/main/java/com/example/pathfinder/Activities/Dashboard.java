@@ -58,6 +58,8 @@ public class Dashboard extends AppCompatActivity implements ThumbstickView.Thumb
 
     @Override
     public void onThumbstickMoved(float xPercent, float yPercent, int id) {
+        int angle = (int)((xPercent) * 100);
+        int speed = (int)((yPercent) * -100);
         Log.d("Main Method", "X percent: " + xPercent + " Y percent: " + yPercent);
     }
 
