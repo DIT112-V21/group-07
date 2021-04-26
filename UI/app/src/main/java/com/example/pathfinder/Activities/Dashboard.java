@@ -6,7 +6,6 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -34,9 +33,8 @@ public class Dashboard extends AppCompatActivity implements ThumbstickView.Thumb
     private static final int IMAGE_WIDTH = 320;
     private static final int IMAGE_HEIGHT = 240;
 
-
-
     private MqttClient mMqttClient;
+    private Mode mMode;
     private boolean isConnected = false;
     private ImageView mCameraView;
     private TextView mSpeedLog, mDistanceLog;
@@ -59,8 +57,10 @@ public class Dashboard extends AppCompatActivity implements ThumbstickView.Thumb
     @Override
     public void onThumbstickMoved(float xPercent, float yPercent, int id) {
         int angle = (int)((xPercent) * 100);
+        //
         int speed = (int)((yPercent) * -100);
         Log.d("Main Method", "X percent: " + xPercent + " Y percent: " + yPercent);
+        drive(speed, angle,"driving");
     }
 
     @Override
@@ -113,7 +113,7 @@ public class Dashboard extends AppCompatActivity implements ThumbstickView.Thumb
                 public void connectionLost(Throwable cause) {
                     isConnected = false;
 
-                    final String connectionLost = "Connection to MQTT broker lost";
+                    final String connectionLost = "Lost connection to MQTT broker";
                     Log.w(TAG, connectionLost);
                     Toast.makeText(getApplicationContext(), connectionLost, Toast.LENGTH_SHORT).show();
                 }
@@ -149,12 +149,13 @@ public class Dashboard extends AppCompatActivity implements ThumbstickView.Thumb
 
     void notConnected() {
         if (!isConnected) {
-            final String notConnected = "Not connected (yet)";
+            final String notConnected = "No connection";
             Log.e(TAG, notConnected);
             Toast.makeText(getApplicationContext(), notConnected, Toast.LENGTH_SHORT).show();
             return;
         }
     }
+
 
     void drive(int throttleSpeed, int steeringAngle, String actionDescription) {
         notConnected();
@@ -162,5 +163,7 @@ public class Dashboard extends AppCompatActivity implements ThumbstickView.Thumb
         mMqttClient.publish(THROTTLE_CONTROL, Integer.toString(throttleSpeed), QOS, null);
         mMqttClient.publish(STEERING_CONTROL, Integer.toString(steeringAngle), QOS, null);
     }
+
+
 
 }
