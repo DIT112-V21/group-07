@@ -390,3 +390,32 @@ void noCPUoverload (){
   delay(35);
 #endif
 }
+
+void startCamera() 
+{
+#ifdef __SMCE__
+    Camera.begin(QVGA, RGB888, 15);
+    frameBuffer.resize(Camera.width() * Camera.height() * Camera.bytesPerPixel()); //setup
+#endif
+}
+
+
+void CameraData(boolean pubCameraData)
+{
+
+    if (pubCameraData)
+    {
+        const auto currentTime = millis();
+#ifdef __SMCE__
+        static auto previousFrame = 0UL;
+        if (currentTime - previousFrame >= 65)
+        {
+            previousFrame = currentTime;
+            Camera.readFrame(frameBuffer.data());
+            mqtt.publish("/smartcar/camera", frameBuffer.data(), frameBuffer.size(), false, 0);
+        }
+#endif
+    }
+}
+
+
