@@ -9,8 +9,10 @@ import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import com.example.pathfinder.Client.MqttClient;
 import com.example.pathfinder.R;
@@ -21,7 +23,7 @@ import org.eclipse.paho.client.mqttv3.IMqttToken;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 
-public class Dashboard extends AppCompatActivity implements ThumbstickView.ThumbstickListener {
+public class DashboardActivity extends AppCompatActivity implements ThumbstickView.ThumbstickListener {
     private static final String TAG = "PathfinderController";
     private static final String EXTERNAL_MQTT_BROKER = "test.mosquitto.org";
     private static final String LOCALHOST = "10.0.2.2";
@@ -35,10 +37,14 @@ public class Dashboard extends AppCompatActivity implements ThumbstickView.Thumb
     private static final int IMAGE_HEIGHT = 240;
 
     private MqttClient mMqttClient;
-    private Mode mMode;
+    //Park/ lock
+    private boolean isParked = false;
+    //Engine activity
+    private boolean isActive = false;
     private boolean isConnected = false;
     private ImageView mCameraView;
     private TextView mSpeedLog, mDistanceLog;
+    private RelativeLayout mParkBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,20 +54,43 @@ public class Dashboard extends AppCompatActivity implements ThumbstickView.Thumb
 
         mSpeedLog = findViewById(R.id.speed_log) ;
         mDistanceLog = findViewById(R.id.distance_log);
+        mParkBtn = findViewById(R.id.park);
 
         mMqttClient = new MqttClient(getApplicationContext(), MQTT_SERVER, TAG);
         mCameraView = findViewById(R.id.cameraView);
 
         connectToMqttBroker();
+
+        mParkBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                park();
+            }
+        });
     }
 
     @Override
     public void onThumbstickMoved(float xPercent, float yPercent, int id) {
         int angle = (int)((xPercent) * 100);
-        //
-        int speed = (int)((yPercent) * -100);
+        int strength = (int)((yPercent) * -100);
+
+        //checks to see if car is parked
+        if (!isParked) {
+            angle = 0;
+            strength = 0;
+        }
+
+        //checks for engine activity
+        if (isActive) {
+            strength = 0;
+            angle = 0;
+        } else {
+            isActive = true;
+        }
+
         Log.d("Main Method", "X percent: " + xPercent + " Y percent: " + yPercent);
-        drive(speed, angle,"driving");
+        //this should change and take a different speed later
+        drive(strength, angle, "driving");
     }
 
     @Override
@@ -163,7 +192,23 @@ public class Dashboard extends AppCompatActivity implements ThumbstickView.Thumb
         Log.i(TAG, actionDescription);
         mMqttClient.publish(THROTTLE_CONTROL, Integer.toString(throttleSpeed), QOS, null);
         mMqttClient.publish(STEERING_CONTROL, Integer.toString(steeringAngle), QOS, null);
+
         speedLog(Math.abs(throttleSpeed));
+    }
+
+    void brake() {
+        drive(0,0, "Stopped");
+        isActive = false;
+    }
+
+    void park() {
+        if ( !isParked ){
+            isParked = true;
+            Toast.makeText(getApplicationContext(), "Car is parked", Toast.LENGTH_SHORT).show();
+        } else {
+            isParked = false;
+            Toast.makeText(getApplicationContext(), "Engine is active", Toast.LENGTH_SHORT).show();
+        }
     }
 
     void speedLog(int speed) {
@@ -178,8 +223,10 @@ public class Dashboard extends AppCompatActivity implements ThumbstickView.Thumb
         mDistanceLog.setText(String.valueOf(distance));
     }
 
-    public void brake(View view) {
-        drive(0, 0, "brake");
+    public void brakeBtn(View view) {
+        brake();
+        isActive = false;
     }
+
 
 }

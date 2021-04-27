@@ -1,6 +1,6 @@
 package com.example.pathfinder.Activities;
 
-public enum Mode {
+public enum ModeType {
     PARK,
     DRIVE
 }
