@@ -395,6 +395,7 @@ void noCPUoverload (){
 #endif
 }
 
+//To define and to initilize the camera
 void startCamera() 
 {
 #ifdef __SMCE__
@@ -403,7 +404,9 @@ void startCamera()
 #endif
 }
 
-
+// Method to publish Camera Data
+//example:
+// CameraData (true, "/smartcar/camera/front" , front); // ex how to use in loop method
 void CameraData(boolean pubCameraData)
 {
 
