@@ -28,6 +28,9 @@ const float MAX_SPEED = 1.845;
 const float STOPPING_SPEED = 0.3; //m/s. used to decide when to stop in slowDownSmoothly
 const int SAFETY_RANGE_COEFF = 130; // multiply by car.getSpeed() to get a safety range
 
+
+std::vector<char> frameBuffer; //for the camera feature
+
 //Runtime environment
 ArduinoRuntime arduinoRuntime;
 
@@ -90,6 +93,7 @@ void loop()
   }
     emergencyBrake();
     reactToSides();
+    noCPUoverload(); 
 
 }
 
