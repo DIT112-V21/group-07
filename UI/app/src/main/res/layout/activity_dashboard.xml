@@ -100,7 +100,7 @@
                     android:background="@drawable/card_1"
                     android:layout_marginLeft="5dp"
                     android:layout_marginRight="5dp"
-                    android:onClick="stop">
+                    android:onClick="brake">
 
                     <ImageView
                     android:layout_width="40dp"
