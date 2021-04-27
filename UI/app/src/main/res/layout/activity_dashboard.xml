@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Activities.Dashboard"
+    tools:context=".Activities.DashboardActivity"
     tools:openDrawer="start">
 
     <LinearLayout
@@ -71,6 +71,7 @@
                     android:layout_gravity="center"
                     android:background="@drawable/card_1"
                     android:layout_marginRight="5dp"
+
                     >
 
                     <ImageView
@@ -100,7 +101,7 @@
                     android:background="@drawable/card_1"
                     android:layout_marginLeft="5dp"
                     android:layout_marginRight="5dp"
-                    android:onClick="brake">
+                    android:onClick="brakeBtn">
 
                     <ImageView
                     android:layout_width="40dp"
@@ -123,11 +124,13 @@
                 </RelativeLayout>
 
                 <RelativeLayout
-                android:layout_width="70dp"
-                android:layout_height="85dp"
-                android:layout_gravity="center"
-                android:layout_marginLeft="5dp"
-                android:background="@drawable/card_1">
+                    android:layout_width="70dp"
+                    android:layout_height="85dp"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="5dp"
+                    android:background="@drawable/card_1"
+                    android:onClick="parkBtn"
+                    android:id="@+id/park">
 
                     <ImageView
                     android:layout_width="40dp"
