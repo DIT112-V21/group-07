@@ -215,7 +215,6 @@ public class DashboardActivity extends AppCompatActivity implements ThumbstickVi
         Log.i(TAG, actionDescription);
         mMqttClient.publish(THROTTLE_CONTROL, Integer.toString(throttleSpeed), QOS, null);
         mMqttClient.publish(STEERING_CONTROL, Integer.toString(steeringAngle), QOS, null);
-
         speedLog(Math.abs(throttleSpeed));
     }
 
