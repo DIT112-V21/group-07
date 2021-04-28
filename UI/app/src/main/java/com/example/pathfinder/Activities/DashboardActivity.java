@@ -259,10 +259,4 @@ public class DashboardActivity extends AppCompatActivity implements ThumbstickVi
         isActive = false;
     }
 
-    public void TurnCamOn(View view){
-        Intent intent = new Intent(this,CameraOn.class);
-        startActivity(intent);
-    }
-
-
 }
