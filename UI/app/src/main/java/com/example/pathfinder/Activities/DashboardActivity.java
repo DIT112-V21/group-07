@@ -12,6 +12,8 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ProgressBar;
+import android.widget.SeekBar;
 import android.widget.ToggleButton;
 
 import com.example.pathfinder.Client.MqttClient;
@@ -44,6 +46,8 @@ public class DashboardActivity extends AppCompatActivity implements ThumbstickVi
     private boolean isConnected = false;
     private ImageView mCameraView;
     private TextView mSpeedLog, mDistanceLog;
+    private TextView textView;
+    private SeekBar seekBar;
     private RelativeLayout mParkBtn;
 
     @Override
@@ -59,8 +63,27 @@ public class DashboardActivity extends AppCompatActivity implements ThumbstickVi
         mMqttClient = new MqttClient(getApplicationContext(), MQTT_SERVER, TAG);
         mCameraView = findViewById(R.id.cameraView);
 
+        textView = (TextView) findViewById(R.id.textView);
+        seekBar = (SeekBar) findViewById(R.id.seekBar);
+
         connectToMqttBroker();
 
+        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                textView.setText("" + progress + "%");
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
         mParkBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -211,6 +234,13 @@ public class DashboardActivity extends AppCompatActivity implements ThumbstickVi
         }
     }
 
+    public void setSpeed(View view){
+        //drive(seekBar.getProgress(), STRAIGHT_ANGLE, "Setting Speed");
+    }
+
+   void getDistance() {
+
+   }
     void speedLog(int speed) {
         notConnected();
         mMqttClient.subscribe(THROTTLE_CONTROL, QOS, null);
