@@ -2,6 +2,7 @@ package com.example.pathfinder.Activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -256,6 +257,11 @@ public class DashboardActivity extends AppCompatActivity implements ThumbstickVi
     public void brakeBtn(View view) {
         brake();
         isActive = false;
+    }
+
+    public void TurnCamOn(View view){
+        Intent intent = new Intent(this,CameraOn.class);
+        startActivity(intent);
     }
 
 

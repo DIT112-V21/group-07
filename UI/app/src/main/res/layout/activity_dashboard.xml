@@ -25,13 +25,14 @@
                 android:layout_centerVertical="true"/>
 
             <ImageView
+                android:id="@+id/cameraView"
                 android:layout_width="35dp"
                 android:layout_height="35dp"
-                android:src="@drawable/img_camera"
-                android:layout_centerVertical="true"
                 android:layout_alignParentRight="true"
-                android:id="@+id/cameraView"
-                android:contentDescription="cameraView"/>
+                android:layout_centerVertical="true"
+                android:contentDescription="cameraView"
+                android:onClick="TurnCamOn"
+                android:src="@drawable/img_camera" />
         </RelativeLayout>
     
         <RelativeLayout
