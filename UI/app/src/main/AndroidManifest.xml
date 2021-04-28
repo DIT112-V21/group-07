@@ -16,7 +16,7 @@
         android:theme="@style/Theme.Pathfinder">
         <activity android:name=".Activities.JoystickView"></activity>
         <activity
-            android:name=".Activities.Dashboard"
+            android:name=".Activities.DashboardActivity"
             android:label="@string/title_activity_dashboard"
             android:theme="@style/Theme.Pathfinder.NoActionBar" />
         <activity android:name=".Activities.MainActivity">
