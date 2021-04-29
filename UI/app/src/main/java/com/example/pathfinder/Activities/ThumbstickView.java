@@ -73,7 +73,8 @@ public class ThumbstickView extends SurfaceView implements SurfaceHolder.Callbac
 
             colors.setARGB(255, 0, 0, 0); //stroke
             myCanvas.drawCircle(centerX, centerY, (baseRadius + 10), colors);
-            colors.setARGB(255, 255, 255, 255); //fill
+            colors.setARGB(255, 179, 128, 217); //fill
+
             myCanvas.drawCircle(centerX, centerY, baseRadius, colors);
             for( int i = 1; i <= (int) (baseRadius / ratio); i++ ) {
                 colors.setARGB(150/i, 255, 0, 0);
@@ -83,7 +84,7 @@ public class ThumbstickView extends SurfaceView implements SurfaceHolder.Callbac
 
             colors.setARGB(255, 0, 0, 0); //stroke
             myCanvas.drawCircle(newX, newY, (hatRadius + 10), colors);
-            colors.setARGB(255, 179, 128, 217); //fill
+            colors.setARGB(255, 255, 255, 255); //fill
             myCanvas.drawCircle(newX, newY, hatRadius, colors);
             getHolder().unlockCanvasAndPost(myCanvas);
         }
