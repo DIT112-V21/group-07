@@ -25,6 +25,9 @@ const unsigned int MAX_DISTANCE = 400;
 const auto PULSES_PER_METER = 600;
 const float MAX_SPEED = 1.845;
 const float STOPPING_SPEED = 0.3; //m/s. used to decide when to stop in slowDownSmoothly
+const int CONNECTIVITY_LOSS_LIMIT = 2;
+int CONNECTIVITY_LOSS_COUNT = 0;
+bool isParked;
 
 //Runtime environment
 ArduinoRuntime arduinoRuntime;
@@ -77,7 +80,7 @@ void setup()
     Serial.begin(9600);
   //Example: 
     // chose to connect to localhost or external
-    connectHost(true); //choosing to connect to localhost.
+    connectHost(false); //choosing to connect to localhost.
     MQTTMessageInput();
 }
 
@@ -90,13 +93,32 @@ void loop()
         mqtt.loop();  // Also needed to keep soing the mqtt operations
         SR04sensorData(true, "/smartcar/ultrasound/front"); //publish sensor data every one second through MQTT
         measureDistance(true, "/smartcar/car/distance");
-  }else{
-       handleInput();
-   }
-    emergencyBrake();
-    reactToSides();
+  }
+    handleInput();
+    /*emergencyBrake();
+    reactToSides();*/
 }
-
+void connectivityLoss(){
+    //print something
+    if(car.getSpeed() != 0 && isClear("all") && !isParked){
+        car.setSpeed(30);
+        car.setAngle(35);
+        delay(5000);
+        car.setAngle(-35);
+        delay(5000);
+        car.setSpeed(0);
+        car.setAngle(0);
+        delay(1000);
+        CONNECTIVITY_LOSS_COUNT = 0;
+        isParked = true;
+    }else if(rightIR.getDistance() != 0 && !isParked){
+        while(!isClear("rightIR")){
+            Serial.println("RightIR");
+            car.setSpeed(20);
+            //emergencyBrake();
+        }
+    }
+}
 /**
  * Subscribing the car with the app so it can react to the different input from the app.
  * Used when connected to MQTT server.
@@ -115,6 +137,17 @@ void MQTTMessageInput(){
                 Serial.println(topic + " " + message);
             }
         });
+        CONNECTIVITY_LOSS_COUNT = 0;
+        Serial.println("MQTT: ");
+    }else{
+        Serial.print("Connectivity loss: ");
+        Serial.print(CONNECTIVITY_LOSS_COUNT);
+        if(CONNECTIVITY_LOSS_COUNT < 2){
+            CONNECTIVITY_LOSS_COUNT++;
+        }
+        if(CONNECTIVITY_LOSS_COUNT == CONNECTIVITY_LOSS_LIMIT){
+            connectivityLoss();
+        }
     }
 }
 /**
@@ -142,7 +175,7 @@ void handleSpeedTopic(int input){
 void handleAngleTopic(int input){
     // look at the angle + or - :  + -> right and - -> left
     //int inputAngle = input.substring(1).toInt();
-    if (input > 0) {
+    if (input > 0){
         int rightValue = rightIR.getDistance();
         handleAngleInput(rightValue, input);
     } else if (input < 0) {//get left sensor
@@ -272,6 +305,10 @@ bool isClear(String sensor)
         return (rightIR.getDistance() == NO_OBSTACLE_VALUE);
     }else if(sensor == "leftIR"){
         return (leftIR.getDistance() == NO_OBSTACLE_VALUE);
+    }else if(sensor == "all"){
+        return (frontUS.getDistance() == NO_OBSTACLE_VALUE && frontIR.getDistance() == NO_OBSTACLE_VALUE
+                && backIR.getDistance() == NO_OBSTACLE_VALUE && rightIR.getDistance() == NO_OBSTACLE_VALUE
+                && leftIR.getDistance() == NO_OBSTACLE_VALUE);
     }else{
         return false;
     }
