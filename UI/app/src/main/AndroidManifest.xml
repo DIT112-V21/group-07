@@ -14,6 +14,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Pathfinder">
+        <activity android:name=".Activities.CameraActivity"></activity>
         <activity
             android:name=".Activities.DashboardActivity"
             android:label="@string/title_activity_dashboard"
@@ -26,7 +27,7 @@
             </intent-filter>
         </activity>
 
-        <service android:name="org.eclipse.paho.android.service.MqttService"></service>
+        <service android:name="org.eclipse.paho.android.service.MqttService" />
     </application>
 
 </manifest>

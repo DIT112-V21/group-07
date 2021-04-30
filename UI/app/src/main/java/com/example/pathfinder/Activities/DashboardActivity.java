@@ -1,6 +1,7 @@
 package com.example.pathfinder.Activities;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentActivity;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -140,7 +141,7 @@ public class DashboardActivity extends AppCompatActivity implements ThumbstickVi
         });
     }
 
-    private void connectToMqttBroker() {
+    public void connectToMqttBroker() {
         if (!isConnected) {
             mMqttClient.connect(TAG, "", new IMqttActionListener() {
                 @Override
@@ -256,6 +257,12 @@ public class DashboardActivity extends AppCompatActivity implements ThumbstickVi
     public void brakeBtn(View view) {
         brake();
         isActive = false;
+    }
+
+
+    public void TurnCamON(View view){
+        Intent i = new Intent(this,CameraActivity.class);
+        startActivity(i);
     }
 
 }
