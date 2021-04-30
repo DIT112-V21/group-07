@@ -34,21 +34,22 @@ public class DashboardActivity extends AppCompatActivity implements ThumbstickVi
     private static final String STEERING_CONTROL = "/smartcar/control/angle";
     private static final String ODOMETER_LOG = "/smartcar/assess/odometer";
     private static final int IDLE_SPEED = 0;
+    private static final int STRAIGHT_ANGLE = 0;
     private static final int QOS = 1;
     private static final int IMAGE_WIDTH = 320;
     private static final int IMAGE_HEIGHT = 240;
 
     private MqttClient mMqttClient;
     //Park/ lock
-    private boolean isParked = false;
+    //private boolean isParked = false;
     //Engine activity
-    private boolean isActive = false;
+    //private boolean isActive = false;
     private boolean isConnected = false;
     private ImageView mCameraView;
     private TextView mSpeedLog, mDistanceLog;
     private TextView textView;
     private SeekBar seekBar;
-    private RelativeLayout mParkBtn;
+    //private RelativeLayout mParkBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,7 +59,7 @@ public class DashboardActivity extends AppCompatActivity implements ThumbstickVi
 
         mSpeedLog = findViewById(R.id.speed_log) ;
         mDistanceLog = findViewById(R.id.distance_log);
-        mParkBtn = findViewById(R.id.park);
+       //mParkBtn = findViewById(R.id.park);
 
         mMqttClient = new MqttClient(getApplicationContext(), MQTT_SERVER, TAG);
         mCameraView = findViewById(R.id.cameraView);
@@ -190,7 +191,6 @@ public class DashboardActivity extends AppCompatActivity implements ThumbstickVi
         }
     }
 
-
     void drive(int throttleSpeed, int steeringAngle, String actionDescription) {
         notConnected();
         Log.i(TAG, actionDescription);
@@ -201,7 +201,6 @@ public class DashboardActivity extends AppCompatActivity implements ThumbstickVi
 
     void brake() {
         drive(0,0, "Stopped");
-        isActive = false;
     }
 
     void speedLog(int speed) {
@@ -216,9 +215,13 @@ public class DashboardActivity extends AppCompatActivity implements ThumbstickVi
         mDistanceLog.setText(String.valueOf(distance));
     }
 
+    //should only be invoked if on cruise control
+    public void setSpeed(View view){
+        drive(seekBar.getProgress(), STRAIGHT_ANGLE, "Setting Speed");
+    }
+
     public void brakeBtn(View view) {
         brake();
-        isActive = false;
     }
 
 
