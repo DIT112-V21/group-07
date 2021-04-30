@@ -72,7 +72,7 @@ void setup()
   //Example: 
     // chose to connect to localhost or external
 
-    connectHost(false); //choosing to connect to localhost.
+    connectHost(true); //choosing to connect to localhost.
   
     MQTTMessageInput();
 

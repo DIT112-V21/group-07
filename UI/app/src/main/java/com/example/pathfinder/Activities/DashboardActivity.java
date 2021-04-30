@@ -29,7 +29,7 @@ public class DashboardActivity extends AppCompatActivity implements ThumbstickVi
     private static final String TAG = "PathfinderController";
     private static final String EXTERNAL_MQTT_BROKER = "test.mosquitto.org";
     private static final String LOCALHOST = "10.0.2.2";
-    private static final String MQTT_SERVER = "tcp://" + EXTERNAL_MQTT_BROKER + ":1883";
+    private static final String MQTT_SERVER = "tcp://" + LOCALHOST + ":1883";
     private static final String THROTTLE_CONTROL = "/smartcar/control/speed";
     private static final String STEERING_CONTROL = "/smartcar/control/angle";
     private static final String ODOMETER_LOG = "/smartcar/assess/odometer";
@@ -84,32 +84,13 @@ public class DashboardActivity extends AppCompatActivity implements ThumbstickVi
 
             }
         });
-        mParkBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                park();
-            }
-        });
+
     }
 
     @Override
     public void onThumbstickMoved(float xPercent, float yPercent, int id) {
         int angle = (int)((xPercent) * 100);
         int strength = (int)((yPercent) * -100);
-
-        //checks to see if car is parked
-        if (!isParked) {
-            angle = 0;
-            strength = 0;
-        }
-
-        //checks for engine activity
-        if (isActive) {
-            strength = 0;
-            angle = 0;
-        } else {
-            isActive = true;
-        }
 
         Log.d("Main Method", "X percent: " + xPercent + " Y percent: " + yPercent);
         //this should change and take a different speed later
@@ -223,23 +204,6 @@ public class DashboardActivity extends AppCompatActivity implements ThumbstickVi
         isActive = false;
     }
 
-    void park() {
-        if ( !isParked ){
-            isParked = true;
-            Toast.makeText(getApplicationContext(), "Car is parked", Toast.LENGTH_SHORT).show();
-        } else {
-            isParked = false;
-            Toast.makeText(getApplicationContext(), "Engine is active", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    public void setSpeed(View view){
-        //drive(seekBar.getProgress(), STRAIGHT_ANGLE, "Setting Speed");
-    }
-
-   void getDistance() {
-
-   }
     void speedLog(int speed) {
         notConnected();
         mMqttClient.subscribe(THROTTLE_CONTROL, QOS, null);
