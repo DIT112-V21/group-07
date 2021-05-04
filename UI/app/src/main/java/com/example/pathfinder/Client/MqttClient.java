@@ -14,7 +14,6 @@ public class MqttClient {
     public MqttClient(Context context, String serverUrl, String clientId) {
         mMqttAndroidClient = new MqttAndroidClient(context, serverUrl, clientId);
     }
-
     public void connect(String username, String password, IMqttActionListener connectionCallback, MqttCallback clientCallback) {
         mMqttAndroidClient.setCallback(clientCallback);
         MqttConnectOptions options = new MqttConnectOptions();
