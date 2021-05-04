@@ -31,7 +31,7 @@ public class DashboardActivity extends AppCompatActivity implements ThumbstickVi
     private static final String TAG = "PathfinderController";
     private static final String EXTERNAL_MQTT_BROKER = "test.mosquitto.org";
     private static final String LOCALHOST = "10.0.2.2";
-    private static final String MQTT_SERVER = "tcp://" + EXTERNAL_MQTT_BROKER + ":1883";
+    private static final String MQTT_SERVER = "tcp://" + LOCALHOST + ":1883";
     private static final String THROTTLE_CONTROL = "/smartcar/control/speed";
     private static final String STEERING_CONTROL = "/smartcar/control/angle";
     private static final String ODOMETER_LOG = "/smartcar/assess/odometer";
@@ -63,7 +63,7 @@ public class DashboardActivity extends AppCompatActivity implements ThumbstickVi
         mParkBtn = findViewById(R.id.park);
 
         mMqttClient = new MqttClient(getApplicationContext(), MQTT_SERVER, TAG);
-        mCameraView = findViewById(R.id.cameraView);
+        mCameraView = findViewById(R.id.videoStream);
 
         textView = (TextView) findViewById(R.id.textView);
         seekBar = (SeekBar) findViewById(R.id.seekBar);
@@ -95,6 +95,29 @@ public class DashboardActivity extends AppCompatActivity implements ThumbstickVi
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+
+        connectToMqttBroker();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        mMqttClient.disconnect(new IMqttActionListener() {
+            @Override
+            public void onSuccess(IMqttToken asyncActionToken) {
+                Log.i(TAG, "Disconnected from broker");
+            }
+
+            @Override
+            public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
+            }
+        });
+    }
+
+    @Override
     public void onThumbstickMoved(float xPercent, float yPercent, int id) {
         int angle = (int)((xPercent) * 100);
         int strength = (int)((yPercent) * -100);
@@ -116,29 +139,6 @@ public class DashboardActivity extends AppCompatActivity implements ThumbstickVi
         Log.d("Main Method", "X percent: " + xPercent + " Y percent: " + yPercent);
         //this should change and take a different speed later
         drive(strength, angle, "driving");
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-        connectToMqttBroker();
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-
-        mMqttClient.disconnect(new IMqttActionListener() {
-            @Override
-            public void onSuccess(IMqttToken asyncActionToken) {
-                Log.i(TAG, "Disconnected from broker");
-            }
-
-            @Override
-            public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
-            }
-        });
     }
 
     public void connectToMqttBroker() {

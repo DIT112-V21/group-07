@@ -2,13 +2,15 @@
 #ifdef __SMCE__
 #include <OV767X.h>
 #endif
+#include <WiFi.h>
 #include <Smartcar.h>
 #include <MQTT.h>
-#include <WiFi.h>
+
 #ifndef __SMCE__ // If the definition of SMCE then instantiate the WiFi client.
 WiFiClient net;
 #endif
 MQTTClient mqtt;
+
 const int NO_OBSTACLE_VALUE = 0;
 const int FRONT_STOP_DISTANCE = 70;
 const int BACK_STOP_DISTANCE = 50;
@@ -25,6 +27,8 @@ const unsigned int MAX_DISTANCE = 400;
 const auto PULSES_PER_METER = 600;
 const float MAX_SPEED = 1.845;
 const float STOPPING_SPEED = 0.3; //m/s. used to decide when to stop in slowDownSmoothly
+
+std::vector<char> frameBuffer;
 
 //Runtime environment
 ArduinoRuntime arduinoRuntime;
@@ -72,11 +76,13 @@ SmartCar car(arduinoRuntime, control, gyroscope, leftOdometer, rightOdometer);
  * For testing, it is recommended using a local host when trying the app and using the serial when testing the car's behaviours.
  * To use the serial, comment out the connectHost() and MQTTMessageInput() methods in the setup().
  */
+
 void setup()
 {
     Serial.begin(9600);
-  //Example: 
+  //Example:
     // chose to connect to localhost or external
+    startCamera();
     connectHost(true); //choosing to connect to localhost.
     MQTTMessageInput();
 }
@@ -87,14 +93,16 @@ void setup()
 void loop()
 {
    if (mqtt.connected()) { // check if the mqtt is connected .. needed if you connect through MQTT
-        mqtt.loop();  // Also needed to keep soing the mqtt operations
+        mqtt.loop();  // Also needed to keep doing the mqtt operations
+        cameraData(true);
         SR04sensorData(true, "/smartcar/ultrasound/front"); //publish sensor data every one second through MQTT
         measureDistance(true, "/smartcar/car/distance");
-  }else{
+   }else{
        handleInput();
    }
     emergencyBrake();
     reactToSides();
+    noCPUoverload();
 }
 
 /**
@@ -406,6 +414,35 @@ if (ifLocalhost){
     #endif
      }
 }
+
+void startCamera()
+{
+#ifdef __SMCE__
+    Camera.begin(QVGA, RGB888, 15);
+    frameBuffer.resize(Camera.width() * Camera.height() * Camera.bytesPerPixel()); //setup
+#endif
+}
+
+// Method to publish Camera Data
+//example:
+// CameraData (true, "/smartcar/camera/front" , front); // ex how to use in loop method
+void cameraData(boolean pubCameraData)
+{
+    if (pubCameraData)
+    {
+        const auto currentTime = millis();
+#ifdef __SMCE__
+        static auto previousFrame = 0UL;
+        if (currentTime - previousFrame >= 65)
+        {
+            previousFrame = currentTime;
+            Camera.readFrame(frameBuffer.data());
+            mqtt.publish("/smartcar/camera", frameBuffer.data(), frameBuffer.size(), false, 0);
+        }
+#endif
+    }
+}
+
 
 /**
  * Avoid over-using the CPU if we are running in the emulator

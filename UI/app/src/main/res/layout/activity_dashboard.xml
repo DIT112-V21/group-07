@@ -51,11 +51,12 @@
                 />
         </RelativeLayout>
 
-        <com.example.pathfinder.Activities.ThumbstickView
+        <ImageView
+            android:id="@+id/videoStream"
             android:layout_width="match_parent"
-            android:layout_height="300dp"
-            android:id="@+id/testThumbstick"/>
-
+            android:layout_height="150dp"
+            android:layout_marginTop="5dp"
+            android:layout_centerHorizontal="true"/>
 
         <RelativeLayout
             android:paddingTop="10dp"
@@ -94,11 +95,13 @@
 
         </RelativeLayout>
 
+
+
         <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:paddingTop="30dp">
+            android:paddingTop="5dp">
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -167,30 +170,30 @@
 
                 <RelativeLayout
                     android:layout_width="70dp"
-                    android:layout_height="85dp"
+                    android:layout_height="95dp"
                     android:layout_gravity="center"
-                    android:background="@drawable/card_1"
                     android:layout_marginLeft="5dp"
                     android:layout_marginRight="5dp"
+                    android:background="@drawable/card_1"
                     android:onClick="brakeBtn">
 
                     <ImageView
                         android:layout_width="40dp"
                         android:layout_height="40dp"
+                        android:layout_centerHorizontal="true"
                         android:layout_marginTop="7dp"
-                        android:src="@drawable/img_brake"
-                        android:layout_centerHorizontal="true"/>
+                        android:src="@drawable/img_brake" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_centerHorizontal="true"
+                        android:layout_marginTop="58dp"
+                        android:fontFamily="@font/basic"
+                        android:gravity="center_horizontal"
                         android:text="@string/brake"
                         android:textAlignment="center"
-                        android:gravity="center_horizontal"
-                        android:fontFamily="@font/basic"
-                        android:textColor="@color/purple"
-                        android:layout_marginTop="58dp"/>
+                        android:textColor="@color/purple" />
 
                 </RelativeLayout>
 
@@ -230,7 +233,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:paddingTop="45dp">
+            android:paddingTop="5dp">
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -305,6 +308,12 @@
                 </RelativeLayout>
             </LinearLayout>
         </RelativeLayout>
+
+        <com.example.pathfinder.Activities.ThumbstickView
+            android:layout_width="match_parent"
+            android:layout_height="180dp"
+            android:id="@+id/testThumbstick"/>
+
     </LinearLayout>
 
 </androidx.drawerlayout.widget.DrawerLayout>
