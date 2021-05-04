@@ -28,10 +28,10 @@ import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 
 public class DashboardActivity extends AppCompatActivity implements ThumbstickView.ThumbstickListener {
-    static final String TAG = "PathfinderController";
+    private static final String TAG = "PathfinderController";
     private static final String EXTERNAL_MQTT_BROKER = "test.mosquitto.org";
     private static final String LOCALHOST = "10.0.2.2";
-    static final String MQTT_SERVER = "tcp://" + EXTERNAL_MQTT_BROKER + ":1883";
+    private static final String MQTT_SERVER = "tcp://" + EXTERNAL_MQTT_BROKER + ":1883";
     private static final String THROTTLE_CONTROL = "/smartcar/control/speed";
     private static final String STEERING_CONTROL = "/smartcar/control/angle";
     private static final String ODOMETER_LOG = "/smartcar/assess/odometer";
@@ -63,7 +63,7 @@ public class DashboardActivity extends AppCompatActivity implements ThumbstickVi
         mParkBtn = findViewById(R.id.park);
 
         mMqttClient = new MqttClient(getApplicationContext(), MQTT_SERVER, TAG);
-        mCameraView = findViewById(R.id.camView);
+        mCameraView = findViewById(R.id.cameraView);
 
         textView = (TextView) findViewById(R.id.textView);
         seekBar = (SeekBar) findViewById(R.id.seekBar);
@@ -117,6 +117,7 @@ public class DashboardActivity extends AppCompatActivity implements ThumbstickVi
         //this should change and take a different speed later
         drive(strength, angle, "driving");
     }
+
     @Override
     protected void onResume() {
         super.onResume();

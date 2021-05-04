@@ -75,11 +75,9 @@ SmartCar car(arduinoRuntime, control, gyroscope, leftOdometer, rightOdometer);
 void setup()
 {
     Serial.begin(9600);
-
-    //Example:
+  //Example: 
     // chose to connect to localhost or external
     connectHost(true); //choosing to connect to localhost.
-    startCamera();
     MQTTMessageInput();
 }
 
@@ -92,7 +90,6 @@ void loop()
         mqtt.loop();  // Also needed to keep soing the mqtt operations
         SR04sensorData(true, "/smartcar/ultrasound/front"); //publish sensor data every one second through MQTT
         measureDistance(true, "/smartcar/car/distance");
-        cameraData(true);
   }else{
        handleInput();
    }
@@ -408,34 +405,6 @@ if (ifLocalhost){
       mqtt.begin(net);
     #endif
      }
-}
-
-void startCamera()
-{
-#ifdef SMCE
-    Camera.begin(QVGA, RGB888, 15);
-    frameBuffer.resize(Camera.width() * Camera.height() * Camera.bytesPerPixel()); //setup
-#endif
-}
-
-// Method to publish Camera Data
-//example:
-// CameraData (true, "/smartcar/camera/front" , front); // ex how to use in loop method
-void cameraData(boolean pubCameraData)
-{
-
-    if (pubCameraData)
-    {
-        const auto currentTime = millis();
-#ifdef SMCE
-        static auto previousFrame = 0UL;
-        if (currentTime - previousFrame >= 65)
-        {
-            previousFrame = currentTime;
-            Camera.readFrame(frameBuffer.data());
-            mqtt.publish("/smartcar/camera", frameBuffer.data(), frameBuffer.size(), false, 0);
-#endif
-    }
 }
 
 /**

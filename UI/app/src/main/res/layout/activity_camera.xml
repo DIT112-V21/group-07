@@ -9,8 +9,8 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/white"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:background="@color/white">
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -20,8 +20,8 @@
             <ImageView
                 android:layout_width="35dp"
                 android:layout_height="35dp"
-                android:layout_centerVertical="true"
-                android:src="@drawable/img_menu" />
+                android:src="@drawable/img_menu"
+                android:layout_centerVertical="true"/>
 
             <ImageView
                 android:id="@+id/mCameraView"
@@ -53,30 +53,34 @@
             android:name="com.example.pathfinder.Activities.Camera"
             android:layout_width="match_parent"
             android:layout_height="150dp"
-            android:layout_gravity="center"></fragment>
+            android:layout_gravity="center"
+            ></fragment>
 
         <com.example.pathfinder.Activities.ThumbstickView
-            android:id="@+id/testThumbstick"
             android:layout_width="match_parent"
-            android:layout_height="250dp" />
+            android:layout_height="250dp"
+            android:id="@+id/testThumbstick"/>
 
         <fragment
             android:id="@+id/seekBar"
             android:name="com.example.pathfinder.Activities.Seekbar"
             android:layout_width="match_parent"
-            android:layout_height="70dp"></fragment>
+            android:layout_height="70dp"
+            ></fragment>
 
         <fragment
             android:id="@+id/Driver_bar"
             android:name="com.example.pathfinder.Activities.Driver_bar"
             android:layout_width="match_parent"
-            android:layout_height="80dp"></fragment>
+            android:layout_height="80dp"
+            ></fragment>
 
         <fragment
             android:id="@+id/distanceLayout"
             android:name="com.example.pathfinder.Activities.SpeedDistance"
             android:layout_width="match_parent"
-            android:layout_height="80dp"></fragment>
+            android:layout_height="80dp"
+            ></fragment>
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
