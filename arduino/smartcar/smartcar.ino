@@ -83,7 +83,7 @@ void setup()
   //Example:
     // chose to connect to localhost or external
     startCamera();
-    connectHost(true); //choosing to connect to localhost.
+    connectHost(false); //choosing to connect to localhost.
     MQTTMessageInput();
 }
 

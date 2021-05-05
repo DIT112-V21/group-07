@@ -31,7 +31,7 @@ public class DashboardActivity extends AppCompatActivity implements ThumbstickVi
     private static final String TAG = "PathfinderController";
     private static final String EXTERNAL_MQTT_BROKER = "test.mosquitto.org";
     private static final String LOCALHOST = "10.0.2.2";
-    private static final String MQTT_SERVER = "tcp://" + LOCALHOST + ":1883";
+    private static final String MQTT_SERVER = "tcp://" + EXTERNAL_MQTT_BROKER + ":1883";
     private static final String THROTTLE_CONTROL = "/smartcar/control/speed";
     private static final String STEERING_CONTROL = "/smartcar/control/angle";
     private static final String ODOMETER_LOG = "/smartcar/assess/odometer";
@@ -258,11 +258,4 @@ public class DashboardActivity extends AppCompatActivity implements ThumbstickVi
         brake();
         isActive = false;
     }
-
-
-    public void TurnCamON(View view){
-        Intent i = new Intent(this,CameraActivity.class);
-        startActivity(i);
-    }
-
 }
