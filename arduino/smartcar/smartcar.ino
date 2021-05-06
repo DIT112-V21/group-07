@@ -1,3 +1,4 @@
+#include <will_options.h>
 #include <vector>
 #ifdef __SMCE__
 #include <OV767X.h>
@@ -80,7 +81,7 @@ void setup()
     Serial.begin(9600);
   //Example: 
     // chose to connect to localhost or external
-    connectHost(false); //choosing to connect to localhost.
+    connectHost(false); //choose true to connect to localhost.
     MQTTMessageInput();
 }
 
@@ -89,17 +90,20 @@ void setup()
  */
 void loop()
 {
-   if (mqtt.connected()) { // check if the mqtt is connected .. needed if you connect through MQTT
-        mqtt.loop();  // Also needed to keep soing the mqtt operations
-        SR04sensorData(true, "/smartcar/ultrasound/front"); //publish sensor data every one second through MQTT
-        measureDistance(true, "/smartcar/car/distance");
+   if (mqtt.connected()) { // check if the mqtt is connected to the server .. needed if you connect through MQTT
+        mqtt.loop();  // Also needed to keep storing the mqtt operations
+        //SR04sensorData(true, "/smartcar/ultrasound/front"); //publish sensor data every one second through MQTT
+        //measureDistance(true, "/smartcar/car/distance");
   }
     handleInput();
     /*emergencyBrake();
     reactToSides();*/
 }
+/**
+ * Instructions for the car to perform a "pulling over" maneuver, triggered when last will message is received.
+ */
 void connectivityLoss(){
-    //print something
+    Serial.println("Connection to te application lost, pulling the vehicle over");
     if(car.getSpeed() != 0 && isClear("all") && !isParked){
         car.setSpeed(30);
         car.setAngle(35);
@@ -124,11 +128,23 @@ void connectivityLoss(){
  * Used when connected to MQTT server.
  */
 void MQTTMessageInput(){
-    if (mqtt.connect("arduino", "public", "public")) {
+
+    if (mqtt.connect("arduino", "public", "public") && mqtt.connected()) {
         mqtt.subscribe("/smartcar/control/#", 1);
+        mqtt.subscribe("/smartcar/connectionLost", 1);
+
         mqtt.onMessage([](String topic, String message) {
+            //Check if connectionLost(Last will) message is received
+            if(topic == "/smartcar/connectionLost"){
+                if(CONNECTIVITY_LOSS_COUNT < 2){
+                    CONNECTIVITY_LOSS_COUNT++;
+                }else{
+                    connectivityLoss();
+                }
+            }
             if (topic == "/smartcar/control/speed") {
                 //car.setSpeed(message.toInt());
+                //save speed and angle
                 handleSpeedTopic(message.toInt());
             } else if (topic == "/smartcar/control/angle") {
                 //car.setAngle(message.toInt());
@@ -138,16 +154,6 @@ void MQTTMessageInput(){
             }
         });
         CONNECTIVITY_LOSS_COUNT = 0;
-        Serial.println("MQTT: ");
-    }else{
-        Serial.print("Connectivity loss: ");
-        Serial.print(CONNECTIVITY_LOSS_COUNT);
-        if(CONNECTIVITY_LOSS_COUNT < 2){
-            CONNECTIVITY_LOSS_COUNT++;
-        }
-        if(CONNECTIVITY_LOSS_COUNT == CONNECTIVITY_LOSS_LIMIT){
-            connectivityLoss();
-        }
     }
 }
 /**

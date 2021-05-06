@@ -14,6 +14,10 @@ import android.widget.Toast;
 
 import com.example.pathfinder.Client.MqttClient;
 import com.example.pathfinder.R;
+/**
+* Library that includes last will options
+**/
+import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 
 import org.eclipse.paho.client.mqttv3.IMqttActionListener;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
@@ -37,10 +41,21 @@ public class Dashboard extends AppCompatActivity {
     private static final int IMAGE_WIDTH = 320;
     private static final int IMAGE_HEIGHT = 240;
 
+/**
+ * Last will topic - topic for subscribers to follow
+ * will_Retained - message will be retained bt the server, even after connection loss/ reconnection
+ */
+    private String WILL_TOPIC = "/smartcar/connectionLost";
+    private boolean will_Retained = true;
+    connOpts = new MqttConnectOptions();
+
+
     private MqttClient mMqttClient;
     private boolean isConnected = false;
     private ImageView mCameraView;
     private TextView mSpeedLog, mDistanceLog;
+
+)
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,10 +106,14 @@ public class Dashboard extends AppCompatActivity {
                     Log.i(TAG, successfulConnection);
                     Toast.makeText(getApplicationContext(), successfulConnection, Toast.LENGTH_SHORT).show();
 
+                    //Set the last will message after successful connection
+                    connOpts.setWill(WILL_TOPIC, WILL_TOPIC.getPayload(), QOS, will_Retained);
+
                     mMqttClient.subscribe("/smartcar/ultrasound/front", QOS, null);
                     mMqttClient.subscribe("/smartcar/camera", QOS, null);
                     mMqttClient.subscribe("/smartcar/odometer", QOS, null);
                 }
+
 
                 @Override
                 public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
