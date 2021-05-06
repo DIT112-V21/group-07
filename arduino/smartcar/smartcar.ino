@@ -77,7 +77,10 @@ void setup()
     Serial.begin(9600);
   //Example: 
     // chose to connect to localhost or external
+
+
     connectHost(true); //choosing to connect to localhost.
+
     MQTTMessageInput();
 }
 

@@ -2,6 +2,11 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.pathfinder">
 
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -10,9 +15,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Pathfinder">
         <activity
-            android:name=".Activities.Dashboard"
+            android:name=".Activities.DashboardActivity"
             android:label="@string/title_activity_dashboard"
-            android:theme="@style/Theme.Pathfinder.NoActionBar"></activity>
+            android:theme="@style/Theme.Pathfinder.NoActionBar" />
         <activity android:name=".Activities.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -20,13 +25,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <service android:name="org.eclipse.paho.android.service.MqttService">
-        </service>
-    </application>
 
-    <uses-permission android:name="android.permission.WAKE_LOCK" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+        <service android:name="org.eclipse.paho.android.service.MqttService"></service>
+    </application>
 
 </manifest>
