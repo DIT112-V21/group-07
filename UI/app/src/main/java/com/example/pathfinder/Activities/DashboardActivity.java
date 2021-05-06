@@ -32,7 +32,7 @@ public class DashboardActivity extends AppCompatActivity implements ThumbstickVi
     private static final String MQTT_SERVER = "tcp://" + LOCALHOST + ":1883";
     private static final String THROTTLE_CONTROL = "/smartcar/control/speed";
     private static final String STEERING_CONTROL = "/smartcar/control/angle";
-    private static final String ODOMETER_LOG = "/smartcar/assess/odometer";
+    private static final String ODOMETER_LOG = "/smartcar/odometer";
     private static final int IDLE_SPEED = 0;
     private static final int STRAIGHT_ANGLE = 0;
     private static final int QOS = 1;
@@ -169,7 +169,10 @@ public class DashboardActivity extends AppCompatActivity implements ThumbstickVi
                         bm.setPixels(colors, 0, IMAGE_WIDTH, 0, 0, IMAGE_WIDTH, IMAGE_HEIGHT);
 
                         mCameraView.setImageBitmap(bm);
-                    } else {
+                    } else if(topic.equals("/smartcar/odometer")) {
+                        distanceLog(Double.parseDouble(message.toString()));
+                    }
+                    else {
                         Log.i(TAG, "[MQTT] Topic: " + topic + " | Message: " + message.toString());
                     }
                 }
@@ -209,10 +212,11 @@ public class DashboardActivity extends AppCompatActivity implements ThumbstickVi
         mSpeedLog.setText(String.valueOf(speed) + " km/h");
     }
 
-    void distanceLog(int distance) {
+    void distanceLog(double distance) {
+        distance = distance/1000;
         notConnected();
-        mMqttClient.subscribe(STEERING_CONTROL, QOS, null);
-        mDistanceLog.setText(String.valueOf(distance));
+        mMqttClient.subscribe(ODOMETER_LOG, QOS, null);
+        mDistanceLog.setText(String.valueOf(distance) + " m");
     }
 
     //should only be invoked if on cruise control
