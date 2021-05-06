@@ -34,7 +34,7 @@ public class MainActivity extends AppCompatActivity {
 
         //Hooks
         cloud = findViewById(R.id.cloud);
-        image = findViewById(R.id.image);
+        image = findViewById(R.id.backgroundImage);
         logo = findViewById(R.id.logo);
         org = findViewById(R.id.org);
 
