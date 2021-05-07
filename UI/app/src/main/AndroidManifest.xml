@@ -18,6 +18,14 @@
             android:name=".Activities.DashboardActivity"
             android:label="@string/title_activity_dashboard"
             android:theme="@style/Theme.Pathfinder.NoActionBar" />
+        <activity
+            android:name=".Activities.DriverLogin"
+            android:label="@string/driver_login"
+            android:theme="@style/Theme.Pathfinder.NoActionBar" />
+        <activity
+            android:name=".Activities.UserSelection"
+            android:label="@string/user_selection"
+            android:theme="@style/Theme.Pathfinder.NoActionBar" />
         <activity android:name=".Activities.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

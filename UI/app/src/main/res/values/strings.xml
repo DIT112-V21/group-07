@@ -1,6 +1,8 @@
 <resources>
     <string name="app_name">pathfinder</string>
     <string name="title_activity_dashboard">Dashboard</string>
+    <string name="user_selection">UserSelection</string>
+    <string name="driver_login">DriverLogin</string>
     <!-- Strings used for fragments for navigation -->
     <string name="next">Next</string>
     <string name="previous">Previous</string>
@@ -17,9 +19,16 @@
 
     <!-- About -->
     <string name="about">About</string>
+
     <!-- User selection page -->
     <string name="i_am_a_driver">I am a driver</string>
     <string name="i_am_a_passenger">I am a passenger</string>
     <string name="background_description">User selection background</string>
+
+    <!-- Driver Login Page -->
+    <string name="hint_password">Password</string>
+    <string name="hint_username">Username</string>
+    <string name="connect_button">Login</string>
+
 
 </resources>

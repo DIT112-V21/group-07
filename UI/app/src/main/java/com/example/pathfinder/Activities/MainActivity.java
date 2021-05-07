@@ -43,13 +43,10 @@ public class MainActivity extends AppCompatActivity {
         logo.setAnimation(bottomAnim);
         org.setAnimation(bottomAnim);
 
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                Intent intent = new Intent(MainActivity.this, DashboardActivity.class);
-                startActivity(intent);
-                finish();
-            }
+        new Handler().postDelayed(() -> {
+            Intent intent = new Intent(this, UserSelection.class);
+            startActivity(intent);
+            finish();
         }, SPLASH_SCREEN);
     }
 }

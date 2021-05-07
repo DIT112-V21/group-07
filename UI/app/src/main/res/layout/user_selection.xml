@@ -8,7 +8,7 @@
     android:layout_gravity="center"
     android:background="#54418F"
     app:layout_anchorGravity="center"
-    tools:context=".UserSelection">
+    tools:context=".Activities.UserSelection">
 
     <ImageView
         android:id="@+id/backgroundImage"
@@ -63,6 +63,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/i_am_a_driver"
+            android:onClick="selectTypeDriver"
             app:backgroundTint="#54418F"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
