@@ -2,28 +2,47 @@
 
 namespace smartcar
 {
-    SmartCar::SmartCar(HeadingCar& car)
-    : mCar{car}
+
+    SmartCar::SmartCar(Runtime& runtime,
+                       Control& control,
+                       HeadingSensor& headingSensor,
+                       Odometer& odometerleft,
+                       Odometer& odometerRight)
+            : SimpleCar::SimpleCar(control)
+            , DistanceCar::DistanceCar(runtime, control, odometerleft, odometerRight)
+            , HeadingCar::HeadingCar(control, headingSensor)
 {
 }
 
 void SmartCar::setSpeed(float speed)
 {
-    mCar.setSpeed(speed);
+    SimpleCar.setSpeed(speed);
 }
 
 void SmartCar::setAngle(int angle)
 {
-    mCar.setAngle(angle);
+    SimpleCar.setAngle(angle);
 }
 
 void SmartCar::update()
 {
-    mCar.update();
+    HeadingCar.update();
 }
 
 int SmartCar::getHeading()
 {
-    return mCar.getHeading();
+    return HeadingCar.getHeading();
 }
+
+long SmartCar::getDistance()
+{
+    return DistanceCar.getDistance();
+}
+
+float SmartCar::getSpeed()
+{
+     return DistanceCar.getSpeed();
+}
+
+
 } // namespace smartcar

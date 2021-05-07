@@ -19,7 +19,7 @@ bool areEqual(const std::vector<char>& v, const char* c)
 namespace smartcar
 {
 SmartCarController::SmartCarController(Car& car,
-                                       RestServer& restServer,
+                                       MQTT& restServer,
                                        PinController& pinController)
     : mCar{car}
     , mRestServer{restServer}

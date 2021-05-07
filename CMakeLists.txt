@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.15)
-project(reusable_and_testable_code_for_arduino)
+project(Pathfinder)
 
 set(CMAKE_CXX_STANDARD 14)
 
