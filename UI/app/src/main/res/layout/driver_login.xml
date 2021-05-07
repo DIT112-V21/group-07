@@ -8,7 +8,7 @@
     android:layout_gravity="center"
     android:background="#54418F"
     app:layout_anchorGravity="center"
-    tools:context=".UserSelection">
+    tools:context=".Activities.DriverLogin">
 
     <ImageView
         android:id="@+id/backgroundImage"
@@ -40,35 +40,54 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/buttonsLayout"
         android:layout_width="411dp"
-        android:layout_height="124dp"
+        android:layout_height="193dp"
         android:layout_gravity="center"
         android:background="#C4FDFDFD">
 
-        <Button
-            android:id="@+id/passengerButton"
+        <EditText
+            android:id="@+id/passwordInput"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="@string/i_am_a_passenger"
-            app:backgroundTint="#54418F"
+            android:ems="10"
+            android:hint="@string/hint_password"
+            android:importantForAutofill="no"
+            android:inputType="textPassword"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.487"
+            app:layout_constraintHorizontal_bias="0.497"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/username"
+            app:layout_constraintVertical_bias="0.149" />
+
+        <EditText
+            android:id="@+id/username"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="@string/hint_username"
+            android:inputType="textPersonName"
+            android:selectAllOnFocus="false"
+            android:singleLine="false"
+            android:importantForAutofill="no"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.497"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.838" />
+            app:layout_constraintVertical_bias="0.108" />
 
         <Button
-            android:id="@+id/driverButton"
+            android:id="@+id/connectButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/i_am_a_driver"
+            android:onClick="connect"
+            android:text="@string/connect_button"
             app:backgroundTint="#54418F"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.161" />
+            app:layout_constraintTop_toBottomOf="@+id/passwordInput"
+            app:layout_constraintVertical_bias="0.384" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
