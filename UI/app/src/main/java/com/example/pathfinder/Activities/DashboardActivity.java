@@ -213,7 +213,7 @@ public class DashboardActivity extends AppCompatActivity implements ThumbstickVi
     }
 
     void distanceLog(double distance) {
-        distance = distance/1000;
+        distance = distance/100;
         notConnected();
         mMqttClient.subscribe(ODOMETER_LOG, QOS, null);
         mDistanceLog.setText(String.valueOf(distance) + " m");
