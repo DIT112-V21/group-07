@@ -92,7 +92,7 @@ void loop()
    if (mqtt.connected()) { // check if the mqtt is connected .. needed if you connect through MQTT
         mqtt.loop();  // Also needed to keep soing the mqtt operations
         SR04sensorData(true, "/smartcar/ultrasound/front"); //publish sensor data every one second through MQTT
-        measureDistance(true, "/smartcar/car/distance");
+        measureDistance(true, "/smartcar/odometer");
   }else{
        handleInput();
    }
