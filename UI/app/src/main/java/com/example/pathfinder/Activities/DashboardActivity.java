@@ -124,6 +124,7 @@ public class DashboardActivity extends AppCompatActivity implements ThumbstickVi
     private void connectToMqttBroker() {
         if (!isConnected) {
             mMqttClient.connect(TAG, "", new IMqttActionListener() {
+
                 @Override
                 public void onSuccess(IMqttToken asyncActionToken) {
                     isConnected = true;
@@ -132,7 +133,8 @@ public class DashboardActivity extends AppCompatActivity implements ThumbstickVi
                     Log.i(TAG, successfulConnection);
                     Toast.makeText(getApplicationContext(), successfulConnection, Toast.LENGTH_SHORT).show();
 
-                    mMqttClient.subscribe("/smartcar/ultrasound/front", QOS, null);
+                    // These are to subscribe to that related specific topics mentioned as first parameter. Topics shall match the topics smart car publishes its data on. 
+                    mMqttClient.subscribe("/smartcar/ultrasound/front", QOS, null); 
                     mMqttClient.subscribe("/smartcar/camera", QOS, null);
                     mMqttClient.subscribe("/smartcar/odometer", QOS, null);
                 }
@@ -153,6 +155,8 @@ public class DashboardActivity extends AppCompatActivity implements ThumbstickVi
                     Toast.makeText(getApplicationContext(), connectionLost, Toast.LENGTH_SHORT).show();
                 }
 
+                //The topics shall be catch hold of by this method and handled through the statements for the specific functions.
+                // (If a message published to a specific topic, use that message to the some specific function).
                 @Override
                 public void messageArrived(String topic, MqttMessage message) throws Exception {
                     if (topic.equals("/smartcar/camera")) {
@@ -212,10 +216,11 @@ public class DashboardActivity extends AppCompatActivity implements ThumbstickVi
         mSpeedLog.setText(String.valueOf(speed) + " km/h");
     }
 
+    // A helper method takes the distance value from ODOMETER_LOG(topic="/smartcar/odometer") and set it to distance log on the related layout in the UI.
     void distanceLog(double distance) {
         distance = distance/100;
         notConnected();
-        mMqttClient.subscribe(ODOMETER_LOG, QOS, null);
+        mMqttClient.subscribe(ODOMETER_LOG, QOS, null); 
         mDistanceLog.setText(String.valueOf(distance) + " m");
     }
 
