@@ -1,7 +1,7 @@
 #include <math.h>   // NOLINT(modernize-deprecated-headers)
 #include <stdint.h> // NOLINT(modernize-deprecated-headers)
 
-#include "../../utilities/Utilities.hpp"
+#include "Utilities.hpp"
 #include "DistanceCar.hpp"
 
 namespace
@@ -10,9 +10,9 @@ const unsigned long kStopAttemptInterval = 100;
 const uint8_t kMaxStopAttempts           = 3;
 } // namespace
 
-using namespace smartcarlib::constants::car;
-using namespace smartcarlib::constants::control;
-using namespace smartcarlib::utils;
+using namespace smartcar::constants::car;
+using namespace smartcar::constants::control;
+using namespace smartcar::utils;
 
 DistanceCar::DistanceCar(Runtime& runtime, Control& control, Odometer& odometer)
     : SimpleCar(control)

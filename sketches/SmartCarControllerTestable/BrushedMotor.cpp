@@ -1,5 +1,5 @@
 #include "BrushedMotor.hpp"
-#include "../../../utilities/Utilities.hpp"
+#include "Utilities.hpp"
 
 namespace
 {
@@ -7,8 +7,8 @@ const int kMinPwm = 0;
 const int kMaxPwm = 255;
 } // namespace
 
-using namespace smartcarlib::utils;
-using namespace smartcarlib::constants::motor;
+using namespace smartcar::utils;
+using namespace smartcar::constants::motor;
 
 BrushedMotor::BrushedMotor(Runtime& runtime,
                            uint8_t forwardPin,

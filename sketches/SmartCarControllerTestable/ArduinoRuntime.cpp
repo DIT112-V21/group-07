@@ -8,7 +8,7 @@
 #endif
 #if defined(ESP8266)
 #define TEN_BIT_ANALOG
-#include "../../utilities/Utilities.hpp"
+#include "Utilities.hpp"
 #endif
 #endif
 

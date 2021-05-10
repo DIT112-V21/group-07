@@ -11,7 +11,7 @@ int HeadingCar::getHeading()
     return mHeadingSensor.getHeading();
 }
 
-void HeadingCar::update()
+virtual HeadingCar::update()
 {
     mHeadingSensor.update();
 }

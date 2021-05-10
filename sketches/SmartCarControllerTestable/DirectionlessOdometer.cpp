@@ -9,7 +9,7 @@ const float kMillisecondsInSecond = 1000.0;
 const float kMillimetersInMeter   = 1000.0;
 } // namespace
 
-using namespace smartcarlib::constants::odometer;
+using namespace smartcar::constants::odometer;
 
 DirectionlessOdometer::DirectionlessOdometer(Runtime& runtime,
                                              uint8_t pulsePin,

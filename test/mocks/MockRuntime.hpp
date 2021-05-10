@@ -1,7 +1,6 @@
 #pragma once
 
 #include "gmock/gmock.h"
-
 #include "Runtime.hpp"
 
 class MockRuntime : public Runtime

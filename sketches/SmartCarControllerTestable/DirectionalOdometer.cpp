@@ -2,7 +2,7 @@
 
 #include "DirectionalOdometer.hpp"
 
-using namespace smartcarlib::constants::odometer;
+using namespace smartcar::constants::odometer;
 
 namespace
 {

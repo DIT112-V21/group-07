@@ -56,3 +56,14 @@ target_include_directories(smartcarcontroller_test PUBLIC
         ${smartcar_dir}
         ${mocks})
 configure_test(smartcarcontroller_test)
+
+# BrushlessMotor test
+add_executable(brushedmotor_test
+        ${smartcar_dir}/BrushedMotor.cpp
+        ${unit_tests}/BrushedMotor_test.cpp
+        )
+target_include_directories(brushedmotor_test PUBLIC
+        ${smartcar_dir}
+        ${mocks}
+        )
+configure_test(brushedmotor_test)

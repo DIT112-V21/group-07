@@ -1,12 +1,6 @@
-/**
- * \class ArduinoRuntime
- * The class to programatically represent the Arduino runtime environment or
- * alternatively calls to the AVR and Arduino libraries.
- */
-
 #pragma once
 
-#include "../Runtime.hpp"
+#include "Runtime.hpp"
 
 class ArduinoRuntime : public Runtime
 {

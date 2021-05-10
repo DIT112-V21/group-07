@@ -5,7 +5,7 @@
     * https://github.com/sparkfun/Tri-Axis_Gyro_Breakout-L3G4200D
 */
 #include "GY50.hpp"
-#include "../../../utilities/Utilities.hpp"
+#include "Utilities.hpp"
 
 namespace
 {
@@ -15,8 +15,8 @@ const float kGyroSensitivity    = 0.07F;
 const int kGyroThreshold        = 12; // Smaller changes are to be ignored
 } // namespace
 
-using namespace smartcarlib::utils;
-using namespace smartcarlib::constants::gy50;
+using namespace smartcar::utils;
+using namespace smartcar::constants::gy50;
 
 GY50::GY50(Runtime& runtime, int offset, unsigned long samplingInterval)
     : kOffset{ offset }

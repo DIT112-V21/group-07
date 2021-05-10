@@ -1,10 +1,10 @@
 #include "DifferentialControl.hpp"
 
-#include "../../utilities/Utilities.hpp"
+#include "Utilities.hpp"
 
-using namespace smartcarlib::utils;
-using namespace smartcarlib::constants::control;
-using namespace smartcarlib::constants::motor;
+using namespace smartcar::utils;
+using namespace smartcar::constants::control;
+using namespace smartcar::constants::motor;
 
 DifferentialControl::DifferentialControl(Motor& leftMotor, Motor& rightMotor)
     : mLeftMotor(leftMotor)
