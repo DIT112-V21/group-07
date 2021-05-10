@@ -67,3 +67,14 @@ target_include_directories(brushedmotor_test PUBLIC
         ${mocks}
         )
 configure_test(brushedmotor_test)
+
+# GY50 (Gyroscope) test
+add_executable(gy50_test
+        ${smartcar_dir}/GY50.cpp
+        ${unit_tests}/GY50_test.cpp
+        )
+target_include_directories(gy50_test PUBLIC
+        ${smartcar_dir}
+        ${mocks}
+        )
+configure_test(gy50_test)

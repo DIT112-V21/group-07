@@ -28,6 +28,7 @@ add_compile_options(
 
 set(smartcar_dir ${CMAKE_CURRENT_SOURCE_DIR}/sketches/SmartCarControllerTestable)
 set(smartcar_dir ${CMAKE_CURRENT_SOURCE_DIR}/sketches/SmartCarControllerTestable)
+set(smartcar_dir ${CMAKE_CURRENT_SOURCE_DIR}/sketches/SmartCarControllerTestable)
 
 add_subdirectory(test)
 enable_testing()

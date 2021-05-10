@@ -1,8 +1,8 @@
 #include "SimpleCar.hpp"
-#include "../../utilities/Utilities.hpp"
+#include "Utilities.hpp"
 
-using namespace smartcarlib::constants::control;
-using namespace smartcarlib::utils;
+using namespace smartcar::constants::control;
+using namespace smartcar::utils;
 
 SimpleCar::SimpleCar(Control& control)
     : mControl(control)
