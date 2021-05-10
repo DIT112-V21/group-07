@@ -1,5 +1,6 @@
 package com.example.pathfinder.Activities;
 
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -15,16 +16,22 @@ import java.util.Map;
 
 public class DriverLogin extends AppCompatActivity {
 
+
+
     private Map<String, String> driversProfiles;
 
 
+    /* Getters and setters */
+    public Map<String, String> getDriversProfiles() {return driversProfiles;}
+    public void setDriversProfiles(Map<String, String> driversProfiles) {this.driversProfiles = driversProfiles;}
+
+
     /**
-     * initialise the activity (page) with layout and a hardcoded map of users. This should be replaced later on with an import of a DB.
-     * Todo: implement a database to replace the hardcoded users.
+     * initialise the activity (page) with layout and a hardcoded map of users. This could be replaced later on with an import of a DB.
      * @param savedInstanceState -> most recent initialisation of the activity. Null in this case. See Android documentation for more details.
      */
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         int view = R.layout.driver_login;
         setContentView(view);
@@ -47,10 +54,10 @@ public class DriverLogin extends AppCompatActivity {
      * @param view -> -> R.id.connectButton for this method.
      */
     public void connect(View view) {
-        String usernameInput = ((EditText) findViewById(R.id.username)).getText().toString();
+        String usernameInput = ((EditText) findViewById(R.id.usernameInput)).getText().toString();
         String passwordInput = ((EditText) findViewById(R.id.passwordInput)).getText().toString();
-        if (driversProfiles.containsKey(usernameInput)) {
-            if (passwordInput.equals(driversProfiles.get(usernameInput))) {
+        if (isRegisteredUsername(usernameInput)) {
+            if (isMatchingPassword(usernameInput,passwordInput)) {
                 goToDashboard();
                 Log.d("driver", "Connection to selected user");
             }
@@ -59,8 +66,16 @@ public class DriverLogin extends AppCompatActivity {
             Log.d("driver", "Connection failed, user name or password are invalid");
         }
     }
-
-
+    
+    public boolean isRegisteredUsername(String username){
+        return driversProfiles.containsKey(username);
+    }
+    
+    public boolean isMatchingPassword(String username, String password){
+        return password.equals(driversProfiles.get(username));
+    }
+    
+    
     /**
      * Helper method for connect(View view) to redirect to the dashboard activity (page).
      */
