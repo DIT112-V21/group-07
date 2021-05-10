@@ -23,6 +23,15 @@ public class MqttClient {
         options.setAutomaticReconnect(true);
         options.setCleanSession(true);
 
+
+        /**
+         * Last will topic - topic for subscribers to follow
+         * will_Retained - message will be retained bt the server, even after connection loss/ reconnection
+         */
+        String WILL_TOPIC = "/smartcar/connectionLost";
+        String PAYLOAD = "Connection unexpectedly lost";
+        options.setWill(WILL_TOPIC, PAYLOAD.getBytes(), 1, true);
+
         try {
             mMqttAndroidClient.connect(options, null, connectionCallback);
         } catch (MqttException e) {

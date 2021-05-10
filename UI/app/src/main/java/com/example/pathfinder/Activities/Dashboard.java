@@ -1,7 +1,5 @@
 package com.example.pathfinder.Activities;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -12,14 +10,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.example.pathfinder.Client.MqttClient;
 import com.example.pathfinder.R;
-
-
-import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
-import org.eclipse.paho.client.mqttv3.MqttException;
-import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
-
 
 import org.eclipse.paho.client.mqttv3.IMqttActionListener;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
@@ -42,15 +36,6 @@ public class Dashboard extends AppCompatActivity {
     private static final int QOS = 1;
     private static final int IMAGE_WIDTH = 320;
     private static final int IMAGE_HEIGHT = 240;
-
-/**
- * Last will topic - topic for subscribers to follow
- * will_Retained - message will be retained bt the server, even after connection loss/ reconnection
- */
-    private String WILL_TOPIC = "/smartcar/connectionLost";
-    private boolean will_Retained = true;
-    MqttConnectOptions connOpts = new MqttConnectOptions();
-
 
     private MqttClient mMqttClient;
     private boolean isConnected = false;
@@ -96,6 +81,7 @@ public class Dashboard extends AppCompatActivity {
         });
     }
 
+
     private void connectToMqttBroker() {
         if (!isConnected) {
             mMqttClient.connect(TAG, "", new IMqttActionListener() {
@@ -106,9 +92,6 @@ public class Dashboard extends AppCompatActivity {
                     final String successfulConnection = "Connected to MQTT broker";
                     Log.i(TAG, successfulConnection);
                     Toast.makeText(getApplicationContext(), successfulConnection, Toast.LENGTH_SHORT).show();
-
-                    //Set the last will message after successful connection
-                    connOpts.setWill(WILL_TOPIC, WILL_TOPIC.getBytes(), QOS, will_Retained);
 
                     mMqttClient.subscribe("/smartcar/ultrasound/front", QOS, null);
                     mMqttClient.subscribe("/smartcar/camera", QOS, null);
@@ -197,7 +180,7 @@ public class Dashboard extends AppCompatActivity {
         drive(-MOVEMENT_SPEED, STRAIGHT_ANGLE, "Moving backward");
     }
 
-   void getDistance() {
+    void getDistance() {
         notConnected();
 
         mMqttClient.subscribe(THROTTLE_CONTROL, QOS, null);
