@@ -26,7 +26,9 @@ public class MqttClient {
 
         /**
          * Last will topic - topic for subscribers to follow
-         * will_Retained - message will be retained bt the server, even after connection loss/ reconnection
+         * Payload - last will message that will be received by the subscribers
+         * QOS - quality of service to publish the message
+         * Retained - message will be retained by the server, even after connection loss/ reconnection
          */
         String WILL_TOPIC = "/smartcar/connectionLost";
         String PAYLOAD = "Connection unexpectedly lost";

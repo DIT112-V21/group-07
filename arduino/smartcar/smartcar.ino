@@ -27,7 +27,7 @@ const auto PULSES_PER_METER = 600;
 const float MAX_SPEED = 1.845; //value used for the conversion of speed into percentage
 const float STOPPING_SPEED = 0.3; //m/s. used to decide when to stop in slowDownSmoothly
 const int PULL_OVER_DISTANCE = 250; //value used for connectivityLoss(), as how far the car pulls over
-bool isParked = false;
+bool isParked = true;
 
 //Runtime environment
 ArduinoRuntime arduinoRuntime;
@@ -80,7 +80,7 @@ void setup()
     Serial.begin(9600);
     //choose to connect to localhost or external
     //choose true to connect to localhost.
-    connectHost(false);
+    connectHost(true);
     MQTTMessageInput();
 }
 
@@ -105,7 +105,7 @@ void loop()
  */
 void MQTTMessageInput(){
 
-    if (mqtt.connect("arduino", "public", "public") && mqtt.connected()) {
+    if (mqtt.connect("arduino", "public", "public")) {
         mqtt.subscribe("/smartcar/control/#", 1);
         mqtt.subscribe("/smartcar/connectionLost", 1);
 
@@ -278,7 +278,16 @@ bool reactToSensor(int sensorDistance, int STOP_DISTANCE, bool isSlowDown){
  */
 void connectivityLoss(){
     Serial.println("Connection to the app lost, pulling the vehicle over");
-    if(car.getSpeed() > NO_OBSTACLE_VALUE && !isParked){
+    //If obstacle is on the right side of the car
+    if(rightIR.getDistance() != NO_OBSTACLE_VALUE && !isParked){
+        while(!isClear("rightIR")){
+            handleSpeedTopic(30);
+            if(emergencyBrake(false)){
+                return;
+            }
+        }
+    }
+    if(car.getSpeed() > NO_OBSTACLE_VALUE){
         car.update();
         handleAngleTopic(35);
         float distance = car.getDistance();
@@ -310,15 +319,7 @@ void connectivityLoss(){
             }
         }
         isParked = true;
-        //If obstacle is on the right side of the car
-    }else if(rightIR.getDistance() != NO_OBSTACLE_VALUE && !isParked){
-        while(!isClear("rightIR")){
-            handleSpeedTopic(30);
-            if(emergencyBrake(false)){
-                return;
-            }
-            reactToSides();
-        }
+
     }
 }
 
