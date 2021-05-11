@@ -106,32 +106,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
 
-                <RelativeLayout
-                    android:layout_width="70dp"
-                    android:layout_height="85dp"
-                    android:layout_gravity="center"
-                    android:background="@drawable/card_1"
-                    android:layout_marginRight="5dp"
-                    >
 
-                    <ImageView
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:layout_marginTop="5dp"
-                        android:src="@drawable/img_cruise_control"
-                        android:layout_centerHorizontal="true"/>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerHorizontal="true"
-                        android:text="@string/cruise_control"
-                        android:textAlignment="center"
-                        android:gravity="center_horizontal"
-                        android:fontFamily="@font/basic"
-                        android:textColor="@color/purple"
-                        android:layout_marginTop="50dp"/>
-                </RelativeLayout>
             </LinearLayout>
 
             <LinearLayout
