@@ -12,7 +12,7 @@ import static com.google.common.truth.Truth.assertThat;
 
 public class DriverLoginTest {
 
-    /** create a new instance of the driverLogin class */
+    /** declare a new instance of the driverLogin class */
     DriverLogin driverLogin;
 
 
@@ -28,8 +28,7 @@ public class DriverLoginTest {
         driverLogin.setDriversProfiles(new HashMap<>());
         driverLogin.getDriversProfiles().put("Alex", "1234");
     }
-
-
+    
     /**
      * Tests if verifying that a username is registered in the map works correctly
      * Associated method: isRegisteredUsername();
@@ -53,7 +52,7 @@ public class DriverLoginTest {
      * Associated method: isMatchingPassword();
      */
     @Test
-    public void isMatchingPasswordTest_returnTrue(){
+    public void isMatchingPasswordTest_returnsTrue(){
         assertThat(driverLogin.isMatchingPassword("Alex", "1234")).isTrue();
         }
 
@@ -62,7 +61,7 @@ public class DriverLoginTest {
      * Associated method: isMatchingPassword();
      */
     @Test
-    public void isNotMatchingPasswordTest_returnFalse(){
+    public void isNotMatchingPasswordTest_returnsFalse(){
         assertThat(driverLogin.isMatchingPassword("Alex", "123")).isFalse();
     }
 }
