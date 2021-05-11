@@ -83,7 +83,7 @@ void setup()
   //Example:
     // chose to connect to localhost or external
     startCamera();
-    connectHost(false); //choosing to connect to localhost.
+    connectHost(true); //choosing to connect to localhost.
     MQTTMessageInput();
 }
 
@@ -96,8 +96,8 @@ void loop()
         mqtt.loop();  // Also needed to keep doing the mqtt operations
         cameraData(true);
         SR04sensorData(true, "/smartcar/ultrasound/front"); //publish sensor data every one second through MQTT
-        measureDistance(true, "/smartcar/car/distance");
-   }else{
+        measureDistance(true, "/smartcar/odometer");
+  }else{
        handleInput();
    }
     emergencyBrake();

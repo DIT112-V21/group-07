@@ -31,26 +31,27 @@ public class DashboardActivity extends AppCompatActivity implements ThumbstickVi
     private static final String TAG = "PathfinderController";
     private static final String EXTERNAL_MQTT_BROKER = "test.mosquitto.org";
     private static final String LOCALHOST = "10.0.2.2";
-    private static final String MQTT_SERVER = "tcp://" + EXTERNAL_MQTT_BROKER + ":1883";
+    private static final String MQTT_SERVER = "tcp://" + LOCALHOST + ":1883";
     private static final String THROTTLE_CONTROL = "/smartcar/control/speed";
     private static final String STEERING_CONTROL = "/smartcar/control/angle";
-    private static final String ODOMETER_LOG = "/smartcar/assess/odometer";
+    private static final String ODOMETER_LOG = "/smartcar/odometer";
     private static final int IDLE_SPEED = 0;
+    private static final int STRAIGHT_ANGLE = 0;
     private static final int QOS = 1;
     private static final int IMAGE_WIDTH = 320;
     private static final int IMAGE_HEIGHT = 240;
 
     private MqttClient mMqttClient;
     //Park/ lock
-    private boolean isParked = false;
+    //private boolean isParked = false;
     //Engine activity
-    private boolean isActive = false;
+    //private boolean isActive = false;
     private boolean isConnected = false;
     private ImageView mCameraView;
     private TextView mSpeedLog, mDistanceLog;
     private TextView textView;
     private SeekBar seekBar;
-    private RelativeLayout mParkBtn;
+    //private RelativeLayout mParkBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,7 +61,7 @@ public class DashboardActivity extends AppCompatActivity implements ThumbstickVi
 
         mSpeedLog = findViewById(R.id.speed_log) ;
         mDistanceLog = findViewById(R.id.distance_log);
-        mParkBtn = findViewById(R.id.park);
+       //mParkBtn = findViewById(R.id.park);
 
         mMqttClient = new MqttClient(getApplicationContext(), MQTT_SERVER, TAG);
         mCameraView = findViewById(R.id.videoStream);
@@ -86,12 +87,17 @@ public class DashboardActivity extends AppCompatActivity implements ThumbstickVi
 
             }
         });
-        mParkBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                park();
-            }
-        });
+
+    }
+
+    @Override
+    public void onThumbstickMoved(float xPercent, float yPercent, int id) {
+        int angle = (int)((xPercent) * 100);
+        int strength = (int)((yPercent) * -100);
+
+        Log.d("Main Method", "X percent: " + xPercent + " Y percent: " + yPercent);
+        //this should change and take a different speed later
+        drive(strength, angle, "driving");
     }
 
     @Override
@@ -117,33 +123,10 @@ public class DashboardActivity extends AppCompatActivity implements ThumbstickVi
         });
     }
 
-    @Override
-    public void onThumbstickMoved(float xPercent, float yPercent, int id) {
-        int angle = (int)((xPercent) * 100);
-        int strength = (int)((yPercent) * -100);
-
-        //checks to see if car is parked
-        if (!isParked) {
-            angle = 0;
-            strength = 0;
-        }
-
-        //checks for engine activity
-        if (isActive) {
-            strength = 0;
-            angle = 0;
-        } else {
-            isActive = true;
-        }
-
-        Log.d("Main Method", "X percent: " + xPercent + " Y percent: " + yPercent);
-        //this should change and take a different speed later
-        drive(strength, angle, "driving");
-    }
-
-    public void connectToMqttBroker() {
+    private void connectToMqttBroker() {
         if (!isConnected) {
             mMqttClient.connect(TAG, "", new IMqttActionListener() {
+
                 @Override
                 public void onSuccess(IMqttToken asyncActionToken) {
                     isConnected = true;
@@ -152,6 +135,7 @@ public class DashboardActivity extends AppCompatActivity implements ThumbstickVi
                     Log.i(TAG, successfulConnection);
                     Toast.makeText(getApplicationContext(), successfulConnection, Toast.LENGTH_SHORT).show();
 
+                    // These are to subscribe to that related specific topics mentioned as first parameter. Topics shall match the topics smart car publishes its data on.
                     mMqttClient.subscribe("/smartcar/ultrasound/front", QOS, null);
                     mMqttClient.subscribe("/smartcar/camera", QOS, null);
                     mMqttClient.subscribe("/smartcar/odometer", QOS, null);
@@ -173,6 +157,8 @@ public class DashboardActivity extends AppCompatActivity implements ThumbstickVi
                     Toast.makeText(getApplicationContext(), connectionLost, Toast.LENGTH_SHORT).show();
                 }
 
+                //The topics shall be catch hold of by this method and handled through the statements for the specific functions.
+                // (If a message published to a specific topic, use that message to the some specific function).
                 @Override
                 public void messageArrived(String topic, MqttMessage message) throws Exception {
                     if (topic.equals("/smartcar/camera")) {
@@ -189,7 +175,10 @@ public class DashboardActivity extends AppCompatActivity implements ThumbstickVi
                         bm.setPixels(colors, 0, IMAGE_WIDTH, 0, 0, IMAGE_WIDTH, IMAGE_HEIGHT);
 
                         mCameraView.setImageBitmap(bm);
-                    } else {
+                    } else if(topic.equals("/smartcar/odometer")) {
+                        distanceLog(Double.parseDouble(message.toString()));
+                    }
+                    else {
                         Log.i(TAG, "[MQTT] Topic: " + topic + " | Message: " + message.toString());
                     }
                 }
@@ -211,7 +200,6 @@ public class DashboardActivity extends AppCompatActivity implements ThumbstickVi
         }
     }
 
-
     void drive(int throttleSpeed, int steeringAngle, String actionDescription) {
         notConnected();
         Log.i(TAG, actionDescription);
@@ -222,40 +210,28 @@ public class DashboardActivity extends AppCompatActivity implements ThumbstickVi
 
     void brake() {
         drive(0,0, "Stopped");
-        isActive = false;
     }
 
-    void park() {
-        if ( !isParked ){
-            isParked = true;
-            Toast.makeText(getApplicationContext(), "Car is parked", Toast.LENGTH_SHORT).show();
-        } else {
-            isParked = false;
-            Toast.makeText(getApplicationContext(), "Engine is active", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    public void setSpeed(View view){
-        //drive(seekBar.getProgress(), STRAIGHT_ANGLE, "Setting Speed");
-    }
-
-   void getDistance() {
-
-   }
     void speedLog(int speed) {
         notConnected();
         mMqttClient.subscribe(THROTTLE_CONTROL, QOS, null);
         mSpeedLog.setText(String.valueOf(speed) + " km/h");
     }
 
-    void distanceLog(int distance) {
+    // A helper method takes the distance value from ODOMETER_LOG(topic="/smartcar/odometer") and set it to distance log on the related layout in the UI.
+    void distanceLog(double distance) {
+        distance = distance/100;
         notConnected();
-        mMqttClient.subscribe(STEERING_CONTROL, QOS, null);
-        mDistanceLog.setText(String.valueOf(distance));
+        mMqttClient.subscribe(ODOMETER_LOG, QOS, null);
+        mDistanceLog.setText(String.valueOf(distance) + " m");
+    }
+
+    //should only be invoked if on cruise control
+    public void setSpeed(View view){
+        drive(seekBar.getProgress(), STRAIGHT_ANGLE, "Setting Speed");
     }
 
     public void brakeBtn(View view) {
         brake();
-        isActive = false;
     }
 }
