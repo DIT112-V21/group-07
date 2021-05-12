@@ -54,7 +54,7 @@
         tools:ignore="VectorDrawableCompat" />
 
     <ImageView
-        android:id="@+id/image"
+        android:id="@+id/backgroundImage"
         android:layout_width="311dp"
         android:layout_height="261dp"
         app:layout_constraintBottom_toBottomOf="parent"
