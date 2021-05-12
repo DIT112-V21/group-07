@@ -1,7 +1,10 @@
 #pragma once
-#include "PinController.h"
 
-namespace smartcar
+#include "PinController.h"
+#include <MQTT.h>
+#include <WiFi.h>
+
+namespace magic_car
 {
 struct ArduinoPinController : public PinController
 {
@@ -9,4 +12,4 @@ struct ArduinoPinController : public PinController
     void setPin(int pin) override;
     void clearPin(int pin) override;
 };
-} // namespace smartcar
+} // namespace magic_car

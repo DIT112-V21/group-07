@@ -1,6 +1,9 @@
 #pragma once
 
-namespace smartcar
+#include <MQTT.h>
+#include <WiFi.h>
+
+namespace magic_car
 {
 enum class PinDirection
 {
@@ -16,4 +19,4 @@ struct PinController
     virtual void setPin(int pin)                                     = 0;
     virtual void clearPin(int pin)                                   = 0;
 };
-} // namespace smartcar
+} // namespace magic_car

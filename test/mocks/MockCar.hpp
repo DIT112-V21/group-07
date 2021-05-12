@@ -2,6 +2,8 @@
 
 #include "Car.h"
 #include "gmock/gmock.h"
+#include <WiFi.h>
+
 
 namespace smartcar
 {
@@ -14,5 +16,12 @@ public:
     MOCK_METHOD(int, getHeading, (), (override));
     MOCK_METHOD(int, getDistance, (), (override));
     MOCK_METHOD(float, getSpeed,(),(override));
+
+
+
+
+
+
+
 };
 } // namespace smartcar

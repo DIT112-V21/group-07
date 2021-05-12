@@ -1,7 +1,9 @@
 #include "ArduinoPinController.h"
 #include <Arduino.h>
+#include <MQTT.h>
+#include <WiFi.h>
 
-namespace smartcar
+namespace magic_car
 {
 void ArduinoPinController::setPinDirection(int pin, PinDirection pinDirection)
 {
@@ -17,4 +19,4 @@ void ArduinoPinController::clearPin(int pin)
 {
     digitalWrite(pin, LOW);
 }
-} // namespace smartcar
+} // namespace magic_car

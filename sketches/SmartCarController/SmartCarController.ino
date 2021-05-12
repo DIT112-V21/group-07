@@ -5,10 +5,12 @@
 #include <Smartcar.h>
 #include <MQTT.h>
 #include <WiFi.h>
+
 #ifndef __SMCE__ // If the definition of SMCE then instantiate the WiFi client.
 WiFiClient net;
 #endif
 MQTTClient mqtt;
+
 const int NO_OBSTACLE_VALUE = 0;
 const int FRONT_STOP_DISTANCE = 70;
 const int BACK_STOP_DISTANCE = 50;

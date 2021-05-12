@@ -2,7 +2,11 @@
 
 #include "Car.h"
 #include "PinController.h"
-#include "MQTT.h"
+#include <Smartcar.h>
+#include <MQTT.h>
+#include <WiFi.h>
+#include <Arduino.h>
+
 
 namespace smartcar
 {
@@ -10,7 +14,6 @@ class SmartCarController
 {
 public:
     SmartCarController(Car& car,
-                       MQTT& restServer,
                        PinController& pinController);
 
     void registerDriveEndpoint();
@@ -21,7 +24,7 @@ public:
 
 private:
     Car& mCar;
-    MQTT& mRestServer;
+    WiFiClient net;
     PinController& mPinController;
 };
 } // namespace smartcar

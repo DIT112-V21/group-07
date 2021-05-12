@@ -2,6 +2,8 @@
 
 #include <cstdio>
 #include <cstring>
+#include <WiFi.h>
+#include <MQTT.h>
 
 namespace
 {

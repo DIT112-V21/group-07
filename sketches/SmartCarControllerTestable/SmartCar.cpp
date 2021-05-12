@@ -1,43 +1,53 @@
 #include "SmartCar.h"
+#include <MQTT.h>
+#include <WiFi.h>
 
 namespace smartcar
 {
+    SmartCar::SmartCar(Runtime& runtime,
+                       Control& control,
+                       HeadingSensor& headingSensor,
+                       Odometer& odometerLeft,
+                       Odometer& odometerRight)
 
-SmartCar::SmartCar(HeadingCar& hCar, DistanceCar& dCar)
-        : mHCar {hCar},
-          mDCar {dCar}
-{
-}
+            : mControl{control},
+            mRuntime{runtime},
+            mHeadingSensor{headingSensor},
+            mOdometerLeft{odometerLeft},
+            mOdometerRight{odometerRight}
+            //SimpleCar::SimpleCar(control),
+            //, DistanceCar::DistanceCar(runtime, control, odometerLeft, odometerRight)
+            //, HeadingCar::HeadingCar(control, headingSensor)
+    {
+    }
 
-void SmartCar::setSpeed(float speed)
-{
-    mHCar.setSpeed(speed);
-}
+    void SmartCar::setSpeed(float speed)
+    {
+        mControl.setSpeed(speed);
+    }
 
-void SmartCar::setAngle(int angle)
-{
-    mHCar.setAngle(angle);
-}
+    void SmartCar::setAngle(int angle)
+    {
+        mControl.setAngle(angle);
+    }
 
-void SmartCar::update()
-{
-    mHCar.update();
-}
+    void SmartCar::update()
+    {
+        mHeadingSensor.update();
+    }
 
-int SmartCar::getHeading()
-{
-    return mHCar.getHeading();
-}
+    int SmartCar::getHeading()
+    {
+        return mHeadingSensor.getHeading();
+    }
 
-int SmartCar::getDistance()
-{
-    return mDCar.getDistance();
-}
+    int SmartCar::getDistance()
+    {
+        return (mOdometerLeft.getDistance() + mOdometerRight.getDistance()) / 2;
+    }
 
-float SmartCar::getSpeed()
-{
-     return mDCar.getSpeed();
-}
-
-
+    float SmartCar::getSpeed()
+    {
+        return (mOdometerLeft.getSpeed() + mOdometerRight.getSpeed()) / 2;
+    }
 } // namespace smartcar
