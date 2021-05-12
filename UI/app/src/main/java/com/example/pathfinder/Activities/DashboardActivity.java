@@ -88,7 +88,8 @@ public class DashboardActivity extends AppCompatActivity implements ThumbstickVi
     @Override
     public void onThumbstickMoved(float xPercent, float yPercent, int id) {
         int angle = (int)((xPercent) * 100);
-        int strength = (int)((yPercent) * -100);
+        //if cruisecontrol -> seekBar.getProgress())
+        int strength = (int)((yPercent) * (-seekBar.getProgress())); //based on limit specified by seekbar
 
         Log.d("Main Method", "X percent: " + xPercent + " Y percent: " + yPercent);
         //this should change and take a different speed later
@@ -223,7 +224,7 @@ public class DashboardActivity extends AppCompatActivity implements ThumbstickVi
 
     //should only be invoked if on cruise control
     public void setSpeed(View view){
-        drive(seekBar.getProgress(), STRAIGHT_ANGLE, "Setting Speed");
+        seekBar.getProgress();
     }
 
     public void brakeBtn(View view) {
