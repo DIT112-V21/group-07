@@ -9,12 +9,9 @@ import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.ProgressBar;
 import android.widget.SeekBar;
-import android.widget.ToggleButton;
 
 import com.example.pathfinder.Client.MqttClient;
 import com.example.pathfinder.R;

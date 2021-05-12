@@ -34,7 +34,7 @@ public class MainActivity extends AppCompatActivity {
 
         //Hooks
         cloud = findViewById(R.id.cloud);
-        image = findViewById(R.id.image);
+        image = findViewById(R.id.backgroundImage);
         logo = findViewById(R.id.logo);
         org = findViewById(R.id.org);
 
@@ -43,13 +43,10 @@ public class MainActivity extends AppCompatActivity {
         logo.setAnimation(bottomAnim);
         org.setAnimation(bottomAnim);
 
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                Intent intent = new Intent(MainActivity.this, DashboardActivity.class);
-                startActivity(intent);
-                finish();
-            }
+        new Handler().postDelayed(() -> {
+            Intent intent = new Intent(this, UserSelection.class);
+            startActivity(intent);
+            finish();
         }, SPLASH_SCREEN);
     }
 }
