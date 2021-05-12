@@ -9,6 +9,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+
 import com.example.pathfinder.R;
 
 import java.util.HashMap;
@@ -19,6 +20,7 @@ public class DriverLogin extends AppCompatActivity {
 
 
     private Map<String, String> driversProfiles;
+    Toast connectionFailedNotification;
 
 
     /* Getters and setters */
@@ -44,6 +46,8 @@ public class DriverLogin extends AppCompatActivity {
         driversProfiles.put("Julia", "1234");
         driversProfiles.put("Ediz", "1234");
         Log.d("driver", "Drivers' profiles successfully loaded");
+
+        connectionFailedNotification = Toast.makeText(this, R.string.connection_failed, Toast.LENGTH_LONG);
     }
 
     /**
@@ -89,7 +93,8 @@ public class DriverLogin extends AppCompatActivity {
      * Helper method for connect(View view) to notify the connection failed.
      */
     private void connectionFailed(){
-        Toast.makeText(this, "Invalid username or password", Toast.LENGTH_LONG).show();
+        connectionFailedNotification.show();
     }
+
 }
 
