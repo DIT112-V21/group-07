@@ -1,4 +1,3 @@
-
 #include <vector>
 #ifdef __SMCE__
 #include <OV767X.h>
