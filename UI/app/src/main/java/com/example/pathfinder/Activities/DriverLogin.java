@@ -20,7 +20,7 @@ public class DriverLogin extends AppCompatActivity {
 
 
     private Map<String, String> driversProfiles;
-    Toast connectionFailedNotification;
+
 
 
     /* Getters and setters */
@@ -47,7 +47,6 @@ public class DriverLogin extends AppCompatActivity {
         driversProfiles.put("Ediz", "1234");
         Log.d("driver", "Drivers' profiles successfully loaded");
 
-        connectionFailedNotification = Toast.makeText(this, R.string.connection_failed, Toast.LENGTH_LONG);
     }
 
     /**
@@ -61,13 +60,16 @@ public class DriverLogin extends AppCompatActivity {
         String usernameInput = ((EditText) findViewById(R.id.usernameInput)).getText().toString();
         String passwordInput = ((EditText) findViewById(R.id.passwordInput)).getText().toString();
         if (isRegisteredUsername(usernameInput)) {
-            if (isMatchingPassword(usernameInput,passwordInput)) {
+            if (isMatchingPassword(usernameInput, passwordInput)) {
                 goToDashboard();
                 Log.d("driver", "Connection to selected user");
+            } else {
+                connectionFailed();
+                Log.d("driver", "Connection failed, password does not match user's");
             }
-        }else {
+        } else {
             connectionFailed();
-            Log.d("driver", "Connection failed, user name or password are invalid");
+            Log.d("driver", "Connection failed, unregistered username");
         }
     }
     
@@ -93,7 +95,7 @@ public class DriverLogin extends AppCompatActivity {
      * Helper method for connect(View view) to notify the connection failed.
      */
     private void connectionFailed(){
-        connectionFailedNotification.show();
+        Toast.makeText(this,R.string.connection_failed, Toast.LENGTH_LONG).show();
     }
 
 }
