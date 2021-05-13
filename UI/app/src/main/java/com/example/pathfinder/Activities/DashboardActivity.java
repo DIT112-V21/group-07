@@ -36,6 +36,7 @@ public class DashboardActivity extends AppCompatActivity implements ThumbstickVi
     private static final int IMAGE_WIDTH = 320;
     private static final int IMAGE_HEIGHT = 240;
 
+
     private MqttClient mMqttClient;
     //Park/ lock
     //private boolean isParked = false;
@@ -47,6 +48,8 @@ public class DashboardActivity extends AppCompatActivity implements ThumbstickVi
     private TextView textView;
     private SeekBar seekBar;
     //private RelativeLayout mParkBtn;
+
+    boolean isCruiseControl;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,15 +88,51 @@ public class DashboardActivity extends AppCompatActivity implements ThumbstickVi
 
     }
 
+    /**
+     *
+     * @param xPercent
+     * @param yPercent
+     * @param id
+     */
     @Override
     public void onThumbstickMoved(float xPercent, float yPercent, int id) {
         int angle = (int)((xPercent) * 100);
-        //if cruisecontrol -> seekBar.getProgress())
-        int strength = (int)((yPercent) * (-seekBar.getProgress())); //based on limit specified by seekbar
+        int strength = 0;
+        int seekProgress = seekBar.getProgress();
+        if(isCruiseControl){
+            //setting fixed speed for cruise control
+            strength = seekProgress;
+        }else{
+            //range calculation (limit speed is active)
+            strength = (int) (yPercent * seekProgress);
+        }
 
         Log.d("Main Method", "X percent: " + xPercent + " Y percent: " + yPercent);
         //this should change and take a different speed later
         drive(strength, angle, "driving");
+    }
+
+    /**
+     *
+     * @param view
+     */
+    //TODO: To be called on change of seekbar
+    public void onSeekBarMoved(View view){
+        int strength = seekBar.getProgress();
+        drive(strength, STRAIGHT_ANGLE, "driving");
+    }
+
+    /**
+     *
+     * @param view
+     */
+    //TODO:To be called when cruise button is pressed
+    public void cruiseControlBtn(View view) {
+        isCruiseControl = !isCruiseControl;
+        int strength = seekBar.getProgress();
+        if(strength > IDLE_SPEED) {
+            drive(strength, STRAIGHT_ANGLE, "driving");
+        }
     }
 
     @Override
@@ -220,11 +259,6 @@ public class DashboardActivity extends AppCompatActivity implements ThumbstickVi
         notConnected();
         mMqttClient.subscribe(ODOMETER_LOG, QOS, null); 
         mDistanceLog.setText(String.valueOf(distance) + " m");
-    }
-
-    //should only be invoked if on cruise control
-    public void setSpeed(View view){
-        seekBar.getProgress();
     }
 
     public void brakeBtn(View view) {
