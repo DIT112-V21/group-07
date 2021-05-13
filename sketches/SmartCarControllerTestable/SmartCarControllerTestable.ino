@@ -21,12 +21,12 @@ GY50 gyroscope(arduinoRuntime, 11);
 
 HeadingCar car(control, gyroscope);
 
-smartcar::SmartCar smartCar{car};
-smartcar::Esp32RestServer esp32RestServer{server};
-smartcar::ArduinoPinController pinController;
+magic_car::MagicCar magicCar{car};
+magic_car::Esp32RestServer esp32RestServer{server};
+magic_car::ArduinoPinController pinController;
 
-smartcar::SmartCarController smartCarController{
-    smartCar, esp32RestServer, pinController};
+magic_car::MagicCarController magicCarController{
+    magicCar, esp32RestServer, pinController};
 
 void setup(void)
 {
@@ -53,18 +53,18 @@ void setup(void)
         Serial.println("MDNS responder started");
     }
 
-    smartCarController.registerDriveEndpoint();
+    magicCarController.registerDriveEndpoint();
 
-    smartCarController.registerGyroscopeEndpoint();
+    magicCarController.registerGyroscopeEndpoint();
 
-    smartCarController.registerErrorHandler();
+    magicCarController.registerErrorHandler();
 
-    smartCarController.beginServer();
+    magicCarController.beginServer();
 
     Serial.println("HTTP server started");
 }
 
 void loop(void)
 {
-    smartCarController.update();
+    magicCarController.update();
 }

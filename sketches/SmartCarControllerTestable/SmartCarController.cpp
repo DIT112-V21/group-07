@@ -1,11 +1,9 @@
 #include "SmartCarController.h"
-
+#include <iosfwd>
 #include <cstdio>
 #include <cstring>
-#include <WiFi.h>
-#include <MQTT.h>
-
-namespace
+using namespace std;
+namespace smartcar
 {
 const auto kPlainText = "text/plain";
 const auto kSuccess   = 200;
@@ -21,68 +19,32 @@ bool areEqual(const std::vector<char>& v, const char* c)
 namespace smartcar
 {
 SmartCarController::SmartCarController(Car& car,
-                                       MQTT& restServer,
+                                       Mqtt& mqttClient,
                                        PinController& pinController)
     : mCar{car}
-    , mRestServer{restServer}
+    , mMqttClient{mqttClient}
     , mPinController{pinController}
 {
     mPinController.setPinDirection(kLightsPin, PinDirection::kOutput);
 }
 
-void SmartCarController::registerDriveEndpoint()
-{
-    mRestServer.on("/drive", [this]() {
-        const auto arguments = mRestServer.args();
+    void SmartCarController::mqttMessageInput(string topic, string message) {
 
-        for (auto i = 0; i < arguments; i++)
-        {
-            const auto command = mRestServer.argName(i);
-            if (areEqual(command, "speed"))
-            {
-                const auto userSpeed = mRestServer.argToInt(i);
-                mCar.setSpeed(static_cast<float>(userSpeed));
-                if (userSpeed == 0)
-                {
-                    mPinController.setPin(kLightsPin);
+        if (mMqttClient.connect("arduino", "public", "public")) {
+            mMqttClient.subscribe("/smartcar/control/#", 1);
+            mMqttClient.onMessage(topic, message) {
+                if (topic == "/smartcar/control/speed") {
+                    //car.setSpeed(message.toInt());
+                    handleSpeedTopic(message.);
+                } else if (topic == "/smartcar/control/angle") {
+                    //car.setAngle(message.toInt());
+                    handleAngleTopic(message.toInt());
+                } else {
+                    Serial.println(topic + " " + message);
                 }
-                else
-                {
-                    mPinController.clearPin(kLightsPin);
-                }
-            }
-            else if (areEqual(command, "angle"))
-            {
-                mCar.setAngle(mRestServer.argToInt(i));
-            }
+            });
         }
-        mRestServer.send(kSuccess, kPlainText, "ok");
-    });
-}
+    }
 
-void SmartCarController::registerGyroscopeEndpoint()
-{
-    mRestServer.on("/gyro", [this]() {
-        char heading[4];
-        sprintf(heading, "%d", mCar.getHeading());
-        mRestServer.send(kSuccess, kPlainText, heading);
-    });
-}
 
-void SmartCarController::registerErrorHandler()
-{
-    mRestServer.onNotFound(
-        [this]() { mRestServer.send(kError, kPlainText, "Unknown command"); });
-}
-
-void SmartCarController::beginServer()
-{
-    mRestServer.begin();
-}
-
-void SmartCarController::update()
-{
-    mRestServer.handleClient();
-    mCar.update();
-}
-} // namespace smartcar
+} // namespace magic_car
