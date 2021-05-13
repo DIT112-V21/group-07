@@ -13,7 +13,6 @@ public:
                        Mqtt& mqttClient,
                        PinController& pinController);
 
-
     void mqttMessageInput(string topic, string message);
     void handleSpeedTopic(int input);
     void handleAngleTopic(int input);

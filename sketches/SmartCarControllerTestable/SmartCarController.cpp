@@ -2,8 +2,10 @@
 #include <iosfwd>
 #include <cstdio>
 #include <cstring>
+
 using namespace std;
-namespace smartcar
+
+namespace
 {
 const auto kPlainText = "text/plain";
 const auto kSuccess   = 200;
@@ -46,5 +48,69 @@ SmartCarController::SmartCarController(Car& car,
         }
     }
 
+    void SmartCarController::handleSpeedTopic(int input){
+        if (input > 0) {
+            int frontValue = frontIR.getDistance();
+            handleSpeedInput(frontValue, input);
+        } else if (input < 0) {
+            int backValue = backIR.getDistance();
+            handleSpeedInput(backValue, input);
+        } else {
+            car.setSpeed(0);
+        }
+        car.update();
+    }
 
+    void SmartCarController::handleAngleTopic(int input){
+
+}
+    void SmartCarController::handleInput(){
+
+}
+    void SmartCarController::handleSpeedInput(int distance, int inputSpeed){
+
+}
+    void SmartCarController::handleAngleInout(int distance, int inputAngle)){
+
+}
+    bool SmartCarController::emergencyBreak(){
+
+}
+    bool SmartCarController::reactToSensor(int sensorDistance, int STOP_DISTANCE){
+
+}
+    bool SmartCarController::isClear(std::string sensor){
+
+}
+    void SmartCarController::slowDownSmoothly(){
+
+}
+    void SmartCarController::reactToSides(){
+
+}
+    void SmartCarController::sideAvoidance(int newAngle){
+
+}
+    void SmartCarController::SR04SensorData(bool pubSensorData, std:: string publishSensorTopic){
+
+}
+    void SmartCarController::measureDistance(bool pubCarDistance, std:: string publishDistanceTopic){
+
+}
+    void SmartCarController::cameraData(bool pubCameraData){
+
+}
+    void SmartCarController::startCamera(){
+
+}
+    float SmartCarController::convertSpeed(float currentSpeedMs){
+
+}
+    void SmartCarController::connectHost(bool ifLocalHost){
+
+}
+    void SmartCarController::update(){
+        mMqttClient.handleClient();
+        mCar.update();
+}
 } // namespace magic_car
