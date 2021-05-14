@@ -29,17 +29,18 @@ jobs:
         run: |
           cd UI
           bash ./gradlew test --info
-  #run-instumented-tests:
-    #runs-on: macos-latest
-    #steps:
-    #- name: checkout
-      #uses: actions/checkout@v2
+  run-instumented-tests:
+    runs-on: macos-latest
+    steps:
+    - name: checkout
+      uses: actions/checkout@v2
 
-    #- name: run instumented tests
-      #uses: reactivecircus/android-emulator-runner@v2
-      #with:
-        #api-level: 29 #Some tests do not work under API30, that is why we use API29.
-        #run: bash ./gradlew connectedAndroidTest --info
+    - name: run instumented tests
+      uses: reactivecircus/android-emulator-runner@v2
+      with:
+        api-level: 29 #Some tests do not work under API30, that is why we use API29.
+        
+        script: ./UI/gradlew connectedAndroidTest --info
       
 
       
