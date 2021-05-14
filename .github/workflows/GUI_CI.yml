@@ -43,7 +43,7 @@ jobs:
       with:
         api-level: 29 #Some tests do not work under API30, that is why we use API29.
         working-directory: ./UI
-        script: ./gradlew connectedAndroidTest --info
+        script: ./gradlew connectedCheck --info
       
 
       
