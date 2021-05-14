@@ -52,7 +52,7 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        setContentView(R.layout.activity_driverdashboard);
+        setContentView(R.layout.activity_driver_dashboard);
 
         mSpeedLog = findViewById(R.id.speed_log) ;
         mDistanceLog = findViewById(R.id.distance_log);

@@ -33,7 +33,7 @@ public class DriverLogin extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        int view = R.layout.driver_login;
+        int view = R.layout.activity_driver_login;
         setContentView(view);
 
         driversProfiles = new HashMap<>();

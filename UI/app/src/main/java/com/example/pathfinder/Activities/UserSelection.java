@@ -16,7 +16,7 @@ public class UserSelection extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        int view = R.layout.user_selection;
+        int view = R.layout.activity_user_selection;
         setContentView(view);
     }
 
