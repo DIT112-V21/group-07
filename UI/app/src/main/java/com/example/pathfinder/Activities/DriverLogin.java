@@ -80,7 +80,7 @@ public class DriverLogin extends AppCompatActivity {
      * Helper method for connect(View view) to redirect to the dashboard activity (page).
      */
     private void goToDashboard() {
-        Intent intent = new Intent(this, DashboardActivity.class);
+        Intent intent = new Intent(this, DriverDashboard.class);
         startActivity(intent);
         finish();
     }
