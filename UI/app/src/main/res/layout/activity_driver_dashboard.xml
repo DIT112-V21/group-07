@@ -23,6 +23,7 @@
                 android:layout_height="30dp"
                 android:src="@drawable/img_menu"
                 android:layout_centerVertical="true"/>
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -35,51 +36,28 @@
                 />
 
         </RelativeLayout>
-    
 
 
+        <ImageView
+            android:id="@+id/videoStream"
+            android:layout_width="match_parent"
+            android:layout_height="150dp"
+            android:layout_marginTop="5dp"
+            android:layout_centerHorizontal="true"/>
 
 
-
-
-
-    <RelativeLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:paddingTop="30dp">
-
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:paddingTop="5dp">
 
-            <RelativeLayout
-                android:layout_width="70dp"
-                android:layout_height="85dp"
-                android:layout_gravity="center"
-                android:background="@drawable/card_1"
-                android:layout_marginRight="5dp"
-                >
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
 
-                <ImageView
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:layout_marginTop="5dp"
-                    android:src="@drawable/img_cruise_control"
-                    android:layout_centerHorizontal="true"/>
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerHorizontal="true"
-                    android:text="@string/cruise_control"
-                    android:textAlignment="center"
-                    android:gravity="center_horizontal"
-                    android:fontFamily="@font/basic"
-                    android:textColor="@color/purple"
-                    android:layout_marginTop="50dp"/>
-            </RelativeLayout>
-        </LinearLayout>
+            </LinearLayout>
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -116,30 +94,30 @@
 
                 <RelativeLayout
                     android:layout_width="70dp"
-                    android:layout_height="85dp"
+                    android:layout_height="95dp"
                     android:layout_gravity="center"
-                    android:background="@drawable/card_1"
                     android:layout_marginLeft="5dp"
                     android:layout_marginRight="5dp"
+                    android:background="@drawable/card_1"
                     android:onClick="brakeBtn">
 
                     <ImageView
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:layout_marginTop="7dp"
-                    android:src="@drawable/img_brake"
-                    android:layout_centerHorizontal="true"/>
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="7dp"
+                        android:src="@drawable/img_brake" />
 
                     <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerHorizontal="true"
-                    android:text="@string/brake"
-                    android:textAlignment="center"
-                    android:gravity="center_horizontal"
-                    android:fontFamily="@font/basic"
-                    android:textColor="@color/purple"
-                    android:layout_marginTop="58dp"/>
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="58dp"
+                        android:fontFamily="@font/basic"
+                        android:gravity="center_horizontal"
+                        android:text="@string/brake"
+                        android:textAlignment="center"
+                        android:textColor="@color/purple" />
 
                 </RelativeLayout>
 
@@ -152,104 +130,104 @@
                     android:id="@+id/park">
 
                     <ImageView
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:layout_marginTop="5dp"
-                    android:src="@drawable/img_park"
-                    android:layout_centerHorizontal="true"/>
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_marginTop="5dp"
+                        android:src="@drawable/img_park"
+                        android:layout_centerHorizontal="true"/>
 
                     <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerHorizontal="true"
-                    android:text="@string/park"
-                    android:textAlignment="center"
-                    android:gravity="center_horizontal"
-                    android:fontFamily="@font/basic"
-                    android:textColor="@color/purple"
-                    android:layout_marginTop="58dp"/>
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerHorizontal="true"
+                        android:text="@string/park"
+                        android:textAlignment="center"
+                        android:gravity="center_horizontal"
+                        android:fontFamily="@font/basic"
+                        android:textColor="@color/purple"
+                        android:layout_marginTop="58dp"/>
 
                 </RelativeLayout>
 
             </LinearLayout>
 
-            </RelativeLayout>
+        </RelativeLayout>
 
         <RelativeLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:paddingTop="45dp">
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:paddingTop="5dp">
 
             <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
 
                 <RelativeLayout
-                android:layout_width="130dp"
-                android:layout_height="100dp"
-                android:background="@drawable/card_1"
-                android:layout_marginRight="10dp">
+                    android:layout_width="130dp"
+                    android:layout_height="100dp"
+                    android:background="@drawable/card_1"
+                    android:layout_marginRight="10dp">
 
                     <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/speed"
-                    android:fontFamily="@font/basic"
-                    android:textColor="@color/purple"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginLeft="10dp"/>
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/speed"
+                        android:fontFamily="@font/basic"
+                        android:textColor="@color/purple"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginLeft="10dp"/>
 
                     <ImageView
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:src="@drawable/img_speed"
-                    android:layout_marginTop="40dp"
-                    android:layout_marginLeft="10dp"/>
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/img_speed"
+                        android:layout_marginTop="40dp"
+                        android:layout_marginLeft="10dp"/>
 
                     <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/speed_log"
-                    android:fontFamily="@font/basic"
-                    android:textColor="@color/yellow"
-                    android:layout_marginTop="70dp"
-                    android:layout_marginLeft="10dp"
-                    android:id="@+id/speed_log"/>
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/speed_log"
+                        android:fontFamily="@font/basic"
+                        android:textColor="@color/yellow"
+                        android:layout_marginTop="70dp"
+                        android:layout_marginLeft="10dp"
+                        android:id="@+id/speed_log"/>
 
                 </RelativeLayout>
 
                 <RelativeLayout
-                android:layout_width="130dp"
-                android:layout_height="100dp"
-                android:background="@drawable/card_1"
-                android:layout_marginLeft="10dp">
+                    android:layout_width="130dp"
+                    android:layout_height="100dp"
+                    android:background="@drawable/card_1"
+                    android:layout_marginLeft="10dp">
 
                     <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/distance"
-                    android:fontFamily="@font/basic"
-                    android:textColor="@color/purple"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginLeft="10dp"/>
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/distance"
+                        android:fontFamily="@font/basic"
+                        android:textColor="@color/purple"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginLeft="10dp"/>
 
                     <ImageView
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:src="@drawable/img_distance"
-                    android:layout_marginTop="40dp"
-                    android:layout_marginLeft="10dp"/>
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/img_distance"
+                        android:layout_marginTop="40dp"
+                        android:layout_marginLeft="10dp"/>
 
                     <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/distance_log"
-                    android:fontFamily="@font/basic"
-                    android:textColor="@color/yellow"
-                    android:layout_marginTop="70dp"
-                    android:layout_marginLeft="10dp"
-                    android:id="@+id/distance_log"/>
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/distance_log"
+                        android:fontFamily="@font/basic"
+                        android:textColor="@color/yellow"
+                        android:layout_marginTop="70dp"
+                        android:layout_marginLeft="10dp"
+                        android:id="@+id/distance_log"/>
 
                 </RelativeLayout>
             </LinearLayout>
