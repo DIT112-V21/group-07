@@ -11,7 +11,7 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.SeekBar;
+//import android.widget.SeekBar;
 
 import com.example.pathfinder.Client.MqttClient;
 import com.example.pathfinder.R;
@@ -45,27 +45,27 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
     private ImageView mCameraView;
     private TextView mSpeedLog, mDistanceLog;
     private TextView textView;
-    private SeekBar seekBar;
+    //private SeekBar seekBar;
     //private RelativeLayout mParkBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        setContentView(R.layout.activity_dashboard);
+        setContentView(R.layout.activity_driverdashboard);
 
         mSpeedLog = findViewById(R.id.speed_log) ;
         mDistanceLog = findViewById(R.id.distance_log);
        //mParkBtn = findViewById(R.id.park);
 
         mMqttClient = new MqttClient(getApplicationContext(), MQTT_SERVER, TAG);
-        mCameraView = findViewById(R.id.cameraView);
 
-        textView = (TextView) findViewById(R.id.textView);
-        seekBar = (SeekBar) findViewById(R.id.seekBar);
+        //textView = (TextView) findViewById(R.id.textView);
+        //seekBar = (SeekBar) findViewById(R.id.seekBar);
 
         connectToMqttBroker();
 
+        /*
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -82,6 +82,7 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
 
             }
         });
+        */
 
     }
 
@@ -221,10 +222,14 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
         mDistanceLog.setText(String.valueOf(distance) + " m");
     }
 
+    /*
     //should only be invoked if on cruise control
     public void setSpeed(View view){
         drive(seekBar.getProgress(), STRAIGHT_ANGLE, "Setting Speed");
     }
+    * */
+
+
 
     public void brakeBtn(View view) {
         brake();
