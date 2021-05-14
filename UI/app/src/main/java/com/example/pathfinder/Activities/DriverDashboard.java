@@ -59,7 +59,7 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
 
         mSpeedLog = findViewById(R.id.speed_log) ;
         mDistanceLog = findViewById(R.id.distance_log);
-       mParkBtn = findViewById(R.id.park);
+        mParkBtn = findViewById(R.id.park);
 
         mMqttClient = new MqttClient(getApplicationContext(), MQTT_SERVER, TAG);
 
@@ -234,5 +234,13 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
 
     public void brakeBtn(View view) {
         brake();
+    }
+
+    public void parkBtn(View view) {
+
+    }
+
+    public void nextStopBtn(View view) {
+
     }
 }
