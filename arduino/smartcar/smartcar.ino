@@ -30,6 +30,7 @@ const float STOPPING_SPEED = 0.3; //m/s. used to decide when to stop in slowDown
 const int PULL_OVER_DISTANCE = 250; //value used for connectivityLoss(), as how far the car pulls over
 bool isParked = true;
 
+//Single image with the values of "r,g,b, and a" through MQTT.
 std::vector<char> frameBuffer;
 
 //Runtime environment
@@ -85,7 +86,7 @@ void setup()
 
   //Example:
     // chose to connect to localhost or external
-    startCamera();
+    startCamera(); // To initiliaze the camera as soon as the car starts rolling
     connectHost(true); //choose true to connect to localhost.
 
     MQTTMessageInput();
@@ -99,7 +100,7 @@ void loop()
 
    if (mqtt.connected()) { // check if the mqtt is connected .. needed if you connect through MQTT
         mqtt.loop();  // Also needed to keep storing the mqtt operations
-        cameraData(true);
+        cameraData(true); // True if camera is on, false otherwise.
         SR04sensorData(true, "/smartcar/ultrasound/front"); //publish sensor data every one second through MQTT
         measureDistance(true, "/smartcar/car/distance");
   }
@@ -483,6 +484,7 @@ if (ifLocalhost){
      }
 }
 
+// To initiliaze the video streaming
 void startCamera()
 {
 #ifdef __SMCE__
@@ -492,8 +494,6 @@ void startCamera()
 }
 
 // Method to publish Camera Data
-//example:
-// CameraData (true, "/smartcar/camera/front" , front); // ex how to use in loop method
 void cameraData(boolean pubCameraData)
 {
     if (pubCameraData)
