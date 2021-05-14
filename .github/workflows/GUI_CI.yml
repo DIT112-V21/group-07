@@ -29,3 +29,11 @@ jobs:
         run: |
           cd UI
           bash ./gradlew test --info
+  run-instumented-tests:
+      runs-on: ubuntu-latest
+      steps:
+      - name: "Build Android project"
+        uses: vgaidarji/android-github-actions-build@v1.0.1
+         
+        with:
+          args: "./gradlew connectedAndroidTest"
