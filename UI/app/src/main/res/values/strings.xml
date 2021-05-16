@@ -33,6 +33,7 @@
     <!-- Driver Login Page -->
     <string name="hint_password">Password</string>
     <string name="hint_username">Username</string>
+    <string name="welcome">Hello there, welcome back!</string>
     <string name="connect_button">Login</string>
 
 
