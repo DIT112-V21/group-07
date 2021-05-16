@@ -39,12 +39,25 @@
         </RelativeLayout>
 
         <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/accessibility"
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:layout_centerHorizontal="true"
+                android:src="@drawable/img_handicap"
+                app:tint="@color/white" />
+        </RelativeLayout>
+
+        <RelativeLayout
             android:layout_width="150dp"
             android:layout_height="60dp"
-            android:background="@drawable/card_1"
             android:layout_marginHorizontal="10dp"
-            android:layout_marginTop="2dp"
+            android:layout_marginTop="10dp"
             android:layout_gravity="center"
+            android:id="@+id/stop_status"
             >
             <TextView
                 android:layout_width="wrap_content"
@@ -52,11 +65,11 @@
                 android:fontFamily="@font/basic"
                 android:textSize="16dp"
                 android:text="@string/stop_requested"
-                android:textColor="@color/yellow"
+                android:textColor="@color/white"
                 android:layout_marginTop="20dp"
-                android:layout_marginLeft="22dp"
-
-                android:gravity="center"/>
+                android:layout_marginLeft="17dp"
+                android:gravity="center"
+                android:textAllCaps="true"/>
         </RelativeLayout>
 
         <RelativeLayout
@@ -71,46 +84,60 @@
                 android:layout_height="wrap_content">
 
                 <RelativeLayout
-                    android:layout_width="140dp"
-                    android:layout_height="100dp"
+                    android:layout_width="160dp"
+                    android:layout_height="130dp"
                     android:layout_marginRight="10dp"
-                    android:background="@drawable/card_1">
+                    android:background="@drawable/card_1"
+                    >
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="40dp"
-                        android:layout_marginTop="30dp"
-                        android:textSize="18sp"
-                        android:gravity="center_vertical"
+                    <ToggleButton
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:paddingTop="85dp"
+                        android:textColor="@color/purple"
                         android:fontFamily="@font/basic"
-                        android:text="@string/request_stop"
-                        android:textColor="@color/purple" />
+                        android:textOff="@string/request_stop"
+                        android:textOn="@string/cancel_stop"
+                        android:background="@drawable/card_1"
+                        android:id="@+id/stop"/>
+
+                    <ImageView
+                        android:layout_width="55dp"
+                        android:layout_height="55dp"
+                        android:src="@drawable/img_stop"
+                        android:layout_marginLeft="53dp"
+                        android:layout_marginTop="20dp"
+                        />
                 </RelativeLayout>
 
                 <RelativeLayout
-                    android:layout_width="140dp"
-                    android:layout_height="100dp"
+                    android:layout_width="160dp"
+                    android:layout_height="130dp"
                     android:background="@drawable/card_1"
-                    android:layout_marginLeft="10dp">
+                    android:layout_marginLeft="10dp"
 
+                    >
+
+                    <ToggleButton
+                        android:id="@+id/handicap"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/card_1"
+                        android:fontFamily="@font/basic"
+                        android:paddingTop="85dp"
+                        android:layout_margin="0dp"
+                        android:textColor="@color/purple"
+                        android:textOff="@string/handicap"
+                        android:textOn="@string/cancel_accessibility" />
 
                     <ImageView
                         android:layout_width="55dp"
                         android:layout_height="55dp"
                         android:src="@drawable/img_handicap"
-                        android:layout_marginLeft="40dp"
-                        android:layout_marginTop="10dp"
+                        android:layout_marginLeft="49dp"
+                        android:layout_marginTop="20dp"
                         />
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/handicap"
-                        android:fontFamily="@font/basic"
-                        android:textColor="@color/purple"
-                        android:layout_marginTop="70dp"
-                        android:layout_marginLeft="7dp"
-                        />
+
 
                 </RelativeLayout>
             </LinearLayout>

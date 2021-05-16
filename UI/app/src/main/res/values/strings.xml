@@ -40,5 +40,7 @@
     <!-- Passenger Dashboard -->
     <string name="request_stop">Stop</string>
     <string name="handicap">Request Accessibility</string>
+    <string name="cancel_stop">Cancel Stop</string>
+    <string name="cancel_accessibility">Cancel Accessibility</string>
 
 </resources>
