@@ -164,7 +164,7 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
     public void onSeekBarMoved(View view){
         int strength = seekBar.getProgress();
 
-        if(isCruiseControl){
+        if( isCruiseControl ){
             drive(strength, STRAIGHT_ANGLE, "driving");
         }
     }
