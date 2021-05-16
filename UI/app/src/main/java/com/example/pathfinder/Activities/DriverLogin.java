@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -19,6 +20,7 @@ import java.util.Map;
 
 public class DriverLogin extends AppCompatActivity {
     Button mLoginBtn, mPassengerBtn;
+    ImageView mBackBtn;
     TextInputEditText mUsername, mPassword;
     private Map<String, String> driversProfiles;
 
@@ -40,6 +42,7 @@ public class DriverLogin extends AppCompatActivity {
 
         mLoginBtn = findViewById(R.id.sign_in);
         mPassengerBtn = findViewById(R.id.cont_passenger);
+        mBackBtn = findViewById(R.id.back);
         mUsername = (TextInputEditText)findViewById(R.id.username);
         mPassword = (TextInputEditText)findViewById(R.id.password);
 
@@ -83,6 +86,13 @@ public class DriverLogin extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(getApplicationContext(), PassengerDashboard.class));
+            }
+        });
+
+        mBackBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getApplicationContext(), UserSelection.class));
             }
         });
     }

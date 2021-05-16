@@ -11,6 +11,20 @@
     app:layout_anchorGravity="center"
     tools:context=".Activities.DriverLogin">
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:layout_margin="10dp"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:id="@+id/back"
+            android:src="@drawable/img_back"
+            app:tint="@color/white"
+            android:layout_centerVertical="true"/>
+    </RelativeLayout>
+
 
     <TextView
         android:id="@+id/appName"

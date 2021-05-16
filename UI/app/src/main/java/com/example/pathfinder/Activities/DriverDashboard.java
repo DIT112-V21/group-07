@@ -45,7 +45,7 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
     //Engine activity
     //private boolean isActive = false;
     private boolean isConnected = false;
-    private ImageView mCameraView;
+    private ImageView mVideoStream, mSignOutBtn;
     private TextView mSpeedLog, mDistanceLog;
     private TextView textView;
     private SeekBar seekBar;
@@ -60,14 +60,22 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
         mSpeedLog = findViewById(R.id.speed_log) ;
         mDistanceLog = findViewById(R.id.distance_log);
         mParkBtn = findViewById(R.id.park);
+        mSignOutBtn = findViewById(R.id.sign_out);
 
         mMqttClient = new MqttClient(getApplicationContext(), MQTT_SERVER, TAG);
 
-        mCameraView = findViewById(R.id.videoStream);
+        mVideoStream = findViewById(R.id.videoStream);
         textView = (TextView) findViewById(R.id.textView);
         seekBar = (SeekBar) findViewById(R.id.seekBar);
 
         connectToMqttBroker();
+
+        mSignOutBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getApplicationContext(), DriverLogin.class));
+            }
+        });
 
 
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -174,7 +182,7 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
                         }
                         bm.setPixels(colors, 0, IMAGE_WIDTH, 0, 0, IMAGE_WIDTH, IMAGE_HEIGHT);
 
-                        mCameraView.setImageBitmap(bm);
+                        mVideoStream.setImageBitmap(bm);
                     } else if(topic.equals("/smartcar/odometer")) {
                         distanceLog(Double.parseDouble(message.toString()));
                     }

@@ -33,7 +33,15 @@
                 android:fontFamily="@font/black_ops_one"
                 android:textColor="@color/yellow"
                 android:layout_centerHorizontal="true"
-                android:textAllCaps="true"
+                android:textAllCaps="true"/>
+
+                <ImageView
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:src="@drawable/img_sign_out"
+                    android:id="@+id/sign_out"
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentRight="true"
                 />
 
         </RelativeLayout>
