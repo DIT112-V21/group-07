@@ -11,11 +11,13 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.SeekBar;
+import android.widget.ToggleButton;
 
 import com.example.pathfinder.Client.MqttClient;
 import com.example.pathfinder.R;
@@ -33,7 +35,9 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
     private static final String MQTT_SERVER = "tcp://" + LOCALHOST + ":1883";
     private static final String THROTTLE_CONTROL = "/smartcar/control/speed";
     private static final String STEERING_CONTROL = "/smartcar/control/angle";
+    private static final String PARK = "/smartcar/control/park";
     private static final String ODOMETER_LOG = "/smartcar/odometer";
+    private static final String SPEEDOMETER_LOG = "/smartcar/speedometer";
     private static final int IDLE_SPEED = 0;
     private static final int STRAIGHT_ANGLE = 0;
     private static final int QOS = 1;
@@ -50,7 +54,7 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
     private TextView mSpeedLog, mDistanceLog;
     private TextView textView;
     private SeekBar seekBar;
-    private RelativeLayout mParkBtn;
+    private ToggleButton mCruiseControlBtn, mParkBtn;
 
     SharedPreferences sharedPreferences;
 
@@ -62,21 +66,48 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
 
         mSpeedLog = findViewById(R.id.speed_log) ;
         mDistanceLog = findViewById(R.id.distance_log);
-        mParkBtn = findViewById(R.id.park);
+        mParkBtn = (ToggleButton) findViewById(R.id.park);
+        mCruiseControlBtn = (ToggleButton) findViewById(R.id.cruise_control) ;
         mSignOutBtn = findViewById(R.id.sign_out);
 
         mMqttClient = new MqttClient(getApplicationContext(), MQTT_SERVER, TAG);
 
         mVideoStream = findViewById(R.id.videoStream);
+
         textView = (TextView) findViewById(R.id.textView);
         seekBar = (SeekBar) findViewById(R.id.seekBar);
 
         connectToMqttBroker();
 
+        //sign out button that redirects user back to DriverLogin activity
         mSignOutBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(getApplicationContext(), DriverLogin.class));
+            }
+        });
+
+        mCruiseControlBtn.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if ( isChecked ) {
+
+                } else {
+
+                }
+            }
+        });
+
+        mParkBtn.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if ( isChecked ) {
+                    //this should subscribe the parked message from the car
+                    //mMqttClient.subscribe(PARK, QOS, null);
+
+                } else {
+
+                }
             }
         });
 
@@ -100,6 +131,7 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
 
 
     }
+
 
     @Override
     public void onThumbstickMoved(float xPercent, float yPercent, int id) {
@@ -147,7 +179,7 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
                     Toast.makeText(getApplicationContext(), successfulConnection, Toast.LENGTH_SHORT).show();
 
                     // These are to subscribe to that related specific topics mentioned as first parameter. Topics shall match the topics smart car publishes its data on.
-                    mMqttClient.subscribe("/smartcar/ultrasound/front", QOS, null);
+                    mMqttClient.subscribe("/smartcar/park", QOS, null);
                     mMqttClient.subscribe("/smartcar/camera", QOS, null);
                     mMqttClient.subscribe("/smartcar/odometer", QOS, null);
                 }
@@ -188,6 +220,8 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
                         mVideoStream.setImageBitmap(bm);
                     } else if(topic.equals("/smartcar/odometer")) {
                         distanceLog(Double.parseDouble(message.toString()));
+                    } else if(topic.equals("/smartcar/speedometer")) {
+                        speedLog(Integer.parseInt(message.toString()));
                     }
                     else {
                         Log.i(TAG, "[MQTT] Topic: " + topic + " | Message: " + message.toString());
@@ -198,6 +232,8 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
                 public void deliveryComplete(IMqttDeliveryToken token) {
                     Log.d(TAG, "Message delivered");
                 }
+
+
             });
         }
     }
@@ -218,6 +254,7 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
         mMqttClient.publish(STEERING_CONTROL, Integer.toString(steeringAngle), QOS, null);
         speedLog(Math.abs(throttleSpeed));
     }
+
 
     void brake() {
         drive(0,0, "Stopped");
@@ -247,9 +284,6 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
         brake();
     }
 
-    public void parkBtn(View view) {
-
-    }
 
     public void nextStopBtn(View view) {
 

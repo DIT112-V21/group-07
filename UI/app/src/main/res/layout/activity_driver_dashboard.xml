@@ -212,10 +212,21 @@
                     android:layout_width="70dp"
                     android:layout_height="85dp"
                     android:layout_gravity="center"
-                    android:background="@drawable/card_1"
                     android:layout_marginRight="5dp"
-
                     >
+
+                    <ToggleButton
+                        android:id="@+id/cruise_control"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/card_1"
+                        android:textOff="@string/cruise_control"
+                        android:textOn="@string/cruise_control_dis"
+                        android:paddingTop="50dp"
+                        android:fontFamily="@font/basic"
+                        android:textColor="@color/purple"
+                        android:textAllCaps="false"
+                    />
 
                     <ImageView
                         android:layout_width="40dp"
@@ -223,17 +234,6 @@
                         android:layout_marginTop="5dp"
                         android:src="@drawable/img_cruise_control"
                         android:layout_centerHorizontal="true"/>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerHorizontal="true"
-                        android:text="@string/cruise_control"
-                        android:textAlignment="center"
-                        android:gravity="center_horizontal"
-                        android:fontFamily="@font/basic"
-                        android:textColor="@color/purple"
-                        android:layout_marginTop="50dp"/>
 
                 </RelativeLayout>
 
@@ -300,8 +300,20 @@
                     android:layout_height="85dp"
                     android:layout_gravity="center"
                     android:layout_marginLeft="5dp"
-                    android:background="@drawable/card_1"
-                    android:id="@+id/park">
+                    >
+
+                    <ToggleButton
+                        android:id="@+id/park"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/card_1"
+                        android:textOff="@string/park"
+                        android:textOn="@string/unpark"
+                        android:paddingTop="50dp"
+                        android:fontFamily="@font/basic"
+                        android:textColor="@color/purple"
+                        android:textAllCaps="false"
+                        />
 
                     <ImageView
                         android:layout_width="40dp"
@@ -309,17 +321,6 @@
                         android:layout_marginTop="9dp"
                         android:src="@drawable/img_park"
                         android:layout_centerHorizontal="true"/>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerHorizontal="true"
-                        android:text="@string/park"
-                        android:textAlignment="center"
-                        android:gravity="center_horizontal"
-                        android:fontFamily="@font/basic"
-                        android:textColor="@color/purple"
-                        android:layout_marginTop="58dp"/>
 
                 </RelativeLayout>
 

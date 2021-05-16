@@ -24,7 +24,9 @@
     <string name="set_speed">Set Speed</string>
     <string name="brake">Brake</string>
     <string name="park">Park</string>
+    <string name="unpark">Unpark</string>
     <string name="cruise_control">Cruise Control</string>
+    <string name="cruise_control_dis">Disable</string>
     <string name="next_stop">Next Stop</string>
     <string name="speed">Speed</string>
     <string name="distance">Distance</string>
