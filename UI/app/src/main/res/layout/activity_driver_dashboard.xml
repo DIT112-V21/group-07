@@ -174,12 +174,12 @@
                 android:id="@+id/seekBar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingTop="20dp"
-                android:paddingBottom="5dp"
                 android:layout_marginStart="30dp"
                 android:layout_marginEnd="30dp"
-                android:thumbTint="@color/yellow"
-                android:onClick="setSpeed"/>
+                android:paddingTop="20dp"
+                android:paddingBottom="5dp"
+                android:thumbTint="@color/yellow" />
+
 
         </RelativeLayout>
 
@@ -205,7 +205,7 @@
                     android:layout_gravity="center"
                     android:background="@drawable/card_1"
                     android:layout_marginRight="5dp"
-
+                    android:onClick="cruiseControlBtn"
                     >
 
                     <ImageView
@@ -266,12 +266,12 @@
                     android:background="@drawable/card_1"
                     android:id="@+id/next_stop">
 
-                    <ImageView
+<!--                    <ImageView
                         android:layout_width="40dp"
                         android:layout_height="40dp"
                         android:layout_marginTop="5dp"
                         android:src="@drawable/img_next_stop"
-                        android:layout_centerHorizontal="true"/>
+                        android:layout_centerHorizontal="true"/>-->
 
                     <TextView
                         android:layout_width="wrap_content"
