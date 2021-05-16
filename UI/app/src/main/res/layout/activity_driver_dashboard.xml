@@ -183,12 +183,12 @@
                 android:id="@+id/seekBar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingTop="20dp"
-                android:paddingBottom="5dp"
                 android:layout_marginStart="30dp"
                 android:layout_marginEnd="30dp"
-                android:thumbTint="@color/yellow"
-                android:onClick="setSpeed"/>
+                android:paddingTop="20dp"
+                android:paddingBottom="5dp"
+                android:thumbTint="@color/yellow" />
+
 
         </RelativeLayout>
 
@@ -212,7 +212,9 @@
                     android:layout_width="70dp"
                     android:layout_height="85dp"
                     android:layout_gravity="center"
+                    android:background="@drawable/card_1"
                     android:layout_marginRight="5dp"
+                    android:onClick="cruiseControlBtn"
                     >
 
                     <ToggleButton

@@ -58,6 +58,10 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
 
     SharedPreferences sharedPreferences;
 
+    private int speed = 0;
+    private int angle = 0;
+    boolean isCruiseControl;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -116,6 +120,7 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 textView.setText("" + progress + "%");
+                onSeekBarMoved(seekBar);
             }
 
             @Override
@@ -129,19 +134,50 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
             }
         });
 
-
     }
 
+    /**
+     *
+     * @param xPercent
+     * @param yPercent
+     * @param id
+     */
 
     @Override
     public void onThumbstickMoved(float xPercent, float yPercent, int id) {
         int angle = (int)((xPercent) * 100);
-        int strength = (int)((yPercent) * -100);
+        int strength = 0;
+        int seekProgress = - seekBar.getProgress();
+        if(isCruiseControl){
+            //setting fixed speed for cruise control
+            strength = seekProgress;
+        } else {
+            //range calculation (limit speed is active)
+            strength = (int) (yPercent * seekProgress);
+        }
 
         Log.d("Main Method", "X percent: " + xPercent + " Y percent: " + yPercent);
         //this should change and take a different speed later
         drive(strength, angle, "driving");
     }
+
+    public void onSeekBarMoved(View view){
+        int strength = seekBar.getProgress();
+
+        if(isCruiseControl){
+            drive(strength, STRAIGHT_ANGLE, "driving");
+        }
+    }
+
+    public void cruiseControlBtn(View view) {
+        isCruiseControl = !isCruiseControl;
+            int strength = seekBar.getProgress();
+            if (strength > IDLE_SPEED && isCruiseControl) {
+                drive(strength, STRAIGHT_ANGLE, "driving");
+            } else {
+                drive(0, 0, "Stopping");
+            }
+        }
 
     @Override
     protected void onResume() {
@@ -179,6 +215,7 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
                     Toast.makeText(getApplicationContext(), successfulConnection, Toast.LENGTH_SHORT).show();
 
                     // These are to subscribe to that related specific topics mentioned as first parameter. Topics shall match the topics smart car publishes its data on.
+                    //mMqttClient.subscribe("/smartcar/ultrasound/front", QOS, null);
                     mMqttClient.subscribe("/smartcar/park", QOS, null);
                     mMqttClient.subscribe("/smartcar/camera", QOS, null);
                     mMqttClient.subscribe("/smartcar/odometer", QOS, null);
@@ -232,8 +269,6 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
                 public void deliveryComplete(IMqttDeliveryToken token) {
                     Log.d(TAG, "Message delivered");
                 }
-
-
             });
         }
     }
@@ -250,11 +285,22 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
     void drive(int throttleSpeed, int steeringAngle, String actionDescription) {
         notConnected();
         Log.i(TAG, actionDescription);
-        mMqttClient.publish(THROTTLE_CONTROL, Integer.toString(throttleSpeed), QOS, null);
-        mMqttClient.publish(STEERING_CONTROL, Integer.toString(steeringAngle), QOS, null);
+        if(throttleSpeed > speed + 5 || throttleSpeed < speed - 5 || throttleSpeed == 0){
+            speed = throttleSpeed;
+            mMqttClient.publish(THROTTLE_CONTROL, Integer.toString(throttleSpeed), QOS, null);
+        }
+        if(steeringAngle > 10 && angle <= 0){
+            angle = 30;
+            mMqttClient.publish(STEERING_CONTROL, Integer.toString(angle), QOS, null);
+        }else if(steeringAngle < -10 && angle >= 0){
+            angle = -30;
+            mMqttClient.publish(STEERING_CONTROL, Integer.toString(angle), QOS, null);
+        }else if (steeringAngle <= 10 && steeringAngle >= -10 && angle != 0){
+            angle = 0;
+            mMqttClient.publish(STEERING_CONTROL, Integer.toString(angle), QOS, null);
+        }
         speedLog(Math.abs(throttleSpeed));
     }
-
 
     void brake() {
         drive(0,0, "Stopped");
@@ -272,12 +318,6 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
         notConnected();
         mMqttClient.subscribe(ODOMETER_LOG, QOS, null);
         mDistanceLog.setText(String.valueOf(distance) + " m");
-    }
-
-
-    //should only be invoked if on cruise control
-    public void setSpeed(View view){
-        drive(seekBar.getProgress(), STRAIGHT_ANGLE, "Setting Speed");
     }
 
     public void brakeBtn(View view) {
