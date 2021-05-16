@@ -31,10 +31,12 @@
     <string name="background_description">User selection background</string>
 
     <!-- Driver Login Page -->
-    <string name="hint_password">Password</string>
-    <string name="hint_username">Username</string>
+    <string name="password">Password</string>
+    <string name="username">Username</string>
     <string name="welcome">Hello there, welcome back!</string>
-    <string name="connect_button">Login</string>
+    <string name="message">Sign In to continue</string>
+    <string name="sign_in">Sign In</string>
+    <string name="passenger">Not a driver? Get started now.</string>
 
 
 </resources>

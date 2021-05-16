@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
+
 import androidx.appcompat.app.AppCompatActivity;
 import com.example.pathfinder.R;
 
@@ -15,6 +17,7 @@ public class UserSelection extends AppCompatActivity {
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         super.onCreate(savedInstanceState);
         int view = R.layout.activity_user_selection;
         setContentView(view);
@@ -35,6 +38,8 @@ public class UserSelection extends AppCompatActivity {
      * @param view -> R.id.passengerButton for this method.
      */
     public void selectTypePassenger(View view){
-
+        Log.d("passenger","passenger user type selected");
+        Intent intent = new Intent(this, PassengerDashboard.class);
+        startActivity(intent);
     }
 }

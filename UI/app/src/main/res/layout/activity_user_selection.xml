@@ -45,20 +45,6 @@
         android:background="#C4FDFDFD">
 
         <Button
-            android:id="@+id/passengerButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="@string/i_am_a_passenger"
-            app:backgroundTint="#54418F"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.487"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.838" />
-
-        <Button
             android:id="@+id/driverButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -70,6 +56,21 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.161" />
+
+        <Button
+            android:id="@+id/passengerButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="selectTypePassenger"
+            android:gravity="center"
+            android:text="@string/i_am_a_passenger"
+            app:backgroundTint="#54418F"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.487"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.838" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
