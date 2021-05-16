@@ -266,12 +266,12 @@
                     android:background="@drawable/card_1"
                     android:id="@+id/next_stop">
 
-<!--                    <ImageView
+                    <ImageView
                         android:layout_width="40dp"
                         android:layout_height="40dp"
                         android:layout_marginTop="5dp"
                         android:src="@drawable/img_next_stop"
-                        android:layout_centerHorizontal="true"/>-->
+                        android:layout_centerHorizontal="true"/>
 
                     <TextView
                         android:layout_width="wrap_content"
