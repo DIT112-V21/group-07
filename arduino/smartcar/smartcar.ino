@@ -2,13 +2,15 @@
 #ifdef __SMCE__
 #include <OV767X.h>
 #endif
+#include <WiFi.h>
 #include <Smartcar.h>
 #include <MQTT.h>
-#include <WiFi.h>
+
 #ifndef __SMCE__ // If the definition of SMCE then instantiate the WiFi client.
 WiFiClient net;
 #endif
 MQTTClient mqtt;
+
 const int NO_OBSTACLE_VALUE = 0; //sensor value will be equal to this when no obstacle is detected.
 const int FRONT_STOP_DISTANCE = 70; //value used for emergency brake (front)
 const int BACK_STOP_DISTANCE = 50; //value used for emergency brake (back)
@@ -27,6 +29,9 @@ const float MAX_SPEED = 1.845; //value used for the conversion of speed into per
 const float STOPPING_SPEED = 0.3; //m/s. used to decide when to stop in slowDownSmoothly
 const int PULL_OVER_DISTANCE = 250; //value used for connectivityLoss(), as how far the car pulls over
 bool isParked = true;
+
+//Single image with the values of "r,g,b, and a" through MQTT.
+std::vector<char> frameBuffer;
 
 //Runtime environment
 ArduinoRuntime arduinoRuntime;
@@ -74,12 +79,16 @@ SmartCar car(arduinoRuntime, control, gyroscope, leftOdometer, rightOdometer);
  * For testing, it is recommended using a local host when trying the app and using the serial when testing the car's behaviours.
  * To use the serial, comment out the connectHost() and MQTTMessageInput() methods in the setup().
  */
+
 void setup()
 {
     Serial.begin(9600);
-    //choose to connect to localhost or external
-    //choose true to connect to localhost.
-    connectHost(true);
+
+  //Example:
+    // chose to connect to localhost or external
+    startCamera(); // To initiliaze the camera as soon as the car starts rolling
+    connectHost(true); //choose true to connect to localhost.
+
     MQTTMessageInput();
 }
 
@@ -88,14 +97,17 @@ void setup()
  */
 void loop()
 {
-   if (mqtt.connected()) { // check if the mqtt is connected to the server .. needed if you connect through MQTT
+
+   if (mqtt.connected()) { // check if the mqtt is connected .. needed if you connect through MQTT
         mqtt.loop();  // Also needed to keep storing the mqtt operations
+        cameraData(true); // True if camera is on, false otherwise.
         SR04sensorData(true, "/smartcar/ultrasound/front"); //publish sensor data every one second through MQTT
         measureDistance(true, "/smartcar/car/distance");
   }
     handleInput();
     emergencyBrake(true);
     reactToSides();
+    noCPUoverload();
 }
 
 /**
@@ -471,6 +483,34 @@ if (ifLocalhost){
     #endif
      }
 }
+
+// To initiliaze the video streaming
+void startCamera()
+{
+#ifdef __SMCE__
+    Camera.begin(QVGA, RGB888, 15);
+    frameBuffer.resize(Camera.width() * Camera.height() * Camera.bytesPerPixel()); //setup
+#endif
+}
+
+// Method to publish Camera Data
+void cameraData(boolean pubCameraData)
+{
+    if (pubCameraData)
+    {
+        const auto currentTime = millis();
+#ifdef __SMCE__
+        static auto previousFrame = 0UL;
+        if (currentTime - previousFrame >= 65)
+        {
+            previousFrame = currentTime;
+            Camera.readFrame(frameBuffer.data());
+            mqtt.publish("/smartcar/camera", frameBuffer.data(), frameBuffer.size(), false, 0);
+        }
+#endif
+    }
+}
+
 
 /**
  * Avoid over-using the CPU if we are running in the emulator

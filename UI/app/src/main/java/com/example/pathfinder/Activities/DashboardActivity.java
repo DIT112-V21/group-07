@@ -1,7 +1,9 @@
 package com.example.pathfinder.Activities;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentActivity;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -59,7 +61,7 @@ public class DashboardActivity extends AppCompatActivity implements ThumbstickVi
        //mParkBtn = findViewById(R.id.park);
 
         mMqttClient = new MqttClient(getApplicationContext(), MQTT_SERVER, TAG);
-        mCameraView = findViewById(R.id.cameraView);
+        mCameraView = findViewById(R.id.videoStream);
 
         textView = (TextView) findViewById(R.id.textView);
         seekBar = (SeekBar) findViewById(R.id.seekBar);
@@ -130,8 +132,8 @@ public class DashboardActivity extends AppCompatActivity implements ThumbstickVi
                     Log.i(TAG, successfulConnection);
                     Toast.makeText(getApplicationContext(), successfulConnection, Toast.LENGTH_SHORT).show();
 
-                    // These are to subscribe to that related specific topics mentioned as first parameter. Topics shall match the topics smart car publishes its data on. 
-                    mMqttClient.subscribe("/smartcar/ultrasound/front", QOS, null); 
+                    // These are to subscribe to that related specific topics mentioned as first parameter. Topics shall match the topics smart car publishes its data on.
+                    mMqttClient.subscribe("/smartcar/ultrasound/front", QOS, null);
                     mMqttClient.subscribe("/smartcar/camera", QOS, null);
                     mMqttClient.subscribe("/smartcar/odometer", QOS, null);
                 }
@@ -217,7 +219,7 @@ public class DashboardActivity extends AppCompatActivity implements ThumbstickVi
     void distanceLog(double distance) {
         distance = distance/100;
         notConnected();
-        mMqttClient.subscribe(ODOMETER_LOG, QOS, null); 
+        mMqttClient.subscribe(ODOMETER_LOG, QOS, null);
         mDistanceLog.setText(String.valueOf(distance) + " m");
     }
 
@@ -229,6 +231,4 @@ public class DashboardActivity extends AppCompatActivity implements ThumbstickVi
     public void brakeBtn(View view) {
         brake();
     }
-
-
 }
