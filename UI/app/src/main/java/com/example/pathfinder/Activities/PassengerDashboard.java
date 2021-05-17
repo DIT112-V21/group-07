@@ -9,6 +9,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.media.Image;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -17,11 +18,15 @@ import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.example.pathfinder.R;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.OnMapReadyCallback;
 
 public class PassengerDashboard extends AppCompatActivity {
 
     ImageView mBackBtn, mAccessibility;
     ToggleButton mStopBtn, mHandicapBtn;
+    Button mFindRouteBtn;
     RelativeLayout mStopStatus;
     SharedPreferences sharedPreferences;
 
@@ -46,7 +51,7 @@ public class PassengerDashboard extends AppCompatActivity {
         //checks if shared pref data is available
         String stopStatus = sharedPreferences.getString(KEY_STOP, null);
 
-        if ( stopStatus == mStopBtn.getTextOff().toString() ) {
+        if (stopStatus == mStopBtn.getTextOff().toString()) {
             Intent intent = new Intent(PassengerDashboard.this, DriverDashboard.class);
         }
 
@@ -54,7 +59,7 @@ public class PassengerDashboard extends AppCompatActivity {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 //toggle enabled
-                if ( isChecked ) {
+                if (isChecked) {
                     //puts data on shared pref
                     SharedPreferences.Editor editor = sharedPreferences.edit();
                     editor.putString(KEY_HANDICAP, mStopBtn.getTextOn().toString());
@@ -78,7 +83,7 @@ public class PassengerDashboard extends AppCompatActivity {
         mHandicapBtn.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if ( isChecked ) {
+                if (isChecked) {
                     //puts data on shared pref
                     SharedPreferences.Editor editor = sharedPreferences.edit();
                     editor.putString(KEY_HANDICAP, mStopBtn.getTextOn().toString());
@@ -110,4 +115,5 @@ public class PassengerDashboard extends AppCompatActivity {
 
 
     }
+
 }

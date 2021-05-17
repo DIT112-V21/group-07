@@ -91,7 +91,9 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
             }
         });
 
-        mCruiseControlBtn.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+
+        /*
+         mCruiseControlBtn.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if ( isChecked ) {
@@ -101,6 +103,7 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
                 }
             }
         });
+        * */
 
         mParkBtn.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override

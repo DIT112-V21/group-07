@@ -44,5 +44,6 @@
     <string name="handicap">Request Accessibility</string>
     <string name="cancel_stop">Cancel Stop</string>
     <string name="cancel_accessibility">Cancel Accessibility</string>
+    <string name="find_route">Find Route</string>
 
 </resources>
