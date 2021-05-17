@@ -2,7 +2,7 @@
 
 #include "Car.h"
 #include <car/heading/HeadingCar.hpp>
-#include <car/distance/DistanceCar.hpp>
+#include <car/distance/DistanceCar.cpp>
 
 namespace smartcar
 {

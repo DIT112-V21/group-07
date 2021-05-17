@@ -18,5 +18,7 @@ namespace smartcar
         MOCK_METHOD(bool, onMessage,(string topic, string message),(override));
         MOCK_METHOD(int, argToInt, (int index), (override));
         MOCK_METHOD(void, handleClient, (), (override));
+
+
     };
 } // namespace smartcar
