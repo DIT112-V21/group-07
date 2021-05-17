@@ -42,6 +42,7 @@ jobs:
       uses: reactivecircus/android-emulator-runner@v2
       with:
         api-level: 29 #Some tests do not work under API30, that is why we use API29.
+        arch: x86_64
         working-directory: ./UI
         script: ./gradlew connectedCheck --stacktrace
       
