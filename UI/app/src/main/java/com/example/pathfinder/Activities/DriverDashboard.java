@@ -70,8 +70,6 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
 
         mSpeedLog = findViewById(R.id.speed_log) ;
         mDistanceLog = findViewById(R.id.distance_log);
-        mParkBtn = (ToggleButton) findViewById(R.id.park);
-        mCruiseControlBtn = (ToggleButton) findViewById(R.id.cruise_control) ;
         mSignOutBtn = findViewById(R.id.sign_out);
 
         mMqttClient = new MqttClient(getApplicationContext(), MQTT_SERVER, TAG);
@@ -88,33 +86,6 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(getApplicationContext(), DriverLogin.class));
-            }
-        });
-
-
-        /*
-         mCruiseControlBtn.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if ( isChecked ) {
-
-                } else {
-
-                }
-            }
-        });
-        * */
-
-        mParkBtn.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if ( isChecked ) {
-                    //this should subscribe the parked message from the car
-                    //mMqttClient.subscribe(PARK, QOS, null);
-
-                } else {
-
-                }
             }
         });
 
