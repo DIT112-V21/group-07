@@ -1,5 +1,6 @@
 package com.example.pathfinder.Activities;
 
+import androidx.test.espresso.action.CloseKeyboardAction;
 import androidx.test.espresso.action.TypeTextAction;
 import androidx.test.espresso.intent.Intents;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
@@ -11,6 +12,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
+import static androidx.test.espresso.Espresso.closeSoftKeyboard;
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
@@ -65,6 +67,7 @@ public class DriverLoginTest {
     public void connectionSucceeded_changeActivityForDashboard() {
         onView(withId(R.id.usernameInput)).perform(new TypeTextAction("Alex"));
         onView(withId(R.id.passwordInput)).perform(new TypeTextAction("1234"));
+        onView(withId(R.id.passwordInput)).perform(new CloseKeyboardAction());
         onView(withId(R.id.connectButton)).perform(click());
 
         Intents.intended(hasComponent(DashboardActivity.class.getName()));
@@ -81,6 +84,8 @@ public class DriverLoginTest {
     public void invalidPassword_getNotificationThatConnectionFailed() {
         onView(withId(R.id.usernameInput)).perform(new TypeTextAction("Alex"));
         onView(withId(R.id.passwordInput)).perform(new TypeTextAction("123"));
+        onView(withId(R.id.passwordInput)).perform(new CloseKeyboardAction());
+
         onView(withId(R.id.connectButton)).perform(click());
 
         onView(withText(R.string.connection_failed))
@@ -96,6 +101,8 @@ public class DriverLoginTest {
     public void unregisteredUsername_getNotificationThatConnectionFailed() {
         onView(withId(R.id.usernameInput)).perform(new TypeTextAction("George"));
         onView(withId(R.id.passwordInput)).perform(new TypeTextAction("123"));
+        onView(withId(R.id.passwordInput)).perform(new CloseKeyboardAction());
+
         onView(withId(R.id.connectButton)).perform(click());
 
         onView(withText(R.string.connection_failed))
@@ -112,6 +119,8 @@ public class DriverLoginTest {
         String empty = "";
         onView(withId(R.id.usernameInput)).perform(new TypeTextAction(empty));
         onView(withId(R.id.passwordInput)).perform(new TypeTextAction("123"));
+        onView(withId(R.id.passwordInput)).perform(new CloseKeyboardAction());
+
         onView(withId(R.id.connectButton)).perform(click());
 
         onView(withText(R.string.connection_failed))
@@ -128,6 +137,8 @@ public class DriverLoginTest {
         String empty = "";
         onView(withId(R.id.usernameInput)).perform(new TypeTextAction("Alex"));
         onView(withId(R.id.passwordInput)).perform(new TypeTextAction(empty));
+        onView(withId(R.id.passwordInput)).perform(new CloseKeyboardAction());
+
         onView(withId(R.id.connectButton)).perform(click());
 
         onView(withText(R.string.connection_failed))
