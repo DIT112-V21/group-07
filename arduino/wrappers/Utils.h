@@ -4,24 +4,27 @@
 
 #if defined(ARDUINO)
 #include <Arduino.h>
-#include <Smartcar.h>
 #else
 
 #include <string>
 using String = std::string;
 #endif
 
+const auto ONE_SECOND = 1000UL;
+
 struct MqttWrapper {
   virtual ~MqttWrapper() = default;
 
   virtual bool connect(String hostname, String id, String password) = 0;
   virtual void subscribe(String topic, int qos) = 0;
+  virtual void publish(String topic, String message) = 0;
   virtual void onMessage(std::function<void(String, String)> callback) = 0;
 };
 
 struct SerialWrapper {
   virtual ~SerialWrapper() = default;
 
+  virtual void millis()                = 0;
   virtual void println(String message) = 0;
 };
 
@@ -98,4 +101,18 @@ inline void MQTTMessageInput(MqttWrapper &mqtt, SerialWrapper &serial) {
       }
     });
   }
+}
+
+void SR04sensorData(bool pubSensorData, String publishTopic, UltraSoundWrapper ultraSoundWrapper,
+                    SerialWrapper serialWrapper, MqttWrapper mqttWrapper) {
+    if (pubSensorData) {
+        const auto currentTime = serialWrapper.millis();
+        static auto previousTransmission = 0UL;
+
+        if (currentTime - previousTransmission >= ONE_SECOND) {
+            previousTransmission = currentTime;
+            const auto distance = String(ultraSoundWrapper.getDistance());
+            mqttWrapper.publish(publishTopic, distance);
+        }
+    }
 }

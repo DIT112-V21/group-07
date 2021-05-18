@@ -1,4 +1,5 @@
 #include <vector>
+
 #ifdef __SMCE__
 #include <OV767X.h>
 #endif
@@ -6,8 +7,8 @@
 #include <Smartcar.h>
 #include <WiFi.h>
 
-#include "Utils.h"
-#include "Wrappers.h"
+#include "../Headers/Utils.h"
+#include "../Headers/Wrappers.h"
 
 #ifndef __SMCE__ // If the definition of SMCE then instantiate the WiFi client.
 WiFiClient net;
@@ -83,6 +84,8 @@ SmartCar car(arduinoRuntime, control, gyroscope, leftOdometer, rightOdometer);
 
 MqttWrp MqttWrp;
 SerialWrp SerialWrp;
+UltraSoundWrapper ultraSoundWrapper;
+InfraredSensorWrapper infraredSensorWrapper;
 
 void setup() {
   Serial.begin(9600);
@@ -92,7 +95,7 @@ void setup() {
   startCamera(); // To initiliaze the camera as soon as the car starts rolling
   connectHost(true); // choose true to connect to localhost.
 
-  MQTTMessageInput(group7MqttWrapper, group7SerialWrapper);
+  MQTTMessageInput(MqttWrp, SerialWrp);
 }
 
 /**

@@ -3,6 +3,7 @@
 #include <Arduino.h>
 #include <MQTT.h>
 #include <Smartcar.h>
+
 #include "Utils.h"
 
 MQTTClient mqtt;
@@ -17,7 +18,7 @@ struct MqttWrp : public MqttWrapper {
   }
 
   void subscribe(String topic, int qos) override { mqtt.subscribe(topic, qos); }
-
+  void publish(String topic, String message) override { mqtt.subscribe(topic, message); }
   void onMessage(std::function<void(String, String)> callback) override {
     mqtt.onMessage(callback);
   }
@@ -63,5 +64,14 @@ struct InfraredSensorWrapper : public InfraredSensorWrapper{
 };
 
 struct SerialWrp: public SerialWrapper {
-  void println(String message) override { Serial.println(message); }
+  void println(String message) override {
+      Serial.println(message);
+  }
+  void millis() override {
+#if defined(ARDUINO)
+        return millis();
+#endif
+    }
 };
+
+

@@ -7,7 +7,7 @@
 *.o
 *.obj
 
-# Precompiled Headers
+# Precompiled wrappers
 *.gch
 *.pch
 
