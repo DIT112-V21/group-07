@@ -4,7 +4,9 @@
 
 #if defined(ARDUINO)
 #include <Arduino.h>
+#include <Smartcar.h>
 #else
+
 #include <string>
 using String = std::string;
 #endif
@@ -21,6 +23,31 @@ struct SerialWrapper {
   virtual ~SerialWrapper() = default;
 
   virtual void println(String message) = 0;
+};
+
+struct SmartCarWrapper {
+    virtual ~SmartCarWrapper() = default;
+
+    virtual float getSpeed()           = 0;
+    virtual void setSpeed(float speed) = 0;
+    virtual void setAngle(int angle)   = 0;
+    virtual int getHeading()           = 0;
+    virtual int getDistance()          = 0;
+    virtual void update()              = 0;
+};
+
+struct UltraSoundWrapper {
+    virtual ~UltraSoundWrapper() = default;
+
+    virtual int getDistance()          = 0;
+
+};
+
+struct InfraredSensorWrapper {
+    virtual ~InfraredSensorWrapper() = default;
+
+    virtual int getDistance()          = 0;
+
 };
 
 #if defined(ARDUINO)

@@ -2,23 +2,22 @@
 #ifdef __SMCE__
 #include <OV767X.h>
 #endif
+
 #include <Smartcar.h>
 #include <WiFi.h>
 
-#include "group_7_utils.h"
-#include "group_7_wrappers.h"
+#include "Utils.h"
+#include "Wrappers.h"
 
 #ifndef __SMCE__ // If the definition of SMCE then instantiate the WiFi client.
 WiFiClient net;
 #endif
 
-const int NO_OBSTACLE_VALUE =
-    0; // sensor value will be equal to this when no obstacle is detected.
+const int NO_OBSTACLE_VALUE = 0; // sensor value will be equal to this when no obstacle is detected.
 const int FRONT_STOP_DISTANCE = 70; // value used for emergency brake (front)
 const int BACK_STOP_DISTANCE = 50;  // value used for emergency brake (back)
-const int SIDE_REACT_DISTANCE =
-    35; // value used for emergency brake/side avoidance (sides)
-const auto ONE_SECOND = 1000UL;
+const int SIDE_REACT_DISTANCE = 35; // value used for emergency brake/side avoidance (sides)
+const ONE_SECOND = 1000UL;
 const auto HAlF_SECOND = 500UL;
 const int FRONT_PIN = 0;
 const int LEFT_PIN = 1;
@@ -26,15 +25,11 @@ const int RIGHT_PIN = 2;
 const int BACK_PIN = 3;
 const int TRIGGER_PIN = 6; // D6
 const int ECHO_PIN = 7;    // D7
-const unsigned int MAX_DISTANCE =
-    400; // value used for slowDownSmoothly as the distance to react
+const unsigned int MAX_DISTANCE = 400; // value used for slowDownSmoothly as the distance to react
 const auto PULSES_PER_METER = 600;
-const float MAX_SPEED =
-    1.845; // value used for the conversion of speed into percentage
-const float STOPPING_SPEED =
-    0.3; // m/s. used to decide when to stop in slowDownSmoothly
-const int PULL_OVER_DISTANCE =
-    250; // value used for connectivityLoss(), as how far the car pulls over
+const float MAX_SPEED = 1.845; // value used for the conversion of speed into percentage
+const float STOPPING_SPEED = 0.3; // m/s. used to decide when to stop in slowDownSmoothly
+const int PULL_OVER_DISTANCE = 250; // value used for connectivityLoss(), as how far the car pulls over
 bool isParked = true;
 
 // Single image with the values of "r,g,b, and a" through MQTT.
@@ -86,8 +81,8 @@ SmartCar car(arduinoRuntime, control, gyroscope, leftOdometer, rightOdometer);
  * comment out the connectHost() and MQTTMessageInput() methods in the setup().
  */
 
-Group7MqttWrapper group7MqttWrapper;
-Group7SerialWrapper group7SerialWrapper;
+MqttWrp MqttWrp;
+SerialWrp SerialWrp;
 
 void setup() {
   Serial.begin(9600);
@@ -109,8 +104,7 @@ void loop() {
                           // connect through MQTT
     mqtt.loop();          // Also needed to keep storing the mqtt operations
     cameraData(true);     // True if camera is on, false otherwise.
-    SR04sensorData(true,
-                   "/smartcar/ultrasound/front"); // publish sensor data every
+    SR04sensorData(true, "/smartcar/ultrasound/front"); // publish sensor data every
                                                   // one second through MQTT
     measureDistance(true, "/smartcar/car/distance");
   }

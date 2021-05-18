@@ -1,4 +1,4 @@
-#include "group_7_utils.h"
+#include "Utils.h"
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
@@ -25,8 +25,7 @@ TEST(MQTTMessageInputTest, MQTTMessageInput_WhenCalled_WillConnectToMqtt) {
   MQTTMessageInput(mqttWrapper, serialWrapper);
 }
 
-TEST(MQTTMessageInputTest,
-     MQTTMessageInput_WhenConnected_WillSubscribeToTopics) {
+TEST(MQTTMessageInputTest, MQTTMessageInput_WhenConnected_WillSubscribeToTopics) {
   MockMqttWrapper mqttWrapper;
   MockSerialWrapper serialWrapper;
 
@@ -37,8 +36,7 @@ TEST(MQTTMessageInputTest,
   MQTTMessageInput(mqttWrapper, serialWrapper);
 }
 
-TEST(MQTTMessageInputTest,
-     MQTTMessageInput_WhenConnected_WillRegisterCallback) {
+TEST(MQTTMessageInputTest, MQTTMessageInput_WhenConnected_WillRegisterCallback) {
   MockMqttWrapper mqttWrapper;
   MockSerialWrapper serialWrapper;
 
