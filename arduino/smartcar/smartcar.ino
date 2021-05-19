@@ -7,7 +7,7 @@
 #include <Smartcar.h>
 #include <WiFi.h>
 
-#include "arduino/wrappers/Utils.h"
+#include <Utils.h>
 #include "arduino/wrappers/Wrappers.h"
 
 #ifndef __SMCE__ // If the definition of SMCE then instantiate the WiFi client.
