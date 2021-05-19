@@ -1,0 +1,338 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.drawerlayout.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Activities.DriverDashboard"
+    tools:openDrawer="start">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:background="@color/white">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="20dp">
+
+            <ImageView
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:src="@drawable/img_menu"
+                android:id="@+id/nav"
+                android:layout_centerVertical="true"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/app_name"
+                android:textSize="35sp"
+                android:fontFamily="@font/black_ops_one"
+                android:textColor="@color/yellow"
+                android:layout_centerHorizontal="true"
+                android:textAllCaps="true"/>
+
+                <ImageView
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:src="@drawable/img_sign_out"
+                    android:id="@+id/sign_out"
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentRight="true"
+                />
+
+        </RelativeLayout>
+
+        <ImageView
+            android:id="@+id/videoStream"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:layout_centerHorizontal="true"/>
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:paddingTop="5dp">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <RelativeLayout
+                    android:layout_width="110dp"
+                    android:layout_height="85dp"
+                    android:layout_marginRight="10dp"
+                    android:background="@drawable/card_1">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginTop="8dp"
+                        android:fontFamily="@font/basic"
+                        android:text="@string/speed"
+                        android:textColor="@color/purple" />
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginTop="33dp"
+                        android:src="@drawable/img_speed" />
+
+                    <TextView
+                        android:id="@+id/speed_log"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginTop="60dp"
+                        android:fontFamily="@font/basic"
+                        android:text="@string/speed_log"
+                        android:textColor="@color/yellow" />
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="110dp"
+                    android:layout_height="85dp"
+                    android:background="@drawable/card_1"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp"
+                    android:layout_marginTop="2dp"
+                    >
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/basic"
+                        android:textSize="16dp"
+                        android:text="@string/stop_requested"
+                        android:textColor="@color/yellow"
+                        android:layout_marginTop="20dp"
+                        android:layout_marginLeft="3dp"
+                        android:layout_marginRight="3dp"
+                        android:gravity="center"/>
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="110dp"
+                    android:layout_height="85dp"
+                    android:background="@drawable/card_1"
+                    android:layout_marginLeft="10dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/distance"
+                        android:fontFamily="@font/basic"
+                        android:textColor="@color/purple"
+                        android:layout_marginTop="7dp"
+                        android:layout_marginLeft="10dp"/>
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/img_distance"
+                        android:layout_marginTop="33dp"
+                        android:layout_marginLeft="10dp"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/distance_log"
+                        android:fontFamily="@font/basic"
+                        android:textColor="@color/yellow"
+                        android:layout_marginTop="60dp"
+                        android:layout_marginLeft="10dp"
+                        android:id="@+id/distance_log"/>
+
+                </RelativeLayout>
+            </LinearLayout>
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:paddingTop="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/set_speed"
+                android:fontFamily="@font/basic"
+                android:textColor="@color/purple"
+                android:layout_marginBottom="10dp"
+                android:layout_marginStart="40dp"
+                android:layout_marginLeft="40dp" />
+
+            <TextView
+                android:id="@+id/textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="118dp"
+                android:layout_marginBottom="24dp"
+                android:text="0%"
+                android:textSize="13dp"
+                android:textColor="@color/yellow"/>
+
+            <SeekBar
+                android:id="@+id/seekBar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="30dp"
+                android:layout_marginEnd="30dp"
+                android:paddingTop="20dp"
+                android:paddingBottom="5dp"
+                android:thumbTint="@color/yellow" />
+
+
+        </RelativeLayout>
+
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:paddingTop="5dp">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <RelativeLayout
+                    android:layout_width="70dp"
+                    android:layout_height="85dp"
+                    android:layout_gravity="center"
+                    android:background="@drawable/card_1"
+                    android:layout_marginRight="5dp"
+                    >
+
+                    <ToggleButton
+                        android:id="@+id/cruise_control"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/card_1"
+                        android:textOff="@string/cruise_control"
+                        android:textOn="@string/cruise_control_dis"
+                        android:paddingTop="50dp"
+                        android:fontFamily="@font/basic"
+                        android:textColor="@color/purple"
+                        android:textAllCaps="false"
+                    />
+
+                    <ImageView
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_marginTop="5dp"
+                        android:src="@drawable/img_cruise_control"
+                        android:layout_centerHorizontal="true"/>
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="70dp"
+                    android:layout_height="85dp"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp"
+                    android:background="@drawable/card_1"
+                    android:onClick="brakeBtn">
+
+                    <ImageView
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="9dp"
+                        android:src="@drawable/img_brake" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="58dp"
+                        android:fontFamily="@font/basic"
+                        android:gravity="center_horizontal"
+                        android:text="@string/brake"
+                        android:textAlignment="center"
+                        android:textColor="@color/purple" />
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="70dp"
+                    android:layout_height="85dp"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp"
+                    android:background="@drawable/card_1"
+                    android:id="@+id/next_stop">
+
+                    <ImageView
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_marginTop="5dp"
+                        android:src="@drawable/img_next_stop"
+                        android:layout_centerHorizontal="true"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerHorizontal="true"
+                        android:text="@string/next_stop"
+                        android:textAlignment="center"
+                        android:gravity="center_horizontal"
+                        android:fontFamily="@font/basic"
+                        android:textColor="@color/purple"
+                        android:layout_marginTop="58dp"/>
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="70dp"
+                    android:layout_height="85dp"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="5dp"
+                    >
+
+                    <ToggleButton
+                        android:id="@+id/park"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/card_1"
+                        android:textOff="@string/park"
+                        android:textOn="@string/unpark"
+                        android:paddingTop="50dp"
+                        android:fontFamily="@font/basic"
+                        android:textColor="@color/purple"
+                        android:textAllCaps="false"
+                        />
+
+                    <ImageView
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_marginTop="9dp"
+                        android:src="@drawable/img_park"
+                        android:layout_centerHorizontal="true"/>
+
+                </RelativeLayout>
+
+            </LinearLayout>
+
+        </RelativeLayout>
+
+        <com.example.pathfinder.Activities.ThumbstickView
+            android:id="@+id/testThumbstick"
+            android:layout_width="match_parent"
+            android:layout_height="300dp" />
+    </LinearLayout>
+
+</androidx.drawerlayout.widget.DrawerLayout>

@@ -5,22 +5,24 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
-
 import com.example.pathfinder.R;
+import com.google.android.material.textfield.TextInputEditText;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class DriverLogin extends AppCompatActivity {
-
-
-
+    Button mLoginBtn, mPassengerBtn;
+    ImageView mBackBtn;
+    TextInputEditText mUsername, mPassword;
     private Map<String, String> driversProfiles;
-
 
 
     /* Getters and setters */
@@ -35,8 +37,14 @@ public class DriverLogin extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        int view = R.layout.driver_login;
-        setContentView(view);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        setContentView(R.layout.activity_driver_login);
+
+        mLoginBtn = findViewById(R.id.sign_in);
+        mPassengerBtn = findViewById(R.id.cont_passenger);
+        mBackBtn = findViewById(R.id.back);
+        mUsername = (TextInputEditText)findViewById(R.id.username);
+        mPassword = (TextInputEditText)findViewById(R.id.password);
 
         driversProfiles = new HashMap<>();
         driversProfiles.put("Alex", "1234");
@@ -47,32 +55,48 @@ public class DriverLogin extends AppCompatActivity {
         driversProfiles.put("Ediz", "1234");
         Log.d("driver", "Drivers' profiles successfully loaded");
 
+        mLoginBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                /**
+                 * - Takes both inputs from the username and password input.
+                 * - Compares the username with the one registered in the drivers' profiles
+                 * - If a match, compares the password with the one registered for that specific user.
+                 * - Connects if it matches, notifies if not.
+                 * @param view -> -> R.id.connectButton for this method.
+                 */
+
+                String usernameInput = mUsername.getText().toString();
+                String passwordInput = mPassword.getText().toString();
+
+                if (isRegisteredUsername(usernameInput)) {
+                    if (isMatchingPassword(usernameInput,passwordInput)) {
+                        startActivity(new Intent(getApplicationContext(), DriverDashboard.class));
+                        Toast.makeText(DriverLogin.this, "Welcome!", Toast.LENGTH_SHORT).show();
+                        Log.d("driver", "Welcome!");
+                    }
+                } else {
+                    signInFailed();
+                    Log.d("driver", "Error: invalid username or password.");
+                }
+            }
+        });
+
+        mPassengerBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getApplicationContext(), PassengerDashboard.class));
+            }
+        });
+
+        mBackBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getApplicationContext(), UserSelection.class));
+            }
+        });
     }
 
-    /**
-     * - Takes both inputs from the username and password input.
-     * - Compares the username with the one registered in the drivers' profiles
-     * - If a match, compares the password with the one registered for that specific user.
-     * - Connects if it matches, notifies if not.
-     * @param view -> -> R.id.connectButton for this method.
-     */
-    public void connect(View view) {
-        String usernameInput = ((EditText) findViewById(R.id.usernameInput)).getText().toString();
-        String passwordInput = ((EditText) findViewById(R.id.passwordInput)).getText().toString();
-        if (isRegisteredUsername(usernameInput)) {
-            if (isMatchingPassword(usernameInput, passwordInput)) {
-                goToDashboard();
-                Log.d("driver", "Connection to selected user");
-            } else {
-                connectionFailed();
-                Log.d("driver", "Connection failed, password does not match user's");
-            }
-        } else {
-            connectionFailed();
-            Log.d("driver", "Connection failed, unregistered username");
-        }
-    }
-    
     public boolean isRegisteredUsername(String username){
         return driversProfiles.containsKey(username);
     }
@@ -80,23 +104,13 @@ public class DriverLogin extends AppCompatActivity {
     public boolean isMatchingPassword(String username, String password){
         return password.equals(driversProfiles.get(username));
     }
-    
-    
-    /**
-     * Helper method for connect(View view) to redirect to the dashboard activity (page).
-     */
-    private void goToDashboard() {
-        Intent intent = new Intent(this, DashboardActivity.class);
-        startActivity(intent);
-        finish();
-    }
+
 
     /**
-     * Helper method for connect(View view) to notify the connection failed.
+     * Helper method for to notify the connection failed.
      */
-    private void connectionFailed(){
-        Toast.makeText(this,R.string.connection_failed, Toast.LENGTH_LONG).show();
+    private void signInFailed(){
+        Toast.makeText(this, "Invalid username or password", Toast.LENGTH_LONG).show();
     }
-
 }
 
