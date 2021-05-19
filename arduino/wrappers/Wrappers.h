@@ -11,6 +11,7 @@ HeadingCar headingCar;
 DistanceCar distanceCar;
 SR04 ultraSound;
 InfraredAnalogSensor infraredSensor;
+ArduinoRuntime arduinoRuntime;
 
 struct MqttWrp : public MqttWrapper {
   bool connect(String hostname, String id, String password) override {
@@ -67,13 +68,32 @@ struct SerialWrp: public SerialWrapper {
   void println(String message) override {
       Serial.println(message);
   }
-#if defined(ARDUINO)
-  float_t millis() override {
+    void begin(int n) override {
+        Serial.begin(n);
+    }
+
+
+/*#if defined(ARDUINO)
+  float millis() override {
 
         return millis();
       }
-#endif
+#endif*/
 
 };
 
+
+struct ArduinoRunWrp: public ArduinoRunWrapper {
+    long millis() override {
+
+#if defined(ARDUINO)
+        return millis();
+#endif
+      }
+        //arduinoRuntime.millis();
+    void delay(int n) override {
+        arduinoRuntime.delay(n);
+    }
+
+};
 

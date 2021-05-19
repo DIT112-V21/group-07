@@ -51,8 +51,16 @@ struct InfraredSensorWrapper {
 struct SerialWrapper {
     virtual ~SerialWrapper() = default;
 
-    virtual float millis()                = 0;
+    //virtual float millis()                = 0;
     virtual void println(String message) = 0;
+    virtual void begin(int n) = 0;
+};
+
+struct ArduinoRunWrapper {
+    virtual ~ArduinoRunWrapper() = default;
+
+    virtual long millis()                = 0;
+    virtual void delay(int n)                = 0;
 };
 
 #if defined(ARDUINO)
@@ -93,11 +101,8 @@ void MQTTMessageInput(MqttWrapper &mqtt, SerialWrapper &serial){
                 connectivityLoss();
             }
             if (topic == "/smartcar/control/speed") {
-                // car.setSpeed(message.toInt());
-                // save speed and angle
                 handleSpeedTopic(stringToInt(message));
             } else if (topic == "/smartcar/control/angle") {
-                // car.setAngle(message.toInt());
                 handleAngleTopic(stringToInt(message));
             } else {
                 serial.println(message);
@@ -107,16 +112,11 @@ void MQTTMessageInput(MqttWrapper &mqtt, SerialWrapper &serial){
 }
 
 
-void SR04sensorData(bool pubSensorData, String publishTopic, UltraSoundWrapper &ultraSoundWrapper,
-                    SerialWrapper &serialWrapper, MqttWrapper &mqttWrapper) {
+void SR04sensorData(bool pubSensorData,MqttWrapper &mqttWrapper){
     if (pubSensorData) {
-        const float currentTime = serialWrapper.millis();
-        static auto previousTransmission = 0UL;
+        String message = "20";
 
-        if (currentTime - previousTransmission >= ONE_SECOND) {
-            previousTransmission = currentTime;
-            const auto distance = ultraSoundWrapper.getDistance();
-            mqttWrapper.publish(publishTopic, reinterpret_cast<const char *>(distance));
-        }
+        if (mqttWrapper.connect("arduino", "public", "public")) {
+            mqttWrapper.publish("/smartcar/ultrasound/front", message);}
     }
 }

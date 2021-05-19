@@ -11,7 +11,13 @@ struct MockMqttWrapper : public MqttWrapper {
 
 struct MockSerialWrapper : public SerialWrapper {
   MOCK_METHOD(void, println, (String), (override));
-  MOCK_METHOD(float , millis, (), (override));
+  MOCK_METHOD(void , begin, (int n), (override));
+};
+
+struct MockArduinoRunWrapper : public ArduinoRunWrapper {
+    MOCK_METHOD(long, millis, (), (override));
+    MOCK_METHOD(void, delay, (int n), (override));
+
 };
 
 struct MockSR04Wrapper : public UltraSoundWrapper {
@@ -60,19 +66,11 @@ TEST(MQTTMessageInputTest, MQTTMessageInput_WhenConnected_WillRegisterCallback) 
   MQTTMessageInput(mqttWrapper, serialWrapper);
 }
 
-/*TEST(SR04Test, SR04sensorData_WhenConnected_WillPublishToTopics) {
+TEST(SR04Test, SR04sensorData_WhenConnected_WillPublishToTopics) {
     MockMqttWrapper mqttWrapper;
-    MockSerialWrapper serialWrapper;
-    MockSR04Wrapper sr04Wrapper;
-
-    bool pubSensorData = true;
-    String publishTopic = "/smartcar/ultrasound/front";
-
-    //String message = reinterpret_cast<const char *>(sr04Wrapper.getDistance());
 
     EXPECT_CALL(mqttWrapper, connect(_, _, _)).WillOnce(Return(true));
-    EXPECT_CALL(mqttWrapper, publish(publishTopic, ""));
+    EXPECT_CALL(mqttWrapper, publish("/smartcar/ultrasound/front", "20"));
 
-    SR04sensorData(pubSensorData, publishTopic, sr04Wrapper, serialWrapper, mqttWrapper);
-
-}*/
+    SR04sensorData(true, mqttWrapper);
+}
