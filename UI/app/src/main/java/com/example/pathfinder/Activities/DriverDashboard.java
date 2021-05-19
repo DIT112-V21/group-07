@@ -60,7 +60,7 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
 
     private int speed = 0;
     private int angle = 0;
-    boolean isCruiseControl;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,7 +94,6 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 textView.setText("" + progress + "%");
-                onSeekBarMoved(seekBar);
             }
 
             @Override
@@ -120,38 +119,8 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
     @Override
     public void onThumbstickMoved(float xPercent, float yPercent, int id) {
         int angle = (int)((xPercent) * 100);
-        int strength = 0;
-        int seekProgress = - seekBar.getProgress();
-        if(isCruiseControl){
-            //setting fixed speed for cruise control
-            strength = seekProgress;
-        } else {
-            //range calculation (limit speed is active)
-            strength = (int) (yPercent * seekProgress);
-        }
-
-        Log.d("Main Method", "X percent: " + xPercent + " Y percent: " + yPercent);
-        //this should change and take a different speed later
-        drive(strength, angle, "driving");
+        int strength = (int)((yPercent) * -100);
     }
-
-    public void onSeekBarMoved(View view){
-        int strength = seekBar.getProgress();
-
-        if( isCruiseControl ){
-            drive(strength, STRAIGHT_ANGLE, "driving");
-        }
-    }
-
-    public void cruiseControlBtn(View view) {
-        isCruiseControl = !isCruiseControl;
-            int strength = seekBar.getProgress();
-            if (strength > IDLE_SPEED && isCruiseControl) {
-                drive(strength, STRAIGHT_ANGLE, "driving");
-            } else {
-                drive(0, 0, "Stopping");
-            }
-        }
 
     @Override
     protected void onResume() {

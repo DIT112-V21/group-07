@@ -21,7 +21,7 @@
     <string name="passenger">Not a driver? Get started now.</string>
 
     <!-- Driver Dashboard -->
-    <string name="set_speed">Set Speed</string>
+    <string name="set_speed">Limit Speed</string>
     <string name="brake">Brake</string>
     <string name="park">Park</string>
     <string name="unpark">Unpark</string>
