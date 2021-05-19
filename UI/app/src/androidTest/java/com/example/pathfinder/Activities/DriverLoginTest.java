@@ -12,7 +12,6 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
-import static androidx.test.espresso.Espresso.closeSoftKeyboard;
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
@@ -44,7 +43,7 @@ public class DriverLoginTest {
     public void setUp() {
         Intents.init();
         try {
-            Thread.sleep(3000);
+            Thread.sleep(4000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -65,12 +64,13 @@ public class DriverLoginTest {
      */
     @Test
     public void connectionSucceeded_changeActivityForDashboard() {
-        onView(withId(R.id.usernameInput)).perform(new TypeTextAction("Alex"));
-        onView(withId(R.id.passwordInput)).perform(new TypeTextAction("1234"));
-        onView(withId(R.id.passwordInput)).perform(new CloseKeyboardAction());
-        onView(withId(R.id.connectButton)).perform(click());
+        onView(withId(R.id.username)).perform(new TypeTextAction("Alex"));
+        onView(withId(R.id.username)).perform(new CloseKeyboardAction());
+        onView(withId(R.id.password)).perform(new TypeTextAction("1234"));
+        onView(withId(R.id.password)).perform(new CloseKeyboardAction());
+        onView(withId(R.id.sign_in)).perform(click());
 
-        Intents.intended(hasComponent(DashboardActivity.class.getName()));
+        Intents.intended(hasComponent(DriverDashboard.class.getName()));
 
     }
 
@@ -82,13 +82,13 @@ public class DriverLoginTest {
      */
     @Test
     public void invalidPassword_getNotificationThatConnectionFailed() {
-        onView(withId(R.id.usernameInput)).perform(new TypeTextAction("Alex"));
-        onView(withId(R.id.passwordInput)).perform(new TypeTextAction("123"));
-        onView(withId(R.id.passwordInput)).perform(new CloseKeyboardAction());
+        onView(withId(R.id.username)).perform(new TypeTextAction("Alex"));
+        onView(withId(R.id.username)).perform(new CloseKeyboardAction());
+        onView(withId(R.id.password)).perform(new TypeTextAction("123"));
+        onView(withId(R.id.password)).perform(new CloseKeyboardAction());
+        onView(withId(R.id.sign_in)).perform(click());
 
-        onView(withId(R.id.connectButton)).perform(click());
-
-        onView(withText(R.string.connection_failed))
+        onView(withText(R.string.signIn_failed))
                 .inRoot(new ToastMatcher("Is a Toast"))
                         .check(matches(isDisplayed()));
 
@@ -99,13 +99,13 @@ public class DriverLoginTest {
      */
     @Test
     public void unregisteredUsername_getNotificationThatConnectionFailed() {
-        onView(withId(R.id.usernameInput)).perform(new TypeTextAction("George"));
-        onView(withId(R.id.passwordInput)).perform(new TypeTextAction("123"));
-        onView(withId(R.id.passwordInput)).perform(new CloseKeyboardAction());
+        onView(withId(R.id.username)).perform(new TypeTextAction("George"));
+        onView(withId(R.id.username)).perform(new CloseKeyboardAction());
+        onView(withId(R.id.password)).perform(new TypeTextAction("1234"));
+        onView(withId(R.id.password)).perform(new CloseKeyboardAction());
+        onView(withId(R.id.sign_in)).perform(click());
 
-        onView(withId(R.id.connectButton)).perform(click());
-
-        onView(withText(R.string.connection_failed))
+        onView(withText(R.string.signIn_failed))
                 .inRoot(new ToastMatcher("Is a Toast"))
                 .check(matches(isDisplayed()));
 
@@ -117,13 +117,13 @@ public class DriverLoginTest {
     @Test
     public void emptyUsername_getNotificationThatConnectionFailed() {
         String empty = "";
-        onView(withId(R.id.usernameInput)).perform(new TypeTextAction(empty));
-        onView(withId(R.id.passwordInput)).perform(new TypeTextAction("123"));
-        onView(withId(R.id.passwordInput)).perform(new CloseKeyboardAction());
+        onView(withId(R.id.username)).perform(new TypeTextAction(empty));
+        onView(withId(R.id.username)).perform(new CloseKeyboardAction());
+        onView(withId(R.id.password)).perform(new TypeTextAction("1234"));
+        onView(withId(R.id.password)).perform(new CloseKeyboardAction());
+        onView(withId(R.id.sign_in)).perform(click());
 
-        onView(withId(R.id.connectButton)).perform(click());
-
-        onView(withText(R.string.connection_failed))
+        onView(withText(R.string.signIn_failed))
                 .inRoot(new ToastMatcher("Is a Toast"))
                 .check(matches(isDisplayed()));
 
@@ -135,13 +135,13 @@ public class DriverLoginTest {
     @Test
     public void emptyPassword_getNotificationThatConnectionFailed() {
         String empty = "";
-        onView(withId(R.id.usernameInput)).perform(new TypeTextAction("Alex"));
-        onView(withId(R.id.passwordInput)).perform(new TypeTextAction(empty));
-        onView(withId(R.id.passwordInput)).perform(new CloseKeyboardAction());
+        onView(withId(R.id.username)).perform(new TypeTextAction("Alex"));
+        onView(withId(R.id.username)).perform(new CloseKeyboardAction());
+        onView(withId(R.id.password)).perform(new TypeTextAction(empty));
+        onView(withId(R.id.password)).perform(new CloseKeyboardAction());
+        onView(withId(R.id.sign_in)).perform(click());
 
-        onView(withId(R.id.connectButton)).perform(click());
-
-        onView(withText(R.string.connection_failed))
+        onView(withText(R.string.signIn_failed))
                 .inRoot(new ToastMatcher("Is a Toast"))
                 .check(matches(isDisplayed()));
 

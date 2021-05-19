@@ -7,11 +7,11 @@ import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+
 import com.example.pathfinder.R;
 import com.google.android.material.textfield.TextInputEditText;
 
@@ -74,6 +74,9 @@ public class DriverLogin extends AppCompatActivity {
                         startActivity(new Intent(getApplicationContext(), DriverDashboard.class));
                         Toast.makeText(DriverLogin.this, "Welcome!", Toast.LENGTH_SHORT).show();
                         Log.d("driver", "Welcome!");
+                    }else{
+                        signInFailed();
+                        Log.d("driver", "Error: invalid password.");
                     }
                 } else {
                     signInFailed();
@@ -110,7 +113,7 @@ public class DriverLogin extends AppCompatActivity {
      * Helper method for to notify the connection failed.
      */
     private void signInFailed(){
-        Toast.makeText(this, "Invalid username or password", Toast.LENGTH_LONG).show();
+        Toast.makeText(this, R.string.signIn_failed, Toast.LENGTH_LONG).show();
     }
 }
 
