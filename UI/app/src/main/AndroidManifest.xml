@@ -13,9 +13,10 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.Pathfinder">
+        android:theme="@style/Theme.Pathfinder.NoActionBar">
+        <activity android:name=".Activities.PassengerDashboard"></activity>
         <activity
-            android:name=".Activities.DashboardActivity"
+            android:name=".Activities.DriverDashboard"
             android:label="@string/title_activity_dashboard"
             android:theme="@style/Theme.Pathfinder.NoActionBar" />
         <activity
@@ -26,7 +27,7 @@
             android:name=".Activities.UserSelection"
             android:label="@string/user_selection"
             android:theme="@style/Theme.Pathfinder.NoActionBar" />
-        <activity android:name=".Activities.MainActivity">
+        <activity android:name=".Activities.SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
