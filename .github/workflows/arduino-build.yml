@@ -31,18 +31,8 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-18.04, windows-latest]
-        compiler: [gnu, clang, msvc]
-
-        exclude:
-          - os: ubuntu-18.04
-            compiler: msvc
-
-          - os: windows-latest
-            compiler: gnu
-
-          - os: windows-latest
-            compiler: clang
+        os: [ubuntu-18.04]
+        compiler: [gnu, clang]
 
         include:
           - os: ubuntu-18.04
