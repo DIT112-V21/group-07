@@ -107,7 +107,9 @@ void loop() {
                           // connect through MQTT
     mqtt.loop();          // Also needed to keep storing the mqtt operations
     cameraData(true);     // True if camera is on, false otherwise.
-    SR04sensorData(true, "/smartcar/ultrasound/front"); // publish sensor data every
+    R04sensorData(true, "/smartcar/ultrasound/front", ultraSoundWrapper,
+                  SerialWrp, mqttWrp);
+    //SR04sensorData(true, "/smartcar/ultrasound/front"); // publish sensor data every
                                                   // one second through MQTT
     measureDistance(true, "/smartcar/car/distance");
   }
@@ -412,7 +414,7 @@ void sideAvoidance(int newAngle) {
  * be created in the header. SR04sensorData (true, "/smartcar/ultrasound/front"
  * , front); // ex how to use in loop method
  */
-void SR04sensorData(boolean pubSensorData, String publishTopic) {
+/*void SR04sensorData(boolean pubSensorData, String publishTopic) {
   if (pubSensorData) {
     const auto currentTime = millis();
     static auto previousTransmission = 0UL;
@@ -423,7 +425,7 @@ void SR04sensorData(boolean pubSensorData, String publishTopic) {
       mqtt.publish(publishTopic, distance);
     }
   }
-}
+}*/
 
 /**
  * Method to publish odometer sensor Data
@@ -507,3 +509,4 @@ void noCPUoverload() {
   delay(35);
 #endif
 }
+

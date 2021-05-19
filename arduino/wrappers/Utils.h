@@ -21,12 +21,7 @@ struct MqttWrapper {
   virtual void onMessage(std::function<void(String, String)> callback) = 0;
 };
 
-struct SerialWrapper {
-  virtual ~SerialWrapper() = default;
 
-  virtual void millis()                = 0;
-  virtual void println(String message) = 0;
-};
 
 struct SmartCarWrapper {
     virtual ~SmartCarWrapper() = default;
@@ -51,6 +46,13 @@ struct InfraredSensorWrapper {
 
     virtual int getDistance()          = 0;
 
+};
+
+struct SerialWrapper {
+    virtual ~SerialWrapper() = default;
+
+    virtual float millis()                = 0;
+    virtual void println(String message) = 0;
 };
 
 #if defined(ARDUINO)
@@ -103,16 +105,16 @@ inline void MQTTMessageInput(MqttWrapper &mqtt, SerialWrapper &serial) {
   }
 }
 
-void SR04sensorData(bool pubSensorData, String publishTopic, UltraSoundWrapper ultraSoundWrapper,
-                    SerialWrapper serialWrapper, MqttWrapper mqttWrapper) {
+void SR04sensorData(bool pubSensorData, String publishTopic, UltraSoundWrapper &ultraSoundWrapper,
+                    SerialWrapper &serialWrapper, MqttWrapper &mqttWrapper) {
     if (pubSensorData) {
-        const auto currentTime = serialWrapper.millis();
+        const float_t currentTime = serialWrapper.millis();
         static auto previousTransmission = 0UL;
 
         if (currentTime - previousTransmission >= ONE_SECOND) {
             previousTransmission = currentTime;
-            const auto distance = String(ultraSoundWrapper.getDistance());
-            mqttWrapper.publish(publishTopic, distance);
+            const auto distance = ultraSoundWrapper.getDistance();
+            mqttWrapper.publish(publishTopic, reinterpret_cast<const char *>(distance));
         }
     }
 }

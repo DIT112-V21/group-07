@@ -11,11 +11,20 @@ struct MockMqttWrapper : public MqttWrapper {
 
 struct MockSerialWrapper : public SerialWrapper {
   MOCK_METHOD(void, println, (String), (override));
-  MOCK_METHOD(void, millis, (), (override));
+  MOCK_METHOD(float_t , millis, (), (override));
 };
 
 struct MockSR04Wrapper : public UltraSoundWrapper {
     MOCK_METHOD(int, getDistance, (), (override));
+};
+
+struct MockSmartcarWrapper : public SmartCarWrapper {
+    MOCK_METHOD(float, getSpeed, (), (override));
+    MOCK_METHOD(void, setSpeed, (float speed), (override));
+    MOCK_METHOD(void, setAngle, (int angle), (override));
+    MOCK_METHOD(int, getDistance, (), (override));
+    MOCK_METHOD(int, getHeading, (), (override));
+    MOCK_METHOD(void, update, (), (override));
 };
 
 using ::testing::_;
@@ -64,4 +73,5 @@ TEST(SR04Test, SR04sensorData_WhenCOnnected_WillPublishToTopics) {
     EXPECT_CALL(mqttWrapper, publish(publishTopic, message));
 
     SR04sensorData(pubSensorData, publishTopic, sr04Wrapper, serialWrapper, mqttWrapper);
+
 }

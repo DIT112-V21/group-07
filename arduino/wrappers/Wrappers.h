@@ -24,7 +24,7 @@ struct MqttWrp : public MqttWrapper {
   }
 };
 
-struct SmartCarWrapper : public SmartCarWrapper{
+struct SmartCarWrp : public SmartCarWrapper{
 
     float getSpeed() {
         distanceCar.getSpeed();
@@ -47,7 +47,7 @@ struct SmartCarWrapper : public SmartCarWrapper{
     }
 };
 
-struct UltraSoundWrapper : public UltraSoundWrapper{
+struct UltraSoundWrp : public UltraSoundWrapper{
 
     int getDistance(){
         ultraSound.getDistance();
@@ -55,7 +55,7 @@ struct UltraSoundWrapper : public UltraSoundWrapper{
 
 };
 
-struct InfraredSensorWrapper : public InfraredSensorWrapper{
+struct InfraredSensorWrp : public InfraredSensorWrapper{
 
     int getDistance(){
         infraredSensor.getDistance();
@@ -67,11 +67,13 @@ struct SerialWrp: public SerialWrapper {
   void println(String message) override {
       Serial.println(message);
   }
-  void millis() override {
 #if defined(ARDUINO)
+  float_t millis() override {
+
         return millis();
+      }
 #endif
-    }
+
 };
 
 
