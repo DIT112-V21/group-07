@@ -214,7 +214,7 @@
                     android:layout_gravity="center"
                     android:background="@drawable/card_1"
                     android:layout_marginRight="5dp"
-                    />
+                    >
 
                     <ToggleButton
                         android:id="@+id/cruise_control"
