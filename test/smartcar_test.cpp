@@ -11,7 +11,7 @@ struct MockMqttWrapper : public MqttWrapper {
 
 struct MockSerialWrapper : public SerialWrapper {
   MOCK_METHOD(void, println, (String), (override));
-  MOCK_METHOD(float_t , millis, (), (override));
+  MOCK_METHOD(float , millis, (), (override));
 };
 
 struct MockSR04Wrapper : public UltraSoundWrapper {
@@ -60,10 +60,11 @@ TEST(MQTTMessageInputTest, MQTTMessageInput_WhenConnected_WillRegisterCallback) 
   MQTTMessageInput(mqttWrapper, serialWrapper);
 }
 
-TEST(SR04Test, SR04sensorData_WhenCOnnected_WillPublishToTopics) {
+TEST(SR04Test, SR04sensorData_WhenConnected_WillPublishToTopics) {
     MockMqttWrapper mqttWrapper;
     MockSerialWrapper serialWrapper;
     MockSR04Wrapper sr04Wrapper;
+
     bool pubSensorData = true;
     String publishTopic = "/smartcar/ultrasound/front";
 

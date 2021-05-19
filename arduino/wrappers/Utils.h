@@ -80,35 +80,37 @@ inline int stringToInt(String input) {
  * Subscribing the car with the app so it can react to the different input from
  * the app. Used when connected to MQTT server.
  */
-inline void MQTTMessageInput(MqttWrapper &mqtt, SerialWrapper &serial) {
 
-  if (mqtt.connect("arduino", "public", "public")) {
-    mqtt.subscribe("/smartcar/control/#", 1);
-    mqtt.subscribe("/smartcar/connectionLost", 1);
 
-    mqtt.onMessage([&](String topic, String message) {
-      // Check if connectionLost(Last will) topic is received
-      if (topic == "/smartcar/connectionLost") {
-        connectivityLoss();
-      }
-      if (topic == "/smartcar/control/speed") {
-        // car.setSpeed(message.toInt());
-        // save speed and angle
-        handleSpeedTopic(stringToInt(message));
-      } else if (topic == "/smartcar/control/angle") {
-        // car.setAngle(message.toInt());
-        handleAngleTopic(stringToInt(message));
-      } else {
-        serial.println(message);
-      }
-    });
-  }
+void MQTTMessageInput(MqttWrapper &mqtt, SerialWrapper &serial){
+    if (mqtt.connect("arduino", "public", "public")) {
+        mqtt.subscribe("/smartcar/control/#", 1);
+        mqtt.subscribe("/smartcar/connectionLost", 1);
+
+        mqtt.onMessage([&](String topic, String message) {
+            // Check if connectionLost(Last will) topic is received
+            if (topic == "/smartcar/connectionLost") {
+                connectivityLoss();
+            }
+            if (topic == "/smartcar/control/speed") {
+                // car.setSpeed(message.toInt());
+                // save speed and angle
+                handleSpeedTopic(stringToInt(message));
+            } else if (topic == "/smartcar/control/angle") {
+                // car.setAngle(message.toInt());
+                handleAngleTopic(stringToInt(message));
+            } else {
+                serial.println(message);
+            }
+        });
+    }
 }
+
 
 void SR04sensorData(bool pubSensorData, String publishTopic, UltraSoundWrapper &ultraSoundWrapper,
                     SerialWrapper &serialWrapper, MqttWrapper &mqttWrapper) {
     if (pubSensorData) {
-        const float_t currentTime = serialWrapper.millis();
+        const float currentTime = serialWrapper.millis();
         static auto previousTransmission = 0UL;
 
         if (currentTime - previousTransmission >= ONE_SECOND) {
