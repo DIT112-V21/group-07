@@ -1,4 +1,4 @@
-#pragma once
+/*#pragma once
 
 #include <Arduino.h>
 #include <MQTT.h>
@@ -7,14 +7,13 @@
 #include "Utils.h"
 
 MQTTClient mqtt;
-HeadingCar headingCar;
 DistanceCar distanceCar;
 SR04 ultraSound;
 InfraredAnalogSensor infraredSensor;
 ArduinoRuntime arduinoRuntime;
 
 
-
+/*
 struct ArduinoRunTimeWrp : public ArduinoRunTimeWrapper{
 
     void setPinDirection(int pin, PinDirection pinDirection)
@@ -32,10 +31,10 @@ struct ArduinoRunTimeWrp : public ArduinoRunTimeWrapper{
         digitalWrite(pin, LOW);
     }
 
-};
+};*/
 
 
-struct MqttWrp : public MqttWrapper {
+/*struct MqttWrp : public MqttWrapper {
   bool connect(String hostname, String id, String password) override {
     return mqtt.connect(hostname.c_str(), id.c_str(), password.c_str());
   }
@@ -45,9 +44,9 @@ struct MqttWrp : public MqttWrapper {
   void onMessage(std::function<void(String, String)> callback) override {
     mqtt.onMessage(callback);
   }
-};
+};*/
 
-struct SmartCarWrp : public SmartCarWrapper{
+/*struct SmartCarWrp : public SmartCarWrapper{
 
     float getSpeed() {
         distanceCar.getSpeed();
@@ -66,8 +65,8 @@ struct SmartCarWrp : public SmartCarWrapper{
     void update() {
         distanceCar.update();
     }
-};
-
+};*/
+/*
 struct UltraSoundWrp : public UltraSoundWrapper{
 
     int getDistance(){
@@ -92,7 +91,7 @@ struct SerialWrp: public SerialWrapper {
         Serial.begin(n);
     }
 
-};
+};*/
 
 
 /*struct ArduinoRunWrp: public ArduinoRunWrapper {

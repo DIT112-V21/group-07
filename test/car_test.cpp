@@ -17,13 +17,13 @@ struct MockMqttWrapper : public MqttWrapper {
 
 struct MockSerialWrapper : public SerialWrapper {
   MOCK_METHOD(void, println, (String), (override));
-  MOCK_METHOD(void , begin, (int n), (override));
+  MOCK_METHOD(void , begin, (int ), (override));
 };
 
 struct MockArduinoRunTimeWrapper : public ArduinoRunTimeWrapper {
     MOCK_METHOD(void, setPinDirection, (int pin, PinDirection pinDirection), (override));
-    MOCK_METHOD(void , setPin, (int pin), (override));
-    MOCK_METHOD(void , clearPin, (int pin), (override));
+    MOCK_METHOD(void , setPin, (int ), (override));
+    MOCK_METHOD(void , clearPin, (int), (override));
 };
 
 /*struct MockArduinoRunWrapper : public ArduinoRunWrapper {
@@ -34,22 +34,29 @@ struct MockArduinoRunTimeWrapper : public ArduinoRunTimeWrapper {
 
 
 
-struct MockSR04Wrapper : public UltraSoundWrapper {
+/*struct MockSR04Wrapper : public UltraSoundWrapper {
     MOCK_METHOD(int, getDistance, (), (override));
-};
+};*/
 
 
 
 struct MockSmartcarWrapper : public SmartCarWrapper {
     MOCK_METHOD(float, getSpeed, (), (override));
-    MOCK_METHOD(void, setSpeed, (float speed), (override));
-    MOCK_METHOD(void, setAngle, (int angle), (override));
+    MOCK_METHOD(void, setSpeed, (float ), (override));
+    MOCK_METHOD(void, setAngle, (int), (override));
     MOCK_METHOD(int, getDistance, (), (override));
     MOCK_METHOD(void, update, (), (override));
 };
 
-
-
+/*struct MockSmartCarControllerWrapper : public SmartCarControllerWrapper {
+    MOCK_METHOD(float, getSpeed, (), (override));
+    MOCK_METHOD(void, setSpeed, (float speed), (override));
+    MOCK_METHOD(void, setAngle, (int angle), (override));
+    MOCK_METHOD(int, getDistance, (), (override));
+    MOCK_METHOD(void, update, (), (override));
+    MOCK_METHOD(void, SR04sensorData,(bool pubSensorData,MqttWrapper &mqttWrapper));
+};
+*/
 using ::testing::_;
 using ::testing::Return;
 
@@ -97,17 +104,25 @@ TEST(SR04Test, SR04sensorData_WhenConnected_WillPublishToTopics) {
     EXPECT_CALL(mqttWrapper, connect(_, _, _)).WillOnce(Return(true));
     EXPECT_CALL(mqttWrapper, publish("/smartcar/ultrasound/front", "20"));
 
-
     SR04sensorData(true, mqttWrapper);
 }
 
-TEST(MagicCarConstructorTest, constructor_WhenCalled_WillSetLightsPinDirection)
-{
-    MockSmartcarWrapper car;
-    MockMqttWrapper mockMqttWrapper;
-    MockArduinoRunTimeWrapper pinController;
 
-    EXPECT_CALL(pinController,
-                setPinDirection(kLightsPin, PinDirection::kOutput));
-    SmartCarControllerWrapper smartCarControllerWrapper{car, mockMqttWrapper, pinController};
+
+// When moving this method to the Utils.cpp file it gives this error..
+// so we will keep it in the header file until we fix the error.
+// Error :: clang: error: linker command failed with exit code 1 (use -v to see invocation)
+
+
+TEST(carSetSpeedTest, handleSpeedInput_WhenConnected_WillSetTheCarSpeed) {
+    MockMqttWrapper mqttWrapper;
+    MockSerialWrapper serialWrapper;
+    MockSmartcarWrapper car;
+    const auto speed = 20.0f;
+
+    EXPECT_CALL(mqttWrapper, connect(_, _, _)).WillOnce(Return(true));
+    EXPECT_CALL(car, setSpeed(speed));
+
+
+    handleSpeedInput(speed, car, mqttWrapper);
 }

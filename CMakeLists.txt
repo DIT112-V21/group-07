@@ -24,6 +24,7 @@ add_compile_options(
         # -Wextra
         # -Werror
 )
+set(smartcar_test ${CMAKE_CURRENT_SOURCE_DIR}/arduino/wrappers)
 
 add_subdirectory(external)
 enable_testing()

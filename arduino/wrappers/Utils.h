@@ -12,12 +12,13 @@ using String = std::string;
 
 const unsigned int kDefaultMaxDistance = 70;
 
+
 enum class PinDirection
 {
     kInput,
     kOutput
 };
-const auto ONE_SECOND = 1000UL;
+
 
 struct ArduinoRunTimeWrapper {
     virtual ~ArduinoRunTimeWrapper() = default;
@@ -49,28 +50,13 @@ struct SmartCarWrapper {
     virtual void update()              = 0;
 };
 
-struct SmartCarControllerWrapper : public SmartCarWrapper{
-    SmartCarControllerWrapper(SmartCarWrapper& car, MqttWrapper& mqtt, ArduinoRunTimeWrapper& pinControler);
-
-    float getSpeed()           override;
-    void setSpeed(float speed) override;
-    void setAngle(int angle)   override;
-    int getDistance()          override;
-    void update()              override;
-};
 
 struct UltraSoundWrapper {
-    UltraSoundWrapper(ArduinoRunTimeWrapper& arduinoRunTimeWrapper,
-    uint8_t triggerPin,
-            uint8_t echoPin,
-    unsigned int maxDistance = kDefaultMaxDistance);
 
     virtual ~UltraSoundWrapper() = default;
 
     virtual int getDistance()          = 0;
 
-private:
-    ArduinoRunTimeWrapper& mArduinoRunTimeWrapper;
 };
 
 struct InfraredSensorWrapper {
@@ -116,6 +102,26 @@ inline int stringToInt(String input) {
 #endif
 }
 
+class SmartCarControllerWrapper : public SmartCarWrapper
+{
+
+public:
+    SmartCarControllerWrapper(SmartCarWrapper& car, MqttWrapper& mqtt, ArduinoRunTimeWrapper& pinController);
+
+
+    void setSpeed(float speed) override;
+    float getSpeed() override;
+    void setAngle(int angle) override;
+    int getDistance()    override;
+    void update() override;
+
+
+private:
+    SmartCarWrapper& mCar;
+    MqttWrapper& mMqtt;
+    ArduinoRunTimeWrapper& mPinController;
+};
+
 /**
  * Subscribing the car with the app so it can react to the different input from
  * the app. Used when connected to MQTT server.
@@ -153,3 +159,11 @@ void SR04sensorData(bool pubSensorData,MqttWrapper &mqttWrapper){
     }
 }
 
+void handleSpeedInput(float speed,SmartCarWrapper &car, MqttWrapper &mqtt){
+    if (mqtt.connect("arduino", "public", "public")) {
+
+        car.setSpeed(speed);
+    }
+}
+
+//void handleSpeedInput(float speed,SmartCarWrapper &car, MqttWrapper &mqtt);
