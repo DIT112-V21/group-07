@@ -10,7 +10,23 @@
 using String = std::string;
 #endif
 
+const unsigned int kDefaultMaxDistance = 70;
+
+enum class PinDirection
+{
+    kInput,
+    kOutput
+};
 const auto ONE_SECOND = 1000UL;
+
+struct ArduinoRunTimeWrapper {
+    virtual ~ArduinoRunTimeWrapper() = default;
+
+    virtual void setPinDirection(int pin, PinDirection pinDirection) = 0;
+    virtual void setPin(int pin)                                     = 0;
+    virtual void clearPin(int pin)                                   = 0;
+};
+
 
 struct MqttWrapper {
   virtual ~MqttWrapper() = default;
@@ -29,16 +45,32 @@ struct SmartCarWrapper {
     virtual float getSpeed()           = 0;
     virtual void setSpeed(float speed) = 0;
     virtual void setAngle(int angle)   = 0;
-    virtual int getHeading()           = 0;
     virtual int getDistance()          = 0;
     virtual void update()              = 0;
 };
 
+struct SmartCarControllerWrapper : public SmartCarWrapper{
+    SmartCarControllerWrapper(SmartCarWrapper& car, MqttWrapper& mqtt, ArduinoRunTimeWrapper& pinControler);
+
+    float getSpeed()           override;
+    void setSpeed(float speed) override;
+    void setAngle(int angle)   override;
+    int getDistance()          override;
+    void update()              override;
+};
+
 struct UltraSoundWrapper {
+    UltraSoundWrapper(ArduinoRunTimeWrapper& arduinoRunTimeWrapper,
+    uint8_t triggerPin,
+            uint8_t echoPin,
+    unsigned int maxDistance = kDefaultMaxDistance);
+
     virtual ~UltraSoundWrapper() = default;
 
     virtual int getDistance()          = 0;
 
+private:
+    ArduinoRunTimeWrapper& mArduinoRunTimeWrapper;
 };
 
 struct InfraredSensorWrapper {
@@ -120,3 +152,4 @@ void SR04sensorData(bool pubSensorData,MqttWrapper &mqttWrapper){
             mqttWrapper.publish("/smartcar/ultrasound/front", message);}
     }
 }
+

@@ -13,6 +13,28 @@ SR04 ultraSound;
 InfraredAnalogSensor infraredSensor;
 ArduinoRuntime arduinoRuntime;
 
+
+
+struct ArduinoRunTimeWrp : public ArduinoRunTimeWrapper{
+
+    void setPinDirection(int pin, PinDirection pinDirection)
+    {
+        pinMode(pin, pinDirection == PinDirection::kInput ? INPUT : OUTPUT);
+    }
+
+    void setPin(int pin)
+    {
+        digitalWrite(pin, HIGH);
+    }
+
+    void clearPin(int pin)
+    {
+        digitalWrite(pin, LOW);
+    }
+
+};
+
+
 struct MqttWrp : public MqttWrapper {
   bool connect(String hostname, String id, String password) override {
     return mqtt.connect(hostname.c_str(), id.c_str(), password.c_str());
@@ -37,9 +59,7 @@ struct SmartCarWrp : public SmartCarWrapper{
     void setAngle(int angle) {
         distanceCar.setAngle(angle);
     }
-    int getHeading() {
-        headingCar.getHeading();
-    }
+
     int getDistance() {
         distanceCar.getDistance();
     }
@@ -72,18 +92,10 @@ struct SerialWrp: public SerialWrapper {
         Serial.begin(n);
     }
 
-
-/*#if defined(ARDUINO)
-  float millis() override {
-
-        return millis();
-      }
-#endif*/
-
 };
 
 
-struct ArduinoRunWrp: public ArduinoRunWrapper {
+/*struct ArduinoRunWrp: public ArduinoRunWrapper {
     long millis() override {
 
 #if defined(ARDUINO)
@@ -95,5 +107,5 @@ struct ArduinoRunWrp: public ArduinoRunWrapper {
         arduinoRuntime.delay(n);
     }
 
-};
+};*/
 
