@@ -58,6 +58,7 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
     /**Used as a way to compare previously published messages with GUI's current values*/
     private int lastSentSpeed = 0;
     private int lastSentAngle = 0;
+    private boolean isCruiseControl;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -119,7 +120,7 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
         int strength;
         //TODO: check why do we need the negative of seekBar.getProgress()
         int seekProgress = - seekBar.getProgress();
-        if(mCruiseControlBtn.isEnabled()){
+        if(isCruiseControl){
             //setting fixed speed for cruise control
             strength = seekProgress;
         }else{
@@ -130,8 +131,9 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
     }
 
     public void onCruiseControlBtn(View view) {
+        isCruiseControl = !isCruiseControl;
         int strength = seekBar.getProgress();
-        if (strength > IDLE_SPEED && mCruiseControlBtn.isEnabled()) {
+        if (strength > IDLE_SPEED && isCruiseControl) {
             drive(strength, STRAIGHT_ANGLE, "driving");
         } else {
             drive(IDLE_SPEED, STRAIGHT_ANGLE, "stopping");
@@ -144,7 +146,7 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 textView.setText("" + progress + "%");
-                if (mCruiseControlBtn.isEnabled()) {
+                if (isCruiseControl) {
                     drive(progress, STRAIGHT_ANGLE, "driving");
                 }
             }
