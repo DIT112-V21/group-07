@@ -1,4 +1,5 @@
 #include <vector>
+#include <vector>
 #ifdef __SMCE__
 #include <OV767X.h>
 #endif
@@ -86,7 +87,7 @@ void setup()
 
     //Example:
     // chose to connect to localhost or external
-    startCamera(); // To initiliaze the camera as soon as the car starts rolling
+    startCamera(); // To initialize the camera as soon as the car starts rolling
     connectHost(true); //choose true to connect to localhost.
 
     MQTTMessageInput();
@@ -484,7 +485,7 @@ void connectHost(boolean ifLocalhost){
     }
 }
 
-// To initiliaze the video streaming
+// To initialize the video streaming
 void startCamera()
 {
 #ifdef __SMCE__

@@ -2,10 +2,12 @@
 #include <Arduino.h>
 #include <MQTT.h>
 #include <Smartcar.h>
+#include <WiFi.h>
 #include "Utils.h"
 
 
 MQTTClient mqtt;
+WiFiClient net;
 DistanceCar distanceCar;
 SR04 ultraSound;
 InfraredAnalogSensor infraredSensor;
@@ -90,20 +92,47 @@ struct SerialWrp: public SerialWrapper {
     void begin(int n) override {
         Serial.begin(n);
     }
-
+    bool available() override {
+        Serial.available();
+    }
+    char readStringUntil(char singleQuotion) override {
+        Serial.readStringUntil(singleQuotion);
+    }
 };
 
 
 struct MqttWrp : public MqttWrapper {
+  void beginLocal() override{
+      //mqtt.begin(net);
+
+#ifdef __SMCE__
+      mqtt.begin(WiFi);
+#else
+      mqttWrapper.beginLocal();
+#endif
+  }
+  void beginExternal() override{
+        //mqtt.begin("test.mosquitto.org", 1883, WiFi);
+#ifdef __SMCE__
+      mqtt.begin("test.mosquitto.org", 1883, WiFi);
+#else
+      mqtt.begin(net);
+#endif
+  }
   bool connect(String hostname, String id, String password) override {
     return mqtt.connect(hostname.c_str(), id.c_str(), password.c_str());
   }
 
-  void subscribe(String topic, int qos) override { mqtt.subscribe(topic, qos); }
-  void publish(String topic, String message) override { mqtt.subscribe(topic, message); }
+  void subscribe(String topic, int qos) override {
+      mqtt.subscribe(topic, qos);
+  }
+  void publish(String topic, String message) override {
+      mqtt.subscribe(topic, message);
+  }
   void onMessage(std::function<void(String, String)> callback) override {
     mqtt.onMessage(callback);
   }
+
 };
 
 struct SmartCarWrp: public SmartCarWrapper{
@@ -141,3 +170,4 @@ struct SmartCarWrp: public SmartCarWrapper{
         }
     }
 }*/
+

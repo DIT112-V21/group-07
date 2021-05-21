@@ -12,7 +12,6 @@ using String = std::string;
 
 const unsigned int kDefaultMaxDistance = 70;
 
-
 enum class PinDirection
 {
     kInput,
@@ -31,14 +30,14 @@ struct ArduinoRunTimeWrapper {
 
 struct MqttWrapper {
   virtual ~MqttWrapper() = default;
-
+  virtual void beginLocal() = 0;
+  virtual void beginExternal() = 0;
   virtual bool connect(String hostname, String id, String password) = 0;
   virtual void subscribe(String topic, int qos) = 0;
   virtual void publish(String topic, String message) = 0;
   virtual void onMessage(std::function<void(String, String)> callback) = 0;
+
 };
-
-
 
 struct SmartCarWrapper {
     virtual ~SmartCarWrapper() = default;
@@ -72,6 +71,8 @@ struct SerialWrapper {
     //virtual float millis()                = 0;
     virtual void println(String message) = 0;
     virtual void begin(int n) = 0;
+    virtual bool available() = 0;
+    virtual char readStringUntil(char singleQuotion) = 0;
 };
 
 struct ArduinoRunWrapper {
@@ -108,7 +109,6 @@ class SmartCarControllerWrapper : public SmartCarWrapper
 public:
     SmartCarControllerWrapper(SmartCarWrapper& car, MqttWrapper& mqtt, ArduinoRunTimeWrapper& pinController);
 
-
     void setSpeed(float speed) override;
     float getSpeed() override;
     void setAngle(int angle) override;
@@ -122,12 +122,7 @@ private:
     ArduinoRunTimeWrapper& mPinController;
 };
 
-/**
- * Subscribing the car with the app so it can react to the different input from
- * the app. Used when connected to MQTT server.
- */
-
-
+// Speed and Angle is not tested because they are tested for connectionLost and Control topics
 void MQTTMessageInput(MqttWrapper &mqtt, SerialWrapper &serial){
     if (mqtt.connect("arduino", "public", "public")) {
         mqtt.subscribe("/smartcar/control/#", 1);
@@ -159,17 +154,10 @@ void SR04sensorData(bool pubSensorData,MqttWrapper &mqttWrapper){
     }
 }
 
-/*void handleSpeedInput(float speed,SmartCarWrapper &car, MqttWrapper &mqtt){
-    if (mqtt.connect("arduino", "public", "public")) {
-
-        car.setSpeed(speed);
-    }
-}*/
-
 void handleSpeedInput(int distance, int inputSpeed, SerialWrapper &serialWrapper, MqttWrapper &mqttWrapper, SmartCarWrapper &car) {
     if (distance != 0) {
         serialWrapper.println(
-                "Obstacle detected in the direction you are trying to move");//void handleSpeedInput(float speed,SmartCarWrapper &car, MqttWrapper &mqtt);
+               "Obstacle detected in the direction you are trying to move");
     } else {
         if (inputSpeed < 0) {
             car.setSpeed(inputSpeed/2);
@@ -177,3 +165,86 @@ void handleSpeedInput(int distance, int inputSpeed, SerialWrapper &serialWrapper
     }
 }
 
+void handleAngleInput(int distance, int inputAngle, SerialWrapper &serialWrapper, MqttWrapper &mqttWrapper, SmartCarWrapper &car){
+    if (distance != 0) {
+        serialWrapper.println("Obstacle detected in the direction you are trying to move");
+    } else {
+        car.setAngle(inputAngle);
+    }
+}
+
+
+void handleInput_SpeedTopicPositive(String input, int speed,
+                              SerialWrapper &serialWrapper, MqttWrapper &mqttWrapper,
+                              SmartCarWrapper &car, InfraredSensorWrapper &InfraredSensor){
+    if (serialWrapper.available()) {
+        String givenNameS = "s";
+        if (input.starts_with(givenNameS)) {
+            if (speed > 0) {
+                int frontValue = InfraredSensor.getDistance();
+                handleSpeedInput(frontValue, speed, serialWrapper, mqttWrapper, car);
+            }
+        }
+    }
+}
+
+void handleInput_SpeedTopicNegative(String input, int speed,
+    SerialWrapper &serialWrapper, MqttWrapper &mqttWrapper,
+            SmartCarWrapper &car, InfraredSensorWrapper &InfraredSensor){
+        if (serialWrapper.available()) {
+            String givenNameS = "s";
+            if (input.starts_with(givenNameS)) {
+                if (speed < 0) {
+                    int backValue = InfraredSensor.getDistance();
+                    handleSpeedInput(backValue, speed, serialWrapper, mqttWrapper, car);
+                }
+            }
+        }
+}
+
+void handleInputStopCar(String input, SerialWrapper &serialWrapper, SmartCarWrapper &car){
+    if (serialWrapper.available()) {
+        String givenNameS = "s";
+        if (!(input.starts_with(givenNameS))) {
+            car.setSpeed(0);
+        }
+    }
+}
+
+//Commented out because of the same conditions are tested on SpeedTopic
+/*
+void handleInput_AngleTopicPositive(String input, int angle,
+                                    SerialWrapper &serialWrapper, MqttWrapper &mqttWrapper,
+                                    SmartCarWrapper &car, InfraredSensorWrapper &InfraredSensor){
+    if (serialWrapper.available()) {
+        String givenNameA = "a";
+        if (input.starts_with(givenNameA)) {
+            if (angle > 0) {
+                int frontValue = InfraredSensor.getDistance();
+                handleSpeedInput(frontValue, angle, serialWrapper, mqttWrapper, car);
+            }
+        }
+    }
+}
+
+void handleInput_AngleTopicNegative(String input, int angle,
+                                    SerialWrapper &serialWrapper, MqttWrapper &mqttWrapper,
+                                    SmartCarWrapper &car, InfraredSensorWrapper &InfraredSensor){
+    if (serialWrapper.available()) {
+        String givenNameA = "a";
+        if (input.starts_with(givenNameA)) {
+            if (angle < 0) {
+                int backValue = InfraredSensor.getDistance();
+                handleSpeedInput(backValue, angle, serialWrapper, mqttWrapper, car);
+            }
+        }
+    }
+}*/
+
+void connectLocalHost(bool ifLocalhost, MqttWrapper &mqttWrapper){
+    mqttWrapper.beginLocal();
+}
+
+void connectExternalHost(bool ifLocalhost, MqttWrapper &mqttWrapper){
+    mqttWrapper.beginExternal();
+}

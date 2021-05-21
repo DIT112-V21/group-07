@@ -1,12 +1,15 @@
 #include "../arduino/wrappers/Utils.h"
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
+
 #include <iostream>
 
 const auto kSuccess   = 200;
 const auto kLightsPin = 2;
 
 struct MockMqttWrapper : public MqttWrapper {
+  MOCK_METHOD(void, beginLocal, (), (override));
+  MOCK_METHOD(void, beginExternal, (), (override));
   MOCK_METHOD(bool, connect, (String, String, String), (override));
   MOCK_METHOD(void, subscribe, (String, int), (override));
   MOCK_METHOD(void, publish, (String, String), (override));
@@ -18,6 +21,8 @@ struct MockMqttWrapper : public MqttWrapper {
 struct MockSerialWrapper : public SerialWrapper {
   MOCK_METHOD(void, println, (String), (override));
   MOCK_METHOD(void , begin, (int ), (override));
+  MOCK_METHOD(bool , available, (), (override));
+  MOCK_METHOD(char , readStringUntil, (char ), (override));
 };
 
 struct MockArduinoRunTimeWrapper : public ArduinoRunTimeWrapper {
@@ -34,11 +39,13 @@ struct MockArduinoRunTimeWrapper : public ArduinoRunTimeWrapper {
 
 
 
-/*struct MockSR04Wrapper : public UltraSoundWrapper {
+struct MockSR04Wrapper : public UltraSoundWrapper {
     MOCK_METHOD(int, getDistance, (), (override));
-};*/
+};
 
-
+struct MockInfraredSensor : public InfraredSensorWrapper {
+    MOCK_METHOD(int, getDistance, (), (override));
+};
 
 struct MockSmartcarWrapper : public SmartCarWrapper {
     MOCK_METHOD(float, getSpeed, (), (override));
@@ -85,7 +92,6 @@ TEST(MQTTMessageInputTest, MQTTMessageInput_WhenConnected_WillSubscribeToTopics)
 }
 
 
-
 TEST(MQTTMessageInputTest, MQTTMessageInput_WhenConnected_WillRegisterCallback) {
   MockMqttWrapper mqttWrapper;
   MockSerialWrapper serialWrapper;
@@ -114,7 +120,7 @@ TEST(SR04Test, SR04sensorData_WhenConnected_WillPublishToTopics) {
 // Error :: clang: error: linker command failed with exit code 1 (use -v to see invocation)
 
 
-TEST(carSetSpeedTest, handleSpeedInput_WhenConnected_WillSetTheCarSpeed) {
+TEST(handleSpeedInput_Test, handleSpeedInput_WhenSetSpeed_WillDivideTheCarSpeed) {
     MockMqttWrapper mqttWrapper;
     MockSerialWrapper serialWrapper;
     MockSmartcarWrapper car;
@@ -124,4 +130,75 @@ TEST(carSetSpeedTest, handleSpeedInput_WhenConnected_WillSetTheCarSpeed) {
     EXPECT_CALL(car, setSpeed(speed/2));
 
     handleSpeedInput(0,speed,serialWrapper,mqttWrapper, car);
+}
+
+TEST(handleAngleInput_Test, handleAngleInput_WhenSetAngle_WillSetTheCarAngle){
+    MockMqttWrapper mqttWrapper;
+    MockSerialWrapper serialWrapper;
+    MockSmartcarWrapper car;
+
+    const auto angle = 70;
+
+    EXPECT_CALL(car, setAngle(angle));
+
+    handleAngleInput (0, angle, serialWrapper, mqttWrapper, car);
+}
+
+TEST(handleInput_Test, handleInput_WhenConnectedAndSpeedIsPozitive_WillReturnSensorDistancePozitive) {
+    MockMqttWrapper mqttWrapper;
+    MockSerialWrapper serialWrapper;
+    MockSmartcarWrapper car;
+    MockInfraredSensor infraredSensor;
+    String input = "start";
+
+    const auto speedPositive = 20.0f;
+
+    EXPECT_CALL(serialWrapper, available()).WillOnce(Return(true));
+    EXPECT_CALL(infraredSensor, getDistance());
+
+    handleInput_SpeedTopicPositive(input, speedPositive, serialWrapper, mqttWrapper, car, infraredSensor);
+}
+
+TEST(handleInput_Test, handleInput_WhenConnectedAndSpeedIsNegative_WillReturnSensorDistanceNegative) {
+    MockMqttWrapper mqttWrapper;
+    MockSerialWrapper serialWrapper;
+    MockSmartcarWrapper car;
+    MockInfraredSensor infraredSensor;
+    String input = "start";
+
+    const auto speedNegative = -20.0f;
+
+    EXPECT_CALL(serialWrapper, available()).WillOnce(Return(true));
+    EXPECT_CALL(infraredSensor, getDistance());
+
+    handleInput_SpeedTopicNegative(input, speedNegative, serialWrapper, mqttWrapper, car, infraredSensor);
+}
+
+
+TEST(handleInputStopCar_Test, handleInputStopCar_WhenConnectedAndTopicNotStartWithS_WillStopTheCar) {
+    MockSerialWrapper serialWrapper;
+    MockSmartcarWrapper car;
+
+    String input = "dart";
+
+    EXPECT_CALL(serialWrapper, available()).WillOnce(Return(true));
+    EXPECT_CALL(car, setSpeed(0));
+
+    handleInputStopCar(input, serialWrapper,car);
+}
+
+TEST(connectLocalHost_Test, connectLocalHost_WhenCalled_WillConnectToLocalHost) {
+    MockMqttWrapper mqttWrapper;
+
+    EXPECT_CALL(mqttWrapper, beginLocal());
+
+    connectLocalHost(true, mqttWrapper);
+}
+
+TEST(connectExternalHost_Test, connectExternalHost_WhenCalled_WillConnectToExternalHost) {
+    MockMqttWrapper mqttWrapper;
+
+    EXPECT_CALL(mqttWrapper, beginExternal());
+
+    connectExternalHost(true, mqttWrapper);
 }
