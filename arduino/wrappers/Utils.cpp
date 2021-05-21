@@ -131,9 +131,13 @@ struct SmartCarWrp: public SmartCarWrapper{
 };
 
 
-/*void handleSpeedInput(float speed,SmartCarWrapper &car, MqttWrapper &mqtt){
-    if (mqtt.connect("arduino", "public", "public")) {
-
-        car.setSpeed(speed);
+/*void handleSpeedInput(int distance, int inputSpeed, SerialWrapper &serialWrapper, MqttWrapper &mqttWrapper, SmartCarWrapper &car) {
+    if (distance != 0) {
+        serialWrapper.println(
+                "Obstacle detected in the direction you are trying to move");//void handleSpeedInput(float speed,SmartCarWrapper &car, MqttWrapper &mqtt);
+    } else {
+        if (inputSpeed < 0) {
+            car.setSpeed(inputSpeed/2);
+        }
     }
 }*/

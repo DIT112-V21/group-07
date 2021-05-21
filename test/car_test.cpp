@@ -118,11 +118,10 @@ TEST(carSetSpeedTest, handleSpeedInput_WhenConnected_WillSetTheCarSpeed) {
     MockMqttWrapper mqttWrapper;
     MockSerialWrapper serialWrapper;
     MockSmartcarWrapper car;
-    const auto speed = 20.0f;
 
-    EXPECT_CALL(mqttWrapper, connect(_, _, _)).WillOnce(Return(true));
-    EXPECT_CALL(car, setSpeed(speed));
+    const auto speed = -20.0f;
 
+    EXPECT_CALL(car, setSpeed(speed/2));
 
-    handleSpeedInput(speed, car, mqttWrapper);
+    handleSpeedInput(0,speed,serialWrapper,mqttWrapper, car);
 }
