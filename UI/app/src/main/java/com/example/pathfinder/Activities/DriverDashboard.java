@@ -58,6 +58,9 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
     /**Used as a way to compare previously published messages with GUI's current values*/
     private int lastSentSpeed = 0;
     private int lastSentAngle = 0;
+
+    /**If true, cruise control is enabled
+     * If false, limit speed is enabled*/
     private boolean isCruiseControl;
 
     @Override
@@ -114,6 +117,9 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
         });
     }
 
+    /**Driving using thumbstick
+     * If cruise control is enabled, speed will be set from seekBar's progress
+     * If cruise control is disabled, speed will be set as percentage of seekBar's progress*/
     @Override
     public void onThumbstickMoved(float xPercent, float yPercent, int id) {
         int angle = (int)((xPercent) * 100);
@@ -130,6 +136,9 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
         drive(strength, angle, "driving");
     }
 
+    /**Switches on/off cruise control
+     * If cruise control is being enabled, vehicle will drive with speed based on seekBar's progress
+     * If cruise control is being disabled, vehicle will stop*/
     public void onCruiseControlBtn(View view) {
         isCruiseControl = !isCruiseControl;
         int strength = seekBar.getProgress();
@@ -140,7 +149,8 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
         }
     }
 
-    //TODO: check location of this method for better code quality
+    /**Updates text showing seekBar's progress
+     * If cruise control is enabled, vehicle will drive with speed based on seekBar's progress*/
     private void seekBarListener(){
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
