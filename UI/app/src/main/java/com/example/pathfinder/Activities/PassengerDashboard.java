@@ -2,12 +2,14 @@ package com.example.pathfinder.Activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.media.Image;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
@@ -46,62 +48,77 @@ public class PassengerDashboard extends AppCompatActivity {
         mStopStatus = findViewById(R.id.stop_status);
         mAccessibility = (ImageView) findViewById(R.id.accessibility);
 
-        sharedPreferences = getSharedPreferences(SHARED_PREF_NAME, MODE_PRIVATE);
+        mStopBtn.setChecked(update(KEY_STOP));
+        mHandicapBtn.setChecked(update(KEY_HANDICAP));
 
-        //checks if shared pref data is available
-        String stopStatus = sharedPreferences.getString(KEY_STOP, null);
+        /*
+        * first checks whether stop and/or accessibility request were made and stored into
+        * shared preferences
+        */
+        saveIntoSharedPrefs(SHARED_PREF_NAME, false);
 
-        if (stopStatus == mStopBtn.getTextOff().toString()) {
-            Intent intent = new Intent(PassengerDashboard.this, DriverDashboard.class);
-        }
+        //checks the state of stop request
+        getStopRequest();
+        //checks the state of accessibility request
+        getAccessibilityRequest();
 
         mStopBtn.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                //toggle enabled
+                //if the button is toggled to true
                 if (isChecked) {
-                    //puts data on shared pref
-                    SharedPreferences.Editor editor = sharedPreferences.edit();
-                    editor.putString(KEY_HANDICAP, mStopBtn.getTextOn().toString());
-                    editor.putString(KEY_HANDICAP, mHandicapBtn.getTextOn().toString());
-                    editor.apply();
+                    //data is stored to shared preference
+                    saveIntoSharedPrefs(KEY_STOP, true);
+                    passengerSharedPrefs(KEY_STOP, true);
 
-                    //pass above data to DriverDashboard
-                    Intent intent = new Intent(PassengerDashboard.this, DriverDashboard.class);
-
-                    //stop requested
+                    /*
+                     * images are given a red and teal background colors respectively to make them
+                     * visible when someone presses the handicap accessibility button
+                     */
                     mStopStatus.setBackgroundColor(Color.parseColor("#B33701"));
+                    Log.d(KEY_STOP, "this is on");
                 } else {
-                    //toggle disabled
+                    //data is stored to shared preference
+                    saveIntoSharedPrefs(KEY_STOP, false);
+                    passengerSharedPrefs(KEY_STOP, false);
+                    /*
+                     * images are given a white background color to make them
+                     * visible when someone presses the handicap accessibility button
+                     */
                     mStopStatus.setBackgroundColor(Color.WHITE);
-                    mAccessibility.setColorFilter(Color.WHITE);
+                    Log.d(KEY_STOP, "this is off");
                 }
-
             }
         });
 
         mHandicapBtn.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                //if the button is toggled to true
                 if (isChecked) {
-                    //puts data on shared pref
-                    SharedPreferences.Editor editor = sharedPreferences.edit();
-                    editor.putString(KEY_HANDICAP, mStopBtn.getTextOn().toString());
-                    editor.putString(KEY_HANDICAP, mHandicapBtn.getTextOn().toString());
-                    editor.apply();
+                    //data is stored to shared preference
+                    saveIntoSharedPrefs(KEY_HANDICAP, true);
+                    passengerSharedPrefs(KEY_HANDICAP, true);
 
-                    //pass above data to DriverDashboard
-                    Intent intent = new Intent(PassengerDashboard.this, DriverDashboard.class);
-
-                    //stop requested
+                    /*
+                     * images are given a red and teal background colors respectively to make them
+                     * visible when someone presses the handicap accessibility button
+                     */
                     mStopStatus.setBackgroundColor(Color.parseColor("#B33701"));
                     mAccessibility.setColorFilter(Color.parseColor("#008080"));
+                    Log.d(KEY_HANDICAP, "this is on");
                 } else {
-                    //toggle disabled
+                    //data is stored to shared preference
+                    saveIntoSharedPrefs(KEY_HANDICAP, false);
+                    passengerSharedPrefs(KEY_HANDICAP, false);
+                    /*
+                     * images are given a white background color to make them
+                     * visible when someone presses the handicap accessibility button
+                     */
                     mStopStatus.setBackgroundColor(Color.WHITE);
                     mAccessibility.setColorFilter(Color.WHITE);
+                    Log.d(KEY_HANDICAP, "this is off");
                 }
-
             }
         });
 
@@ -114,6 +131,67 @@ public class PassengerDashboard extends AppCompatActivity {
         });
 
 
+    }
+
+    /*
+     * helper method to check if stop request evaluates as true.
+     * if stop request has is true then the stop status lights up and is made visible; otherwise
+     * its color is set to white to appear invisible.
+     */
+    public void getStopRequest() {
+        sharedPreferences = getSharedPreferences(KEY_STOP, Context.MODE_PRIVATE);
+
+        if (sharedPreferences.getBoolean(KEY_STOP, true)) {
+            mStopStatus.setBackgroundColor(Color.parseColor("#B33701"));
+        } else {
+            mStopStatus.setBackgroundColor(Color.WHITE);
+        }
+    }
+
+    /*
+    * helper method to check if accessibility request evaluates as true.
+    * if accessibility request has is true then the stop status and accessibility symbols
+    * light up and is made visible; otherwise their colors are set to white to appear invisible.
+    */
+    public void getAccessibilityRequest() {
+        sharedPreferences = getSharedPreferences(KEY_HANDICAP, Context.MODE_PRIVATE);
+
+        if (sharedPreferences.getBoolean(KEY_HANDICAP, true)) {
+            mStopStatus.setBackgroundColor(Color.parseColor("#B33701"));
+            mAccessibility.setColorFilter(Color.parseColor("#008080"));
+        } else {
+            mStopStatus.setBackgroundColor(Color.WHITE);
+            mAccessibility.setColorFilter(Color.WHITE);
+        }
+    }
+
+    /*
+    * Helper method to save state of buttons into passenger shared preference
+    *
+    * */
+    public void passengerSharedPrefs(String key, Boolean value) {
+        sharedPreferences = getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putBoolean(key, value);
+        editor.commit();
+    }
+
+    /*
+    * Helper method to save state of buttons into a shared preference
+    */
+    public void saveIntoSharedPrefs(String key, Boolean value) {
+        sharedPreferences = getSharedPreferences(key, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putBoolean(key, value);
+        editor.apply();
+    }
+
+    /*
+    * Helper update to last state of buttons into a shared preference
+    */
+    public boolean update(String key) {
+        sharedPreferences = getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
+        return sharedPreferences.getBoolean(key, false);
     }
 
 }
