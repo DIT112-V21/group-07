@@ -32,7 +32,7 @@
     <string name="distance">Distance</string>
     <string name="speed_log">0 km/h</string>
     <string name="distance_log">0 m</string>
-    <string name="stop_requested">Stop</string>
+    <string name="stop_requested">Stop Requested</string>
 
     <!-- About -->
     <string name="about">About</string>
