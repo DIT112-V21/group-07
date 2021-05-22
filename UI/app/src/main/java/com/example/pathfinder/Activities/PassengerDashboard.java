@@ -48,19 +48,15 @@ public class PassengerDashboard extends AppCompatActivity {
         mStopStatus = findViewById(R.id.stop_status);
         mAccessibility = (ImageView) findViewById(R.id.accessibility);
 
+        /*
+         * first checks whether stop and/or accessibility request were made and stored into
+         * shared preferences
+         */
+
         mStopBtn.setChecked(update(KEY_STOP));
         mHandicapBtn.setChecked(update(KEY_HANDICAP));
 
-        /*
-        * first checks whether stop and/or accessibility request were made and stored into
-        * shared preferences
-        */
-        saveIntoSharedPrefs(SHARED_PREF_NAME, false);
 
-        //checks the state of stop request
-        getStopRequest();
-        //checks the state of accessibility request
-        getAccessibilityRequest();
 
         mStopBtn.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -70,7 +66,6 @@ public class PassengerDashboard extends AppCompatActivity {
                     //data is stored to shared preference
                     saveIntoSharedPrefs(KEY_STOP, true);
                     passengerSharedPrefs(KEY_STOP, true);
-
                     /*
                      * images are given a red and teal background colors respectively to make them
                      * visible when someone presses the handicap accessibility button
@@ -97,6 +92,7 @@ public class PassengerDashboard extends AppCompatActivity {
                 //if the button is toggled to true
                 if (isChecked) {
                     //data is stored to shared preference
+                    saveIntoSharedPrefs(KEY_STOP, true);
                     saveIntoSharedPrefs(KEY_HANDICAP, true);
                     passengerSharedPrefs(KEY_HANDICAP, true);
 
@@ -109,6 +105,7 @@ public class PassengerDashboard extends AppCompatActivity {
                     Log.d(KEY_HANDICAP, "this is on");
                 } else {
                     //data is stored to shared preference
+                    saveIntoSharedPrefs(KEY_STOP, false);
                     saveIntoSharedPrefs(KEY_HANDICAP, false);
                     passengerSharedPrefs(KEY_HANDICAP, false);
                     /*
@@ -141,10 +138,12 @@ public class PassengerDashboard extends AppCompatActivity {
     public void getStopRequest() {
         sharedPreferences = getSharedPreferences(KEY_STOP, Context.MODE_PRIVATE);
 
-        if (sharedPreferences.getBoolean(KEY_STOP, true)) {
+        if (sharedPreferences.getBoolean(KEY_STOP, false)) {
             mStopStatus.setBackgroundColor(Color.parseColor("#B33701"));
+            Log.d(KEY_STOP, "red");
         } else {
             mStopStatus.setBackgroundColor(Color.WHITE);
+            Log.d(KEY_STOP, "white");
         }
     }
 
@@ -156,12 +155,12 @@ public class PassengerDashboard extends AppCompatActivity {
     public void getAccessibilityRequest() {
         sharedPreferences = getSharedPreferences(KEY_HANDICAP, Context.MODE_PRIVATE);
 
-        if (sharedPreferences.getBoolean(KEY_HANDICAP, true)) {
-            mStopStatus.setBackgroundColor(Color.parseColor("#B33701"));
+        if (sharedPreferences.getBoolean(KEY_HANDICAP, false)) {
             mAccessibility.setColorFilter(Color.parseColor("#008080"));
+            Log.d(KEY_HANDICAP, "red");
         } else {
-            mStopStatus.setBackgroundColor(Color.WHITE);
             mAccessibility.setColorFilter(Color.WHITE);
+            Log.d(KEY_HANDICAP, "white");
         }
     }
 
@@ -180,7 +179,7 @@ public class PassengerDashboard extends AppCompatActivity {
     * Helper method to save state of buttons into a shared preference
     */
     public void saveIntoSharedPrefs(String key, Boolean value) {
-        sharedPreferences = getSharedPreferences(key, Context.MODE_PRIVATE);
+        sharedPreferences = getApplicationContext().getSharedPreferences(key, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putBoolean(key, value);
         editor.apply();
@@ -192,6 +191,16 @@ public class PassengerDashboard extends AppCompatActivity {
     public boolean update(String key) {
         sharedPreferences = getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
         return sharedPreferences.getBoolean(key, false);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        //checks the state of stop request
+        getStopRequest();
+        //checks the state of accessibility request
+        getAccessibilityRequest();
     }
 
 }

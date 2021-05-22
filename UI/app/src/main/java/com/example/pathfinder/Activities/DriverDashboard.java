@@ -245,7 +245,7 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
     public void checkStopRequest() {
         sharedPreferences = getSharedPreferences(KEY_STOP, Context.MODE_PRIVATE);
 
-        if (sharedPreferences.getBoolean(KEY_STOP, true)) {
+        if (sharedPreferences.getBoolean(KEY_STOP, false)) {
             mStopRequest.setBackgroundColor(Color.parseColor("#B33701"));
         } else {
             mStopRequest.setBackgroundColor(Color.WHITE);
@@ -261,11 +261,9 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
     public void checkAccessibilityRequest() {
         sharedPreferences = getSharedPreferences(KEY_HANDICAP, Context.MODE_PRIVATE);
 
-        if (sharedPreferences.getBoolean(KEY_HANDICAP, true)) {
-            mStopRequest.setBackgroundColor(Color.parseColor("#B33701"));
+        if (sharedPreferences.getBoolean(KEY_HANDICAP, false)) {
             mAccessibilityRequest.setColorFilter(Color.parseColor("#008080"));
         } else {
-            mStopRequest.setBackgroundColor(Color.WHITE);
             mAccessibilityRequest.setColorFilter(Color.WHITE);
         }
     }
