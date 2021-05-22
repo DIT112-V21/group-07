@@ -5,7 +5,6 @@ git clone git@github.com:DIT112-V21/group-07.git
 ```
 
 ## What
-##What
 Pathfinder is a remote-operated bus that is controllable via an Android app. The bus features two different screens, depending on the role of the user. 
 
 The passenger screen features buttons that send stop and accessibility requests to the driver. These buttons may be toggled on and off, to allow the passenger to cancel their request as desired.
