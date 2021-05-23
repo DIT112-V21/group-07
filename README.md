@@ -1,5 +1,5 @@
 ## Installation
-Open your terminal then paste the following command to clone this repository.  Upon cloning, you may now import and simulate our source code into **Android Studio** and test it on the simulator.
+Open your terminal then paste the following command to clone this repository.  Upon cloning, you may now import and simulate our source code into **Android Studio*.
 ```bash
 git clone git@github.com:DIT112-V21/group-07.git
 ```
