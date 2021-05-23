@@ -1,8 +1,5 @@
 package com.example.pathfinder.Activities;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.FragmentActivity;
-
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -11,15 +8,17 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.CompoundButton;
+import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.SeekBar;
 import android.widget.ToggleButton;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.example.pathfinder.Client.MqttClient;
+import com.example.pathfinder.Model.BusLine;
 import com.example.pathfinder.R;
 
 import org.eclipse.paho.client.mqttv3.IMqttActionListener;
@@ -38,6 +37,7 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
     private static final String PARK = "/smartcar/control/park";
     private static final String ODOMETER_LOG = "/smartcar/odometer";
     private static final String SPEEDOMETER_LOG = "/smartcar/speedometer";
+    private static final String NEXT_STOP = "/smartcar/busNextStop";
     private static final int IDLE_SPEED = 0;
     private static final int STRAIGHT_ANGLE = 0;
     private static final int QOS = 1;
@@ -55,7 +55,13 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
     private TextView textView;
     private SeekBar seekBar;
     private ToggleButton mCruiseControlBtn, mParkBtn;
+    
+    private TextView busLineName;
+    private TextView nextStop;
+    private Button changeStop;
 
+
+    private BusLine busLine;
     SharedPreferences sharedPreferences;
 
     private int speed = 0;
@@ -78,6 +84,10 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
 
         textView = (TextView) findViewById(R.id.textView);
         seekBar = (SeekBar) findViewById(R.id.seekBar);
+
+        busLineName = (TextView) findViewById(R.id.busLineName);
+        nextStop = (TextView) findViewById(R.id.nextStopView);
+        changeStop = (Button) findViewById(R.id.changeStop);
 
         connectToMqttBroker();
 
@@ -106,6 +116,8 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
 
             }
         });
+
+            generateBusLine();
 
     }
 
@@ -271,4 +283,39 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
     public void nextStopBtn(View view) {
 
     }
+
+
+    /**
+     * Helper method that simulates the database retrieving a bus line. We assume the drivers have assigned bus lines by the system.
+     */
+    private void generateBusLine(){
+        busLine = new BusLine("9");
+        busLine.addStop("Sandarna");
+        busLine.addStop("Sannaplan");
+        busLine.addStop("Mariaplan");
+        busLine.addStop("Vagnhallen Majorna");
+
+        busLineName.setText(busLine.getName());
+    }
+
+
+    public void changeStop(View view){
+        String comingStop = busLine.nextStop();
+        publishNextStop(comingStop);
+        displayNextStop(comingStop);
+    }
+
+    /**
+     * Helper method when pressing the next stop button.
+     * Send the next stop via MQTT to the topic "NEXT_STOP + name of bus line" (In case we have several lines).
+     * The passengers should subscribe to this topic when choosing the line they are using.
+     */
+    private void publishNextStop(String comingStop){
+        mMqttClient.publish(NEXT_STOP + busLine.getName(), comingStop, QOS, null);
+    }
+
+    private void displayNextStop(String comingStop){
+        nextStop.setText(comingStop);
+    }
+
 }

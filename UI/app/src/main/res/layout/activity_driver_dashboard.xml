@@ -329,10 +329,61 @@
 
         </RelativeLayout>
 
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="65dp">
+
+            <TextView
+                android:id="@+id/busLineName"
+                android:layout_width="90dp"
+                android:layout_height="30dp"
+                android:autoText="false"
+                android:clickable="false"
+                android:editable="false"
+                android:gravity="center|center_horizontal"
+                android:importantForAutofill="no"
+                android:fontFamily="@font/basic"
+                android:textSize="16dp"
+                android:textColor="@color/yellow"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.571" />
+
+            <TextView
+                android:id="@+id/nextStopView"
+                android:layout_width="203dp"
+                android:layout_height="31dp"
+                android:layout_marginStart="12dp"
+                android:layout_marginLeft="12dp"
+                android:clickable="false"
+                android:editable="false"
+                android:gravity="center|center_vertical"
+                android:importantForAutofill="no"
+                android:fontFamily="@font/basic"
+                android:textSize="16dp"
+                android:textColor="@color/yellow"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/busLineName"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.571" />
+
+            <Button
+                android:id="@+id/changeStop"
+                android:layout_width="75dp"
+                android:layout_height="40dp"
+                android:onClick="changeStop"
+                android:text="@string/next"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/nextStopView"
+                app:layout_constraintTop_toTopOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
         <com.example.pathfinder.Activities.ThumbstickView
             android:id="@+id/testThumbstick"
             android:layout_width="match_parent"
-            android:layout_height="300dp" />
+            android:layout_height="match_parent" />
     </LinearLayout>
 
 </androidx.drawerlayout.widget.DrawerLayout>
