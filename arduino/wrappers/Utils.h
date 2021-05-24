@@ -16,6 +16,7 @@ const auto ONE_SECOND = 1000UL;
 const int NO_OBSTACLE_VALUE = 0;
 
 const float MAX_SPEED = 1.845;
+//const float STOPPING_SPEED = 0.3;
 
 enum class PinDirection
 {
@@ -275,6 +276,19 @@ void slowDownSmoothly(SmartCarWrapper &car, float STOPPING_SPEED)
 }
 
 float convertSpeed(float speed) {
-    return (speed / MAX_SPEED) * 100;   // check max speed.
+    return (speed / MAX_SPEED) * 100;
 }
 
+bool reactToSensor(int sensorDistance, int STOP_DISTANCE, bool isSlowDown, SmartCarWrapper &car, float STOPPING_SPEED, bool isParked){
+    if (sensorDistance != 0){
+        if(sensorDistance > STOP_DISTANCE && sensorDistance <= 250 && isSlowDown){
+            slowDownSmoothly(car, STOPPING_SPEED);
+            isParked = true;
+        }else if ( sensorDistance <= STOP_DISTANCE ){
+            car.setSpeed(0);
+            isParked = true;
+            return true;
+        }
+    }
+    return false;
+}

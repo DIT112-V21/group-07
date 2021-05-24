@@ -6,6 +6,10 @@
 
 const auto kSuccess   = 200;
 const auto kLightsPin = 2;
+int STOP_DISTANCE = 70;
+bool isSlowDown = true;
+bool isParked = true;
+const float STOPPING_SPEED = 0.3;
 
 struct MockMqttWrapper : public MqttWrapper {
   MOCK_METHOD(void, beginLocal, (), (override));
@@ -253,10 +257,45 @@ TEST(convertSpeedTest, convertSpeed_WhenCalled_WillConvertTheSpeed) {
 TEST(slowDownSmoothlyTest, slowDownSmoothly_WhenCalled_WillSetTheSpeedToSlowDownSmoothly) {
     MockSmartcarWrapper car;
 
-    const float STOPPING_SPEED = 0.3;
     float carSpeed = 0.4;
 
     EXPECT_CALL(car, getSpeed()).WillOnce(Return(carSpeed));
 
     slowDownSmoothly(car, STOPPING_SPEED);
+}
+
+TEST(reactToSensorTest, reactToSensor_WhenObstacle_WillSlowDownTheCar) {
+    MockSmartcarWrapper car;
+    MockInfraredSensor infraredSensor;
+
+    float carSpeed = 0.4;
+    int sensorDistance = 80;
+
+    EXPECT_CALL(car, getSpeed()).WillOnce(Return(carSpeed));
+
+    reactToSensor(sensorDistance, STOP_DISTANCE, isSlowDown,
+                  car, STOPPING_SPEED, isParked);
+}
+
+TEST(reactToSensorTest, reactToSensor_WhenObstacle_WillStopTheCar) {
+    MockSmartcarWrapper car;
+
+    int sensorDistance = 60;
+
+    EXPECT_CALL(car, setSpeed(0));
+
+    reactToSensor(sensorDistance, STOP_DISTANCE, isSlowDown,
+                  car, STOPPING_SPEED, isParked);
+}
+
+TEST(reactToSensorTest, reactToSensor_WhenNOobstacle_WillReturnFalse) {
+    MockSmartcarWrapper car;
+
+    int sensorDistance = 0;
+
+    bool obstacle = reactToSensor(sensorDistance, STOP_DISTANCE, isSlowDown,
+                  car, STOPPING_SPEED, isParked);
+
+    EXPECT_EQ(false, obstacle);
+
 }

@@ -12,6 +12,8 @@ WiFiClient net;
 #endif
 MQTTClient mqtt;
 
+
+
 const int NO_OBSTACLE_VALUE = 0; //sensor value will be equal to this when no obstacle is detected.
 const int FRONT_STOP_DISTANCE = 70; //value used for emergency brake (front)
 const int BACK_STOP_DISTANCE = 50; //value used for emergency brake (back)
