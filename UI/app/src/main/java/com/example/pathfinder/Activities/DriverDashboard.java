@@ -8,6 +8,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -15,6 +17,9 @@ import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.pathfinder.Client.MqttClient;
 import com.example.pathfinder.Model.BusLine;
@@ -59,9 +64,15 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
     private TextView textView;
     private SeekBar seekBar;
     private ToggleButton mCruiseControlBtn, mParkBtn;
-    
-    private TextView busLineName;
-    private TextView nextStop;
+
+
+    private RecyclerView stopList;
+    private RecyclerView.LayoutManager stopListLayoutManager;
+    private RecyclerView.Adapter stopListAdapter;
+    private ConstraintLayout stopInfo;
+    private TextView busLineName, nextStop, stopTitle;
+
+    Animation bottomAwayAnim, bottomAnim;
 
     private BusLine busLine;
     SharedPreferences sharedPreferences;
@@ -74,6 +85,9 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
         super.onCreate(savedInstanceState);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_driver_dashboard);
+
+        bottomAwayAnim = AnimationUtils.loadAnimation(this, R.anim.slide_away_down_animation);
+        bottomAnim = AnimationUtils.loadAnimation(this, R.anim.slide_up_animation);
 
         mSpeedLog = findViewById(R.id.speed_log) ;
         mDistanceLog = findViewById(R.id.distance_log);
@@ -119,7 +133,7 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
         });
 
             generateBusLine();
-
+            generateStopList();
     }
 
     /**
@@ -330,7 +344,27 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
     }
 
     public void displayAllStops(View view){
-        //TODO: Display all the stops when pressing the current stop
+        if (stopInfo.getVisibility() == View.INVISIBLE){
+            stopInfo.startAnimation(bottomAnim);
+            stopInfo.setVisibility(View.VISIBLE);
+        }else{
+            stopInfo.startAnimation(bottomAwayAnim);
+            stopInfo.setVisibility(View.INVISIBLE);
+        }
+
+    }
+
+    private void generateStopList(){
+         stopTitle = findViewById(R.id.stopTitle);
+         stopInfo = findViewById(R.id.stopInfo);
+         stopList = findViewById(R.id.stopList);
+         stopList.setHasFixedSize(true);
+         stopListLayoutManager = new LinearLayoutManager(this);
+         stopListAdapter = new StopListAdapter(busLine.getStopList());
+         stopList.setLayoutManager(stopListLayoutManager);
+         stopList.setAdapter(stopListAdapter);
+
+         stopTitle.setText("Stops for line: " + busLine.getName());
     }
 
 }
