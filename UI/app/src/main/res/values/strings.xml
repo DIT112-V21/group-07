@@ -33,7 +33,8 @@
     <string name="speed_log">0 km/h</string>
     <string name="distance_log">0 m</string>
     <string name="stop_requested">Stop Requested</string>
-    <string name="signIn_failed">"Error: invalid username or password."</string>
+    <string name="signIn_failed">Error: invalid username or password.</string>
+    <string name="display_first_stop">Press "NEXT" to start</string>
 
     <!-- About -->
     <string name="about">About</string>

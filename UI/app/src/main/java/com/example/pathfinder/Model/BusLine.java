@@ -1,9 +1,16 @@
 package com.example.pathfinder.Model;
 
+import com.example.pathfinder.Activities.DriverDashboard;
+
 import java.util.ArrayList;
+import java.util.EmptyStackException;
 import java.util.Stack;
 
 public class BusLine {
+
+    public static final String NO_NEXT_STOP = "End of the line.";
+    public static final String REVERSE_INSTRUCTION = "Click on 'NEXT' one more time to reverse the line";
+    public static final String END_OF_LINE = NO_NEXT_STOP + DriverDashboard.LINE_SEPARATOR + REVERSE_INSTRUCTION;
 
     // Attributes
     private String name;
@@ -63,12 +70,19 @@ public class BusLine {
     // Methods
     /**
      * Pop the next stop and saves it into the pastStops stack to later reverse the line.
-     * @return a string with the next stop's name.
+     * @return a string with the next stop's name if there is a next stop in the stack. Return an indication that there is no next stop if not.
      */
     public String nextStop(){
-        String nextStop = comingStops.pop();
-        pastStops.push(nextStop);
-        return nextStop;
+
+        try {
+            comingStops.peek();
+        }catch (EmptyStackException e){
+            reverseLine();
+            return NO_NEXT_STOP;
+        }
+            String nextStop = comingStops.pop();
+            pastStops.push(nextStop);
+            return nextStop;
     }
 
     /**
@@ -84,7 +98,7 @@ public class BusLine {
     /**
      * Receives a string stop name and add it to the different list and stacks.
      * Needs to add the destination first, then the closest stop from the destination to the starting point.
-     * @param stop
+     * @param stop name as a string
      */
     public void addStop(String stop){
         stopList.add(stop);

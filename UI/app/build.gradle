@@ -4,7 +4,7 @@ plugins {
 
 android {
 
-    useLibrary 'android.test.runner'
+    useLibrary 'androidx.test.runner'
     useLibrary 'android.test.base'
     useLibrary 'android.test.mock'
 

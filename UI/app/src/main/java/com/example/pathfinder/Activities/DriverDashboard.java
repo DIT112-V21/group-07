@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -27,7 +26,11 @@ import org.eclipse.paho.client.mqttv3.IMqttToken;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 
+import static android.view.Gravity.TOP;
+
 public class DriverDashboard extends AppCompatActivity implements ThumbstickView.ThumbstickListener {
+
+    public static final String LINE_SEPARATOR = "\n";
     private static final String TAG = "PathfinderController";
     private static final String EXTERNAL_MQTT_BROKER = "test.mosquitto.org";
     private static final String LOCALHOST = "10.0.2.2";
@@ -44,6 +47,7 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
     private static final int IMAGE_WIDTH = 320;
     private static final int IMAGE_HEIGHT = 240;
 
+
     private MqttClient mMqttClient;
     //Park/ lock
     //private boolean isParked = false;
@@ -58,15 +62,12 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
     
     private TextView busLineName;
     private TextView nextStop;
-    private Button changeStop;
-
 
     private BusLine busLine;
     SharedPreferences sharedPreferences;
 
     private int speed = 0;
     private int angle = 0;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,7 +88,7 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
 
         busLineName = (TextView) findViewById(R.id.busLineName);
         nextStop = (TextView) findViewById(R.id.nextStopView);
-        changeStop = (Button) findViewById(R.id.changeStop);
+
 
         connectToMqttBroker();
 
@@ -279,12 +280,6 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
         brake();
     }
 
-
-    public void nextStopBtn(View view) {
-
-    }
-
-
     /**
      * Helper method that simulates the database retrieving a bus line. We assume the drivers have assigned bus lines by the system.
      */
@@ -295,27 +290,47 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
         busLine.addStop("Mariaplan");
         busLine.addStop("Vagnhallen Majorna");
 
-        busLineName.setText(busLine.getName());
+        busLineName.setText("Line: " + busLine.getName());
     }
 
-
+    /**
+     * Change the next stop on the driver's screen and publish it to communicate with the passengers.
+     * If the end of the line, display an information to the driver and invite to click one more time to reverse the line.
+     * @param view -> "next" button (R.id.changeStop)
+     */
     public void changeStop(View view){
         String comingStop = busLine.nextStop();
-        publishNextStop(comingStop);
-        displayNextStop(comingStop);
+
+        if (comingStop.equals(BusLine.NO_NEXT_STOP)){
+            Toast reverseInstruction = Toast.makeText(this, BusLine.REVERSE_INSTRUCTION, Toast.LENGTH_LONG);
+            reverseInstruction.setGravity(TOP, 0,0);
+            reverseInstruction.show();
+        }
+            publishNextStop(comingStop);
+            displayNextStop(comingStop);
     }
 
     /**
      * Helper method when pressing the next stop button.
      * Send the next stop via MQTT to the topic "NEXT_STOP + name of bus line" (In case we have several lines).
      * The passengers should subscribe to this topic when choosing the line they are using.
+     * @param comingStop -> the next stop as a string
      */
     private void publishNextStop(String comingStop){
         mMqttClient.publish(NEXT_STOP + busLine.getName(), comingStop, QOS, null);
     }
 
+    /**
+     * Helper method when pressing the next stop button.
+     * Displays the next stop on the driver's dashboard.
+     * @param comingStop -> the next stop as a string
+     */
     private void displayNextStop(String comingStop){
         nextStop.setText(comingStop);
+    }
+
+    public void displayAllStops(View view){
+        //TODO: Display all the stops when pressing the current stop
     }
 
 }
