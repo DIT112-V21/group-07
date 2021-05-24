@@ -31,3 +31,9 @@ Furthermore, passengers may utilize the stop button controls available on the ap
 4. Display all stop requests for every stop that is shown
 5. Update all stops as instructed by the driver
 6. Passengers will have buttons available to them that will indicate if the want to stop, or if the need more amenities available to them.
+
+## Shortcuts
+
+  * [WIKI](https://github.com/DIT112-V21/group-07/wiki/Pathfinder's-Wiki#welcome-to-the-pathfinders-wiki)
+  * [User Manual](https://github.com/DIT112-V21/group-07/wiki/User-Manual)
+  * [Project charter](https://github.com/DIT112-V21/group-07/wiki/Project-Charter)
