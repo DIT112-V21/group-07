@@ -80,7 +80,6 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
         textView = (TextView) findViewById(R.id.textView);
         seekBar = (SeekBar) findViewById(R.id.seekBar);
 
-        //TODO: check method call location for better code quality
         seekBarListener();
         connectToMqttBroker();
 
@@ -124,7 +123,7 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
     public void onThumbstickMoved(float xPercent, float yPercent, int id) {
         int angle = (int)((xPercent) * 100);
         int strength;
-        //TODO: check why do we need the negative of seekBar.getProgress()
+        //We need the negative of seekBar.getProgress()
         int seekProgress = - seekBar.getProgress();
         if(isCruiseControl){
             //setting fixed speed for cruise control
