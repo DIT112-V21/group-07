@@ -227,6 +227,7 @@
                         android:fontFamily="@font/basic"
                         android:textColor="@color/purple"
                         android:textAllCaps="false"
+                        android:onClick="onCruiseControlBtn"
                     />
 
                     <ImageView
