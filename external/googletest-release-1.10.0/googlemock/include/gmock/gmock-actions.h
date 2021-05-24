@@ -557,7 +557,7 @@ class ReturnAction {
     // ambiguity. value_ is then initialized using its copy constructor.
     explicit Impl(const std::shared_ptr<R>& value)
         : value_before_cast_(*value),
-          value_(ImplicitCast_<Result>(value_before_cast_)) {}
+          value_(ImplicitCast_<Result>(static_cast<long>(value_before_cast_))) {}
 
     Result Perform(const ArgumentTuple&) override { return value_; }
 

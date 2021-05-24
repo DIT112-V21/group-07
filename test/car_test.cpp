@@ -10,6 +10,8 @@ const auto kLightsPin = 2;
 struct MockMqttWrapper : public MqttWrapper {
   MOCK_METHOD(void, beginLocal, (), (override));
   MOCK_METHOD(void, beginExternal, (), (override));
+  MOCK_METHOD(bool, connected, (), (override));
+  MOCK_METHOD(bool, loop, (), (override));
   MOCK_METHOD(bool, connect, (String, String, String), (override));
   MOCK_METHOD(void, subscribe, (String, int), (override));
   MOCK_METHOD(void, publish, (String, String), (override));
@@ -31,11 +33,11 @@ struct MockArduinoRunTimeWrapper : public ArduinoRunTimeWrapper {
     MOCK_METHOD(void , clearPin, (int), (override));
 };
 
-/*struct MockArduinoRunWrapper : public ArduinoRunWrapper {
+struct MockArduinoRunWrapper : public ArduinoRunWrapper {
     MOCK_METHOD(long, millis, (), (override));
-    MOCK_METHOD(void, delay, (int n), (override));
+    MOCK_METHOD(void, delay, (int), (override));
 
-};*/
+};
 
 
 
@@ -56,12 +58,13 @@ struct MockSmartcarWrapper : public SmartCarWrapper {
 };
 
 /*struct MockSmartCarControllerWrapper : public SmartCarControllerWrapper {
+
     MOCK_METHOD(float, getSpeed, (), (override));
     MOCK_METHOD(void, setSpeed, (float speed), (override));
     MOCK_METHOD(void, setAngle, (int angle), (override));
     MOCK_METHOD(int, getDistance, (), (override));
     MOCK_METHOD(void, update, (), (override));
-    MOCK_METHOD(void, SR04sensorData,(bool pubSensorData,MqttWrapper &mqttWrapper));
+    //MOCK_METHOD(void, SR04sensorData,(bool pubSensorData,MqttWrapper &mqttWrapper));
 };
 */
 using ::testing::_;
@@ -103,18 +106,6 @@ TEST(MQTTMessageInputTest, MQTTMessageInput_WhenConnected_WillRegisterCallback) 
 }
 
 
-
-TEST(SR04Test, SR04sensorData_WhenConnected_WillPublishToTopics) {
-    MockMqttWrapper mqttWrapper;
-
-    EXPECT_CALL(mqttWrapper, connect(_, _, _)).WillOnce(Return(true));
-    EXPECT_CALL(mqttWrapper, publish("/smartcar/ultrasound/front", "20"));
-
-    SR04sensorData(true, mqttWrapper);
-}
-
-
-
 // When moving this method to the Utils.cpp file it gives this error..
 // so we will keep it in the header file until we fix the error.
 // Error :: clang: error: linker command failed with exit code 1 (use -v to see invocation)
@@ -144,7 +135,7 @@ TEST(handleAngleInput_Test, handleAngleInput_WhenSetAngle_WillSetTheCarAngle){
     handleAngleInput (0, angle, serialWrapper, mqttWrapper, car);
 }
 
-TEST(handleInput_Test, handleInput_WhenConnectedAndSpeedIsPozitive_WillReturnSensorDistancePozitive) {
+TEST(handleInput_Test, handleInput_WhenConnectedAndSpeedIsPozitive_WillReturnSensorDistancePositive) {
     MockMqttWrapper mqttWrapper;
     MockSerialWrapper serialWrapper;
     MockSmartcarWrapper car;
@@ -192,7 +183,7 @@ TEST(connectLocalHost_Test, connectLocalHost_WhenCalled_WillConnectToLocalHost) 
 
     EXPECT_CALL(mqttWrapper, beginLocal());
 
-    connectLocalHost(true, mqttWrapper);
+    connectLocalHost(mqttWrapper);
 }
 
 TEST(connectExternalHost_Test, connectExternalHost_WhenCalled_WillConnectToExternalHost) {
@@ -200,5 +191,58 @@ TEST(connectExternalHost_Test, connectExternalHost_WhenCalled_WillConnectToExter
 
     EXPECT_CALL(mqttWrapper, beginExternal());
 
-    connectExternalHost(true, mqttWrapper);
+    connectExternalHost(mqttWrapper);
 }
+
+/*TEST(SR04Test, SR04sensorData_WhenConnected_WillPublishToTopics) {
+    MockMqttWrapper mqttWrapper;
+
+    EXPECT_CALL(mqttWrapper, connect(_, _, _)).WillOnce(Return(true));
+    EXPECT_CALL(mqttWrapper, publish("/smartcar/ultrasound/front", "20"));
+
+    SR04sensorData(true, mqttWrapper);
+}*/
+
+TEST(SR04Test, SR04sensorData_WhenConnected_WillPublishToUltrasoundTopicEverySecond) {
+
+    MockMqttWrapper mqttWrapper;
+    MockSerialWrapper serialWrapper;
+    MockArduinoRunWrapper arduinoRunWrapper;
+    MockSR04Wrapper ultraSoundWrapper;
+
+    String message = std::to_string(ultraSoundWrapper.getDistance());
+
+    EXPECT_CALL(arduinoRunWrapper, millis()).WillOnce(Return(1000));
+    EXPECT_CALL(ultraSoundWrapper, getDistance());
+    EXPECT_CALL(mqttWrapper, publish("/smartcar/ultrasound/front", message));
+
+    SR04sensorData(true,mqttWrapper,serialWrapper, arduinoRunWrapper,ultraSoundWrapper );
+}
+
+
+/*TEST(loop, loop_WhenConnected_WillPublishToUltrasoundTopicEverySecondAndHandleInout) {
+
+    MockMqttWrapper mqttWrapper;
+    MockSerialWrapper serialWrapper;
+    MockArduinoRunWrapper arduinoRunWrapper;
+    MockSR04Wrapper ultraSoundWrapper;
+    MockSmartcarWrapper car;
+    MockInfraredSensor InfraredSensor;
+
+    String input = "s";
+    float speed = 20.0;
+
+    String message = std::to_string(ultraSoundWrapper.getDistance());
+
+    EXPECT_CALL(mqttWrapper, connected()).WillOnce(Return(true));
+    EXPECT_CALL(mqttWrapper, loop()).WillOnce(Return(true));
+    //EXPECT_CALL(serialWrapper, available()).WillOnce(Return(true));
+    //EXPECT_CALL(ultraSoundWrapper, getDistance());
+    //EXPECT_CALL(mqttWrapper, publish("/smartcar/ultrasound/front", message));
+
+    loop( input, speed,serialWrapper, mqttWrapper,car, InfraredSensor,arduinoRunWrapper,ultraSoundWrapper );
+}
+*/
+
+// It doesn't return 0 value for infrared sensor but returns 0 with ultrasound sensor
+// we will need to fix this issue.

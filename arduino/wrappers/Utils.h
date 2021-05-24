@@ -10,7 +10,9 @@
 using String = std::string;
 #endif
 
+
 const unsigned int kDefaultMaxDistance = 70;
+const auto ONE_SECOND = 1000UL;
 
 enum class PinDirection
 {
@@ -20,6 +22,7 @@ enum class PinDirection
 
 
 struct ArduinoRunTimeWrapper {
+
     virtual ~ArduinoRunTimeWrapper() = default;
 
     virtual void setPinDirection(int pin, PinDirection pinDirection) = 0;
@@ -29,9 +32,13 @@ struct ArduinoRunTimeWrapper {
 
 
 struct MqttWrapper {
+
   virtual ~MqttWrapper() = default;
+
   virtual void beginLocal() = 0;
   virtual void beginExternal() = 0;
+  virtual bool connected() = 0;
+  virtual bool loop() = 0;
   virtual bool connect(String hostname, String id, String password) = 0;
   virtual void subscribe(String topic, int qos) = 0;
   virtual void publish(String topic, String message) = 0;
@@ -40,6 +47,7 @@ struct MqttWrapper {
 };
 
 struct SmartCarWrapper {
+
     virtual ~SmartCarWrapper() = default;
 
     virtual float getSpeed()           = 0;
@@ -59,6 +67,7 @@ struct UltraSoundWrapper {
 };
 
 struct InfraredSensorWrapper {
+
     virtual ~InfraredSensorWrapper() = default;
 
     virtual int getDistance()          = 0;
@@ -66,9 +75,9 @@ struct InfraredSensorWrapper {
 };
 
 struct SerialWrapper {
+
     virtual ~SerialWrapper() = default;
 
-    //virtual float millis()                = 0;
     virtual void println(String message) = 0;
     virtual void begin(int n) = 0;
     virtual bool available() = 0;
@@ -79,7 +88,7 @@ struct ArduinoRunWrapper {
     virtual ~ArduinoRunWrapper() = default;
 
     virtual long millis()                = 0;
-    virtual void delay(int n)                = 0;
+    virtual void delay(int n)            = 0;
 };
 
 #if defined(ARDUINO)
@@ -103,7 +112,7 @@ inline int stringToInt(String input) {
 #endif
 }
 
-class SmartCarControllerWrapper : public SmartCarWrapper
+/*class SmartCarControllerWrapper : public SmartCarWrapper
 {
 
 public:
@@ -121,6 +130,7 @@ private:
     MqttWrapper& mMqtt;
     ArduinoRunTimeWrapper& mPinController;
 };
+*/
 
 // Speed and Angle is not tested because they are tested for connectionLost and Control topics
 void MQTTMessageInput(MqttWrapper &mqtt, SerialWrapper &serial){
@@ -144,13 +154,36 @@ void MQTTMessageInput(MqttWrapper &mqtt, SerialWrapper &serial){
     }
 }
 
+/*void measureOdometerDistance(bool pubDistanceData,MqttWrapper &mqttWrapper){
+    if (pubDistanceData) {
+        String message = "20";
 
-void SR04sensorData(bool pubSensorData,MqttWrapper &mqttWrapper){
+        if (mqttWrapper.connect("arduino", "public", "public")) {
+            mqttWrapper.publish("/smartcar/ultrasound/front", message);}
+    }
+}
+*/
+/*void SR04sensorData(bool pubSensorData,MqttWrapper &mqttWrapper){
     if (pubSensorData) {
         String message = "20";
 
         if (mqttWrapper.connect("arduino", "public", "public")) {
             mqttWrapper.publish("/smartcar/ultrasound/front", message);}
+    }
+}*/
+void SR04sensorData(bool pubSensorData,MqttWrapper &mqttWrapper, SerialWrapper &serialWrapper
+                    ,ArduinoRunWrapper &arduinoRunWrapper
+                    ,UltraSoundWrapper &ultraSoundWrapper ){
+    if(pubSensorData){
+
+        const auto currentTime = arduinoRunWrapper.millis();
+        static auto previousTransmission = 0UL;
+
+        if (currentTime - previousTransmission >= ONE_SECOND) {
+            previousTransmission = currentTime;
+            int distance = ultraSoundWrapper.getDistance();
+            mqttWrapper.publish("/smartcar/ultrasound/front", std::to_string(distance));
+        }
     }
 }
 
@@ -241,10 +274,37 @@ void handleInput_AngleTopicNegative(String input, int angle,
     }
 }*/
 
-void connectLocalHost(bool ifLocalhost, MqttWrapper &mqttWrapper){
+void connectLocalHost(MqttWrapper &mqttWrapper){
     mqttWrapper.beginLocal();
 }
 
-void connectExternalHost(bool ifLocalhost, MqttWrapper &mqttWrapper){
+void connectExternalHost(MqttWrapper &mqttWrapper){
     mqttWrapper.beginExternal();
 }
+
+
+/*void loop(String input, int speed,
+          SerialWrapper &serialWrapper, MqttWrapper &mqttWrapper,
+          SmartCarWrapper &car, InfraredSensorWrapper &InfraredSensor
+          ,ArduinoRunWrapper &arduinoRunWrapper,UltraSoundWrapper &ultraSoundWrapper )
+{
+
+    if (mqttWrapper.connected()) {
+        mqttWrapper.loop();
+        //cameraData(true);
+        SR04sensorData(true,mqttWrapper, serialWrapper,arduinoRunWrapper,ultraSoundWrapper );
+        //measureOdometerDistance(true, "/smartcar/car/distance");
+    }
+
+    handleInput_SpeedTopicPositive( input, speed,serialWrapper, mqttWrapper,
+            car, InfraredSensor);
+
+    handleInput_SpeedTopicNegative( input, speed,serialWrapper, mqttWrapper,
+                                    car, InfraredSensor);
+
+    //emergencyBrake(true);
+    //reactToSides();
+    //noCPUoverload();
+}
+
+*/
