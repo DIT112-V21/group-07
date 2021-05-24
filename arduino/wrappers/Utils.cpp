@@ -13,6 +13,7 @@ DistanceCar distanceCar;
 
 InfraredAnalogSensor infraredSensor;
 ArduinoRuntime arduinoRuntime;
+Odometer odometer;
 
 //SR04 ultraSound(arduinoRuntime, TRIGGER_PIN, ECHO_PIN, MAX_DISTANCE);
 //SmartCar car(arduinoRuntime, control, gyroscope, leftOdometer, rightOdometer);
@@ -48,10 +49,6 @@ void SmartCarControllerWrapper::setSpeed(float speed) override{
 float SmartCarControllerWrapper::getSpeed()override {
     return distanceCar.getSpeed();
 }
-
-
-
-
 
 struct ArduinoRunTimeWrp : public ArduinoRunTimeWrapper{
 
@@ -98,6 +95,14 @@ struct InfraredSensorWrp : public InfraredSensorWrapper{
 
     int getDistance()override{
         return infraredSensor.getDistance();
+    }
+
+};
+
+struct OdometerWrp : public OdometerWrapper{
+
+    int getDirection() override{
+        return odometer.getDirection();
     }
 
 };

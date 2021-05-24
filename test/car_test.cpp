@@ -18,8 +18,6 @@ struct MockMqttWrapper : public MqttWrapper {
   MOCK_METHOD(void, onMessage, (std::function<void(String, String)>), (override));
 };
 
-
-
 struct MockSerialWrapper : public SerialWrapper {
   MOCK_METHOD(void, println, (String), (override));
   MOCK_METHOD(void , begin, (int ), (override));
@@ -39,6 +37,10 @@ struct MockArduinoRunWrapper : public ArduinoRunWrapper {
 
 };
 
+struct MockOdometerWrapper : public OdometerWrapper {
+    MOCK_METHOD(int, getDirection, (), (override));
+
+};
 
 
 struct MockSR04Wrapper : public UltraSoundWrapper {
@@ -194,14 +196,14 @@ TEST(connectExternalHost_Test, connectExternalHost_WhenCalled_WillConnectToExter
     connectExternalHost(mqttWrapper);
 }
 
-/*TEST(SR04Test, SR04sensorData_WhenConnected_WillPublishToTopics) {
+TEST(SR04Test, SR04sensorData_WhenConnected_WillPublishToUltrasoundTopic) {
     MockMqttWrapper mqttWrapper;
 
     EXPECT_CALL(mqttWrapper, connect(_, _, _)).WillOnce(Return(true));
     EXPECT_CALL(mqttWrapper, publish("/smartcar/ultrasound/front", "20"));
 
     SR04sensorData(true, mqttWrapper);
-}*/
+}
 
 TEST(SR04Test, SR04sensorData_WhenConnected_WillPublishToUltrasoundTopicEverySecond) {
 
@@ -219,30 +221,24 @@ TEST(SR04Test, SR04sensorData_WhenConnected_WillPublishToUltrasoundTopicEverySec
     SR04sensorData(true,mqttWrapper,serialWrapper, arduinoRunWrapper,ultraSoundWrapper );
 }
 
-
-/*TEST(loop, loop_WhenConnected_WillPublishToUltrasoundTopicEverySecondAndHandleInout) {
-
-    MockMqttWrapper mqttWrapper;
-    MockSerialWrapper serialWrapper;
-    MockArduinoRunWrapper arduinoRunWrapper;
+TEST(isClearTest, isClear_WhenCalled_WillUltraSoundSensorDistance) {
     MockSR04Wrapper ultraSoundWrapper;
-    MockSmartcarWrapper car;
-    MockInfraredSensor InfraredSensor;
+    MockInfraredSensor infraredSensor;
 
-    String input = "s";
-    float speed = 20.0;
+    String sensorName = "frontUS";
 
-    String message = std::to_string(ultraSoundWrapper.getDistance());
+    EXPECT_CALL(ultraSoundWrapper, getDistance());
 
-    EXPECT_CALL(mqttWrapper, connected()).WillOnce(Return(true));
-    EXPECT_CALL(mqttWrapper, loop()).WillOnce(Return(true));
-    //EXPECT_CALL(serialWrapper, available()).WillOnce(Return(true));
-    //EXPECT_CALL(ultraSoundWrapper, getDistance());
-    //EXPECT_CALL(mqttWrapper, publish("/smartcar/ultrasound/front", message));
-
-    loop( input, speed,serialWrapper, mqttWrapper,car, InfraredSensor,arduinoRunWrapper,ultraSoundWrapper );
+    isClear(sensorName, ultraSoundWrapper, infraredSensor);
 }
-*/
 
-// It doesn't return 0 value for infrared sensor but returns 0 with ultrasound sensor
-// we will need to fix this issue.
+TEST(isClearTest, isClear_WhenCalled_WillInfraredSensorDistance) {
+    MockSR04Wrapper ultraSoundWrapper;
+    MockInfraredSensor infraredSensor;
+
+    String sensorName = "frontIR";
+
+    EXPECT_CALL(infraredSensor, getDistance());
+
+    isClear(sensorName, ultraSoundWrapper, infraredSensor);
+}

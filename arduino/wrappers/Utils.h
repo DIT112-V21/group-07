@@ -13,6 +13,7 @@ using String = std::string;
 
 const unsigned int kDefaultMaxDistance = 70;
 const auto ONE_SECOND = 1000UL;
+const int NO_OBSTACLE_VALUE = 0;
 
 enum class PinDirection
 {
@@ -73,6 +74,15 @@ struct InfraredSensorWrapper {
     virtual int getDistance()          = 0;
 
 };
+
+struct OdometerWrapper {
+
+    virtual ~OdometerWrapper() = default;
+
+    virtual int getDirection()          = 0;
+
+};
+
 
 struct SerialWrapper {
 
@@ -154,23 +164,14 @@ void MQTTMessageInput(MqttWrapper &mqtt, SerialWrapper &serial){
     }
 }
 
-/*void measureOdometerDistance(bool pubDistanceData,MqttWrapper &mqttWrapper){
-    if (pubDistanceData) {
-        String message = "20";
-
-        if (mqttWrapper.connect("arduino", "public", "public")) {
-            mqttWrapper.publish("/smartcar/ultrasound/front", message);}
-    }
-}
-*/
-/*void SR04sensorData(bool pubSensorData,MqttWrapper &mqttWrapper){
+void SR04sensorData(bool pubSensorData,MqttWrapper &mqttWrapper){
     if (pubSensorData) {
         String message = "20";
 
         if (mqttWrapper.connect("arduino", "public", "public")) {
             mqttWrapper.publish("/smartcar/ultrasound/front", message);}
     }
-}*/
+}
 void SR04sensorData(bool pubSensorData,MqttWrapper &mqttWrapper, SerialWrapper &serialWrapper
                     ,ArduinoRunWrapper &arduinoRunWrapper
                     ,UltraSoundWrapper &ultraSoundWrapper ){
@@ -205,7 +206,6 @@ void handleAngleInput(int distance, int inputAngle, SerialWrapper &serialWrapper
         car.setAngle(inputAngle);
     }
 }
-
 
 void handleInput_SpeedTopicPositive(String input, int speed,
                               SerialWrapper &serialWrapper, MqttWrapper &mqttWrapper,
@@ -244,36 +244,6 @@ void handleInputStopCar(String input, SerialWrapper &serialWrapper, SmartCarWrap
     }
 }
 
-//Commented out because of the same conditions are tested on SpeedTopic
-/*
-void handleInput_AngleTopicPositive(String input, int angle,
-                                    SerialWrapper &serialWrapper, MqttWrapper &mqttWrapper,
-                                    SmartCarWrapper &car, InfraredSensorWrapper &InfraredSensor){
-    if (serialWrapper.available()) {
-        String givenNameA = "a";
-        if (input.starts_with(givenNameA)) {
-            if (angle > 0) {
-                int frontValue = InfraredSensor.getDistance();
-                handleSpeedInput(frontValue, angle, serialWrapper, mqttWrapper, car);
-            }
-        }
-    }
-}
-
-void handleInput_AngleTopicNegative(String input, int angle,
-                                    SerialWrapper &serialWrapper, MqttWrapper &mqttWrapper,
-                                    SmartCarWrapper &car, InfraredSensorWrapper &InfraredSensor){
-    if (serialWrapper.available()) {
-        String givenNameA = "a";
-        if (input.starts_with(givenNameA)) {
-            if (angle < 0) {
-                int backValue = InfraredSensor.getDistance();
-                handleSpeedInput(backValue, angle, serialWrapper, mqttWrapper, car);
-            }
-        }
-    }
-}*/
-
 void connectLocalHost(MqttWrapper &mqttWrapper){
     mqttWrapper.beginLocal();
 }
@@ -282,29 +252,19 @@ void connectExternalHost(MqttWrapper &mqttWrapper){
     mqttWrapper.beginExternal();
 }
 
-
-/*void loop(String input, int speed,
-          SerialWrapper &serialWrapper, MqttWrapper &mqttWrapper,
-          SmartCarWrapper &car, InfraredSensorWrapper &InfraredSensor
-          ,ArduinoRunWrapper &arduinoRunWrapper,UltraSoundWrapper &ultraSoundWrapper )
-{
-
-    if (mqttWrapper.connected()) {
-        mqttWrapper.loop();
-        //cameraData(true);
-        SR04sensorData(true,mqttWrapper, serialWrapper,arduinoRunWrapper,ultraSoundWrapper );
-        //measureOdometerDistance(true, "/smartcar/car/distance");
-    }
-
-    handleInput_SpeedTopicPositive( input, speed,serialWrapper, mqttWrapper,
-            car, InfraredSensor);
-
-    handleInput_SpeedTopicNegative( input, speed,serialWrapper, mqttWrapper,
-                                    car, InfraredSensor);
-
-    //emergencyBrake(true);
-    //reactToSides();
-    //noCPUoverload();
+bool isClear(String sensor, UltraSoundWrapper &ultraSoundWrapper,
+             InfraredSensorWrapper &infraredSensorWrapper){
+    if (sensor == "frontUS"){
+        return (ultraSoundWrapper.getDistance() == NO_OBSTACLE_VALUE);
+    } else if(sensor == "frontIR") {
+        return (infraredSensorWrapper.getDistance() == NO_OBSTACLE_VALUE);
+    }/*else if(sensor == "backIR"){
+        return (infraredSensorWrapper.getDistance() == NO_OBSTACLE_VALUE);
+    }else if(sensor == "rightIR"){
+        return (infraredSensorWrapper.getDistance() == NO_OBSTACLE_VALUE);
+    }else if(sensor == "leftIR"){
+        return (infraredSensorWrapper.getDistance() == NO_OBSTACLE_VALUE);
+    }else{
+        return false;
+    }*/
 }
-
-*/
