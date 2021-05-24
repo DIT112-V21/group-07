@@ -263,12 +263,14 @@ bool isClear(String sensor, UltraSoundWrapper &ultraSoundWrapper,
     } else if(sensor == "frontIR") {
         return (infraredSensorWrapper.getDistance() == NO_OBSTACLE_VALUE);
     }
+    return false;
 }
 
-void slowDownSmoothly(SmartCarWrapper &car, float expectedSpeed, float STOPPING_SPEED)
+void slowDownSmoothly(SmartCarWrapper &car, float STOPPING_SPEED)
 {
-    if (car.getSpeed() >= STOPPING_SPEED){ //check constant for details
-        car.setSpeed(convertSpeed(car.getSpeed()) * 0.7);
+    if (car.getSpeed() >= STOPPING_SPEED){
+        float setSpeed = convertSpeed(car.getSpeed() * 0.7);
+        car.setSpeed(setSpeed);
     }
 }
 

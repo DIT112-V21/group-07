@@ -250,15 +250,13 @@ TEST(convertSpeedTest, convertSpeed_WhenCalled_WillConvertTheSpeed) {
     EXPECT_EQ(speed, convertSpeed(MAX_SPEED));
 }
 
-/*TEST(slowDownSmoothlyTest, slowDownSmoothly_WhenCalled_WillSetTheSpeedToSlowDownSmoothly) {
+TEST(slowDownSmoothlyTest, slowDownSmoothly_WhenCalled_WillSetTheSpeedToSlowDownSmoothly) {
     MockSmartcarWrapper car;
+
     const float STOPPING_SPEED = 0.3;
+    float carSpeed = 0.4;
 
-    float speed = 100;
-    float expectedSpeed = 100;
+    EXPECT_CALL(car, getSpeed()).WillOnce(Return(carSpeed));
 
-    EXPECT_CALL(car, getSpeed()).WillOnce(Return(expectedSpeed));
-    EXPECT_CALL(car, setSpeed(100));
-
-    slowDownSmoothly(car, expectedSpeed, STOPPING_SPEED);
-}*/
+    slowDownSmoothly(car, STOPPING_SPEED);
+}
