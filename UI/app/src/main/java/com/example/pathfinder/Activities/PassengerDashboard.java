@@ -63,22 +63,22 @@ public class PassengerDashboard extends AppCompatActivity {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 //if the button is toggled to true
                 if (isChecked) {
-                    //data is stored to shared preference
+                    //boolean data is stored to shared preference
                     saveIntoSharedPrefs(KEY_STOP, true);
                     passengerSharedPrefs(KEY_STOP, true);
                     /*
-                     * images are given a red and teal background colors respectively to make them
-                     * visible when someone presses the handicap accessibility button
+                     * text is given a red background color to make it visible when someone
+                     * toggles on the stop button
                      */
                     mStopStatus.setBackgroundColor(Color.parseColor("#B33701"));
                     Log.d(KEY_STOP, "this is on");
                 } else {
-                    //data is stored to shared preference
+                    //boolean data is stored to shared preference
                     saveIntoSharedPrefs(KEY_STOP, false);
                     passengerSharedPrefs(KEY_STOP, false);
                     /*
-                     * images are given a white background color to make them
-                     * visible when someone presses the handicap accessibility button
+                     * text is given a white background color to make it visible when someone
+                     * toggles on the stop button
                      */
                     mStopStatus.setBackgroundColor(Color.WHITE);
                     Log.d(KEY_STOP, "this is off");
@@ -91,26 +91,26 @@ public class PassengerDashboard extends AppCompatActivity {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 //if the button is toggled to true
                 if (isChecked) {
-                    //data is stored to shared preference
+                    //boolean data is stored to shared preference
                     saveIntoSharedPrefs(KEY_STOP, true);
                     saveIntoSharedPrefs(KEY_HANDICAP, true);
                     passengerSharedPrefs(KEY_HANDICAP, true);
 
                     /*
                      * images are given a red and teal background colors respectively to make them
-                     * visible when someone presses the handicap accessibility button
+                     * visible when someone toggles on the handicap accessibility button
                      */
                     mStopStatus.setBackgroundColor(Color.parseColor("#B33701"));
                     mAccessibility.setColorFilter(Color.parseColor("#008080"));
                     Log.d(KEY_HANDICAP, "this is on");
                 } else {
-                    //data is stored to shared preference
+                    //boolean data is stored to shared preference
                     saveIntoSharedPrefs(KEY_STOP, false);
                     saveIntoSharedPrefs(KEY_HANDICAP, false);
                     passengerSharedPrefs(KEY_HANDICAP, false);
                     /*
                      * images are given a white background color to make them
-                     * visible when someone presses the handicap accessibility button
+                     * visible when someone toggles off the handicap accessibility button
                      */
                     mStopStatus.setBackgroundColor(Color.WHITE);
                     mAccessibility.setColorFilter(Color.WHITE);

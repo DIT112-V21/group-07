@@ -52,8 +52,7 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
     private MqttClient mMqttClient;
     private boolean isConnected = false;
     private ImageView mVideoStream, mSignOutBtn, mAccessibilityRequest;
-    private TextView mSpeedLog, mDistanceLog;
-    private TextView textView, mStopRequest;
+    private TextView mSpeedLog, mDistanceLog, mStopRequest, textView;
     private SeekBar seekBar;
     private ToggleButton mCruiseControlBtn, mParkBtn;
 
