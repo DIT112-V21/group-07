@@ -72,7 +72,7 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
     private ConstraintLayout stopInfo;
     private TextView busLineName, nextStop, stopTitle;
 
-    Animation bottomAwayAnim, bottomAnim;
+    Animation fadeAwayAnim, bottomAnim;
 
     private BusLine busLine;
     SharedPreferences sharedPreferences;
@@ -91,7 +91,7 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_driver_dashboard);
 
-        bottomAwayAnim = AnimationUtils.loadAnimation(this, R.anim.slide_away_down_animation);
+        fadeAwayAnim = AnimationUtils.loadAnimation(this, R.anim.fade_away_animation);
         bottomAnim = AnimationUtils.loadAnimation(this, R.anim.slide_up_animation);
 
         mSpeedLog = findViewById(R.id.speed_log) ;
@@ -374,12 +374,16 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
             stopInfo.startAnimation(bottomAnim);
             stopInfo.setVisibility(View.VISIBLE);
         }else{
-            stopInfo.startAnimation(bottomAwayAnim);
+            stopInfo.startAnimation(fadeAwayAnim);
             stopInfo.setVisibility(View.INVISIBLE);
         }
 
     }
 
+    /**
+     * This method initialise the lists of stops corresponding to the bus line.
+     * It also initialise the needed attributes.
+     */
     private void generateStopList(){
          stopTitle = findViewById(R.id.stopTitle);
          stopInfo = findViewById(R.id.stopInfo);
