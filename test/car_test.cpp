@@ -242,3 +242,23 @@ TEST(isClearTest, isClear_WhenCalled_WillInfraredSensorDistance) {
 
     isClear(sensorName, ultraSoundWrapper, infraredSensor);
 }
+
+TEST(convertSpeedTest, convertSpeed_WhenCalled_WillConvertTheSpeed) {
+
+    float speed = 100;
+
+    EXPECT_EQ(speed, convertSpeed(MAX_SPEED));
+}
+
+/*TEST(slowDownSmoothlyTest, slowDownSmoothly_WhenCalled_WillSetTheSpeedToSlowDownSmoothly) {
+    MockSmartcarWrapper car;
+    const float STOPPING_SPEED = 0.3;
+
+    float speed = 100;
+    float expectedSpeed = 100;
+
+    EXPECT_CALL(car, getSpeed()).WillOnce(Return(expectedSpeed));
+    EXPECT_CALL(car, setSpeed(100));
+
+    slowDownSmoothly(car, expectedSpeed, STOPPING_SPEED);
+}*/

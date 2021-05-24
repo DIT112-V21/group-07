@@ -15,6 +15,8 @@ const unsigned int kDefaultMaxDistance = 70;
 const auto ONE_SECOND = 1000UL;
 const int NO_OBSTACLE_VALUE = 0;
 
+const float MAX_SPEED = 1.845;
+
 enum class PinDirection
 {
     kInput,
@@ -100,6 +102,8 @@ struct ArduinoRunWrapper {
     virtual long millis()                = 0;
     virtual void delay(int n)            = 0;
 };
+
+float convertSpeed(float speed);
 
 #if defined(ARDUINO)
 // TODO: Remove these forward declarations as you refactor code
@@ -258,13 +262,17 @@ bool isClear(String sensor, UltraSoundWrapper &ultraSoundWrapper,
         return (ultraSoundWrapper.getDistance() == NO_OBSTACLE_VALUE);
     } else if(sensor == "frontIR") {
         return (infraredSensorWrapper.getDistance() == NO_OBSTACLE_VALUE);
-    }/*else if(sensor == "backIR"){
-        return (infraredSensorWrapper.getDistance() == NO_OBSTACLE_VALUE);
-    }else if(sensor == "rightIR"){
-        return (infraredSensorWrapper.getDistance() == NO_OBSTACLE_VALUE);
-    }else if(sensor == "leftIR"){
-        return (infraredSensorWrapper.getDistance() == NO_OBSTACLE_VALUE);
-    }else{
-        return false;
-    }*/
+    }
 }
+
+void slowDownSmoothly(SmartCarWrapper &car, float expectedSpeed, float STOPPING_SPEED)
+{
+    if (car.getSpeed() >= STOPPING_SPEED){ //check constant for details
+        car.setSpeed(convertSpeed(car.getSpeed()) * 0.7);
+    }
+}
+
+float convertSpeed(float speed) {
+    return (speed / MAX_SPEED) * 100;   // check max speed.
+}
+
