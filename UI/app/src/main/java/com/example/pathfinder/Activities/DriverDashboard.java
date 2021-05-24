@@ -1,7 +1,5 @@
 package com.example.pathfinder.Activities;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -16,7 +14,6 @@ import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.SeekBar;
 import android.widget.ToggleButton;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -122,6 +119,9 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
                 startActivity(new Intent(getApplicationContext(), DriverLogin.class));
             }
         });
+
+        generateBusLine();
+        generateStopList();
 
     }
 
