@@ -153,14 +153,14 @@
 
             <TextView
                 android:id="@+id/nextStopPassenger"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_width="349dp"
+                android:layout_height="72dp"
                 android:layout_gravity="center"
                 android:background="@drawable/stop_list_background"
                 android:fontFamily="@font/basic"
                 android:gravity="center|center_horizontal"
                 android:textColor="@color/purple"
-                android:textSize="30sp" />
+                android:textSize="20sp" />
 
         </RelativeLayout>
 
