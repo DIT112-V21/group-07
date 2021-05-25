@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.media.Image;
@@ -19,10 +20,17 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
+import com.example.pathfinder.Client.MqttClient;
 import com.example.pathfinder.R;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
+
+import org.eclipse.paho.client.mqttv3.IMqttActionListener;
+import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
+import org.eclipse.paho.client.mqttv3.IMqttToken;
+import org.eclipse.paho.client.mqttv3.MqttCallback;
+import org.eclipse.paho.client.mqttv3.MqttMessage;
 
 public class PassengerDashboard extends AppCompatActivity {
 
@@ -36,6 +44,14 @@ public class PassengerDashboard extends AppCompatActivity {
     private static final String KEY_STOP = "stop";
     private static final String KEY_HANDICAP = "handicap";
 
+    private static final String TAG = "PathfinderPassenger";
+    private static final String EXTERNAL_MQTT_BROKER = "test.mosquitto.org";
+    private static final String LOCALHOST = "10.0.2.2";
+    private static final String MQTT_SERVER = "tcp://" + LOCALHOST + ":1883";
+    private static final int QOS = 1;
+
+    private MqttClient mMqttClient;
+    private boolean isConnected = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,8 +71,6 @@ public class PassengerDashboard extends AppCompatActivity {
 
         mStopBtn.setChecked(update(KEY_STOP));
         mHandicapBtn.setChecked(update(KEY_HANDICAP));
-
-
 
         mStopBtn.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -130,6 +144,89 @@ public class PassengerDashboard extends AppCompatActivity {
 
     }
 
+    private void connectToMqttBroker() {
+        if (!isConnected) {
+            mMqttClient.connect(TAG, "", new IMqttActionListener() {
+
+                @Override
+                public void onSuccess(IMqttToken asyncActionToken) {
+                    isConnected = true;
+
+                    final String successfulConnection = "Connected to MQTT broker";
+                    Log.i(TAG, successfulConnection);
+                    Toast.makeText(getApplicationContext(), successfulConnection, Toast.LENGTH_SHORT).show();
+
+                    // These are to subscribe to that related specific topics mentioned as first parameter. Topics shall match the topics smart car publishes its data on.
+                    mMqttClient.subscribe("/smartcar/park", QOS, null);
+                    mMqttClient.subscribe("/smartcar/camera", QOS, null);
+                    mMqttClient.subscribe("/smartcar/odometer", QOS, null);
+                }
+
+                @Override
+                public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
+                    final String failedConnection = "Failed to connect to MQTT broker";
+                    Log.e(TAG, failedConnection);
+                    Toast.makeText(getApplicationContext(), failedConnection, Toast.LENGTH_SHORT).show();
+                }
+            }, new MqttCallback() {
+                @Override
+                public void connectionLost(Throwable cause) {
+                    isConnected = false;
+
+                    final String connectionLost = "Lost connection to MQTT broker";
+                    Log.w(TAG, connectionLost);
+                    Toast.makeText(getApplicationContext(), connectionLost, Toast.LENGTH_SHORT).show();
+                }
+
+                /*
+                 * The topics shall be catch hold of by this method and handled through the
+                 * statements for the specific functions.
+                 * If a message published to a specific topic, use that message to the some
+                 * ( specific function).
+                 */
+                @Override
+                public void messageArrived(String topic, MqttMessage message) throws Exception {
+                    if (topic.equals("/smartcar/camera")) {
+                        final Bitmap bm = Bitmap.createBitmap(IMAGE_WIDTH, IMAGE_HEIGHT, Bitmap.Config.ARGB_8888);
+
+                        final byte[] payload = message.getPayload();
+                        final int[] colors = new int[IMAGE_WIDTH * IMAGE_HEIGHT];
+                        for (int ci = 0; ci < colors.length; ++ci) {
+                            final byte r = payload[3 * ci];
+                            final byte g = payload[3 * ci + 1];
+                            final byte b = payload[3 * ci + 2];
+                            colors[ci] = Color.rgb(r, g, b);
+                        }
+                        bm.setPixels(colors, 0, IMAGE_WIDTH, 0, 0, IMAGE_WIDTH, IMAGE_HEIGHT);
+
+                        mVideoStream.setImageBitmap(bm);
+                    } else if(topic.equals("/smartcar/car/distance")) {
+                        distanceLog(Double.parseDouble(message.toString()));
+                    } else if(topic.equals("/smartcar/speed")) {
+                        speedLog(Integer.parseInt(message.toString()));
+                    }
+                    else {
+                        Log.i(TAG, "[MQTT] Topic: " + topic + " | Message: " + message.toString());
+                    }
+                }
+
+                @Override
+                public void deliveryComplete(IMqttDeliveryToken token) {
+                    Log.d(TAG, "Message delivered");
+                }
+            });
+        }
+    }
+
+    void notConnected() {
+        if (!isConnected) {
+            final String notConnected = "No connection";
+            Log.e(TAG, notConnected);
+            Toast.makeText(getApplicationContext(), notConnected, Toast.LENGTH_SHORT).show();
+            return;
+        }
+    }
+
     /*
      * helper method to check if stop request evaluates as true.
      * if stop request has is true then the stop status lights up and is made visible; otherwise
@@ -183,6 +280,8 @@ public class PassengerDashboard extends AppCompatActivity {
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putBoolean(key, value);
         editor.apply();
+
+
     }
 
     /*
