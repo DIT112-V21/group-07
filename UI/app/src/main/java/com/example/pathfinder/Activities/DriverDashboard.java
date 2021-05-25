@@ -1,8 +1,8 @@
 package com.example.pathfinder.Activities;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.FragmentActivity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -11,9 +11,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.CompoundButton;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.SeekBar;
@@ -44,23 +42,26 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
     private static final int IMAGE_WIDTH = 320;
     private static final int IMAGE_HEIGHT = 240;
 
+    //key names for stored data in shared preferences
+    private static final String KEY_STOP = "stop";
+    private static final String KEY_HANDICAP = "handicap";
+
     private MqttClient mMqttClient;
-    //Park/ lock
-    //private boolean isParked = false;
-    //Engine activity
-    //private boolean isActive = false;
     private boolean isConnected = false;
-    private ImageView mVideoStream, mSignOutBtn;
-    private TextView mSpeedLog, mDistanceLog;
-    private TextView textView;
+    private ImageView mVideoStream, mSignOutBtn, mAccessibilityRequest;
+    private TextView mSpeedLog, mDistanceLog, mStopRequest, textView;
     private SeekBar seekBar;
     private ToggleButton mCruiseControlBtn, mParkBtn;
 
     SharedPreferences sharedPreferences;
 
+    /**Used as a way to compare previously published messages with GUI's current values*/
     private int lastSentSpeed = 0;
     private int lastSentAngle = 0;
-    boolean isCruiseControl;
+
+    /**If true, cruise control is enabled
+     * If false, limit speed is enabled*/
+    private boolean isCruiseControl;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,6 +72,8 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
         mSpeedLog = findViewById(R.id.speed_log) ;
         mDistanceLog = findViewById(R.id.distance_log);
         mSignOutBtn = findViewById(R.id.sign_out);
+        mStopRequest = findViewById(R.id.stop);
+        mAccessibilityRequest = findViewById(R.id.accessibility);
 
         mMqttClient = new MqttClient(getApplicationContext(), MQTT_SERVER, TAG);
 
@@ -78,6 +81,13 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
 
         textView = (TextView) findViewById(R.id.textView);
         seekBar = (SeekBar) findViewById(R.id.seekBar);
+
+        //checks the state of stop request
+        checkStopRequest();
+        //checks the state of accessibility request
+        checkAccessibilityRequest();
+
+        seekBarListener();
 
         connectToMqttBroker();
 
@@ -89,66 +99,6 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
             }
         });
 
-
-        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                textView.setText("" + progress + "%");
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-
-            }
-        });
-
-    }
-
-    /**
-     *
-     * @param xPercent
-     * @param yPercent
-     * @param id
-     */
-    @Override
-    public void onThumbstickMoved(float xPercent, float yPercent, int id) {
-        int angle = (int)((xPercent) * 100);
-        int strength = 0;
-        int seekProgress = - seekBar.getProgress();
-        if(isCruiseControl){
-            //setting fixed speed for cruise control
-            strength = seekProgress;
-        }else{
-            //range calculation (limit speed is active)
-            strength = (int) (yPercent * seekProgress);
-        }
-
-        Log.d("Main Method", "X percent: " + xPercent + " Y percent: " + yPercent);
-        //this should change and take a different speed later
-        drive(strength, angle, "driving");
-    }
-
-    public void onSeekBarMoved(View view){
-        int strength = seekBar.getProgress();
-
-        if(isCruiseControl){
-            drive(strength, STRAIGHT_ANGLE, "driving");
-        }
-    }
-
-    public void cruiseControlBtn(View view) {
-        isCruiseControl = !isCruiseControl;
-        int strength = seekBar.getProgress();
-        if (strength > IDLE_SPEED && isCruiseControl) {
-            drive(strength, STRAIGHT_ANGLE, "driving");
-        } else {
-            drive(0, 0, "Stopping");
-        }
     }
 
     @Override
@@ -174,6 +124,57 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
         });
     }
 
+    /**Driving using thumbstick
+     * If cruise control is enabled, speed will be set from seekBar's progress
+     * If cruise control is disabled, speed will be set as percentage of seekBar's progress*/
+    @Override
+    public void onThumbstickMoved(float xPercent, float yPercent, int id) {
+        int angle = (int)((xPercent) * 100);
+        int strength;
+        //We need the negative of seekBar.getProgress()
+        int seekProgress = - seekBar.getProgress();
+        if(isCruiseControl){
+            //setting fixed speed for cruise control
+            strength = seekProgress;
+        }else{
+            //range calculation (limit speed is active)
+            strength = (int)(yPercent * seekProgress);
+        }
+        drive(strength, angle, "driving");
+    }
+
+    /**Switches on/off cruise control
+     * If cruise control is being enabled, vehicle will drive with speed based on seekBar's progress
+     * If cruise control is being disabled, vehicle will stop*/
+    public void onCruiseControlBtn(View view) {
+        isCruiseControl = !isCruiseControl;
+        int strength = seekBar.getProgress();
+        if (strength > IDLE_SPEED && isCruiseControl) {
+            drive(strength, STRAIGHT_ANGLE, "driving");
+        } else {
+            drive(IDLE_SPEED, STRAIGHT_ANGLE, "stopping");
+        }
+    }
+
+    /**Updates text showing seekBar's progress
+     * If cruise control is enabled, vehicle will drive with speed based on seekBar's progress*/
+    private void seekBarListener(){
+        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                textView.setText("" + progress + "%");
+                if (isCruiseControl) {
+                    drive(progress, STRAIGHT_ANGLE, "driving");
+                }
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {}
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {}
+        });
+    }
+
     private void connectToMqttBroker() {
         if (!isConnected) {
             mMqttClient.connect(TAG, "", new IMqttActionListener() {
@@ -187,7 +188,6 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
                     Toast.makeText(getApplicationContext(), successfulConnection, Toast.LENGTH_SHORT).show();
 
                     // These are to subscribe to that related specific topics mentioned as first parameter. Topics shall match the topics smart car publishes its data on.
-                    //mMqttClient.subscribe("/smartcar/ultrasound/front", QOS, null);
                     mMqttClient.subscribe("/smartcar/park", QOS, null);
                     mMqttClient.subscribe("/smartcar/camera", QOS, null);
                     mMqttClient.subscribe("/smartcar/odometer", QOS, null);
@@ -209,8 +209,12 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
                     Toast.makeText(getApplicationContext(), connectionLost, Toast.LENGTH_SHORT).show();
                 }
 
-                //The topics shall be catch hold of by this method and handled through the statements for the specific functions.
-                // (If a message published to a specific topic, use that message to the some specific function).
+                /*
+                * The topics shall be catch hold of by this method and handled through the
+                * statements for the specific functions.
+                * If a message published to a specific topic, use that message to the some
+                * ( specific function).
+                */
                 @Override
                 public void messageArrived(String topic, MqttMessage message) throws Exception {
                     if (topic.equals("/smartcar/camera")) {
@@ -251,6 +255,38 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
             Log.e(TAG, notConnected);
             Toast.makeText(getApplicationContext(), notConnected, Toast.LENGTH_SHORT).show();
             return;
+        }
+    }
+
+    /*
+     * helper method to check if stop request evaluates as true.
+     * if stop request has is true then the stop status lights up and is made visible; otherwise
+     * its color is set to white to appear invisible.
+     */
+
+    public void checkStopRequest() {
+        sharedPreferences = getSharedPreferences(KEY_STOP, Context.MODE_PRIVATE);
+
+        if (sharedPreferences.getBoolean(KEY_STOP, false)) {
+            mStopRequest.setBackgroundColor(Color.parseColor("#B33701"));
+        } else {
+            mStopRequest.setBackgroundColor(Color.WHITE);
+        }
+    }
+
+    /*
+     * helper method to check if accessibility request evaluated as true.
+     * if accessibility request has is true then the stop status and accessibility symbols
+     * light up and is made visible; otherwise their colors are set to white to appear invisible.
+     */
+
+    public void checkAccessibilityRequest() {
+        sharedPreferences = getSharedPreferences(KEY_HANDICAP, Context.MODE_PRIVATE);
+
+        if (sharedPreferences.getBoolean(KEY_HANDICAP, false)) {
+            mAccessibilityRequest.setColorFilter(Color.parseColor("#008080"));
+        } else {
+            mAccessibilityRequest.setColorFilter(Color.WHITE);
         }
     }
 
@@ -297,7 +333,10 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
         mSpeedLog.setText(String.valueOf(speed) + " km/h");
     }
 
-    // A helper method takes the distance value from ODOMETER_LOG(topic="/smartcar/odometer") and set it to distance log on the related layout in the UI.
+    /*
+    * A helper method takes the distance value from ODOMETER_LOG(topic="/smartcar/odometer") and
+    * set it to distance log on the related layout in the UI.
+    */
     void distanceLog(double distance) {
         distance = distance/100;
         notConnected();
@@ -308,7 +347,6 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
     public void brakeBtn(View view) {
         brake();
     }
-
 
     public void nextStopBtn(View view) {
 
