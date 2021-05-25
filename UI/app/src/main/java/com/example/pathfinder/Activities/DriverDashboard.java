@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
@@ -231,9 +232,9 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
                         bm.setPixels(colors, 0, IMAGE_WIDTH, 0, 0, IMAGE_WIDTH, IMAGE_HEIGHT);
 
                         mVideoStream.setImageBitmap(bm);
-                    } else if(topic.equals("/smartcar/odometer")) {
+                    } else if(topic.equals("/smartcar/car/distance")) {
                         distanceLog(Double.parseDouble(message.toString()));
-                    } else if(topic.equals("/smartcar/speedometer")) {
+                    } else if(topic.equals("/smartcar/speed")) {
                         speedLog(Integer.parseInt(message.toString()));
                     }
                     else {
