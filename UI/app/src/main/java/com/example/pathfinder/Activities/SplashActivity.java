@@ -13,7 +13,7 @@ import android.widget.TextView;
 
 import com.example.pathfinder.R;
 
-public class MainActivity extends AppCompatActivity {
+public class SplashActivity extends AppCompatActivity {
 
     private static int SPLASH_SCREEN = 5000;
 
@@ -26,7 +26,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_splash);
 
         //Animations
         topAnim = AnimationUtils.loadAnimation(this, R.anim.top_animation);
@@ -34,7 +34,7 @@ public class MainActivity extends AppCompatActivity {
 
         //Hooks
         cloud = findViewById(R.id.cloud);
-        image = findViewById(R.id.image);
+        image = findViewById(R.id.backgroundImage);
         logo = findViewById(R.id.logo);
         org = findViewById(R.id.org);
 
@@ -43,13 +43,10 @@ public class MainActivity extends AppCompatActivity {
         logo.setAnimation(bottomAnim);
         org.setAnimation(bottomAnim);
 
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                Intent intent = new Intent(MainActivity.this, Dashboard.class);
-                startActivity(intent);
-                finish();
-            }
+        new Handler().postDelayed(() -> {
+            Intent intent = new Intent(this, UserSelection.class);
+            startActivity(intent);
+            finish();
         }, SPLASH_SCREEN);
     }
 }

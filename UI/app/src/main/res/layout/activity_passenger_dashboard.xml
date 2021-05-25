@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.drawerlayout.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Activities.DriverDashboard"
+    tools:openDrawer="start">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:background="@color/white">
+
+
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="20dp">
+
+            <ImageView
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:id="@+id/back"
+                android:src="@drawable/img_back"
+                android:layout_centerVertical="true"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/app_name"
+                android:textSize="35sp"
+                android:fontFamily="@font/black_ops_one"
+                android:textColor="@color/yellow"
+                android:layout_centerHorizontal="true"
+                android:textAllCaps="true"
+                />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/accessibility"
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:layout_centerHorizontal="true"
+                android:src="@drawable/img_handicap"
+                app:tint="@color/white" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="150dp"
+            android:layout_height="60dp"
+            android:layout_marginHorizontal="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_gravity="center"
+            android:id="@+id/stop_status"
+            >
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/basic"
+                android:textSize="16dp"
+                android:text="@string/stop_requested"
+                android:textColor="@color/white"
+                android:layout_marginTop="20dp"
+                android:layout_marginLeft="17dp"
+                android:gravity="center"
+                android:textAllCaps="true"/>
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:paddingTop="5dp"
+            android:layout_marginTop="30dp"
+            >
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                >
+
+                <RelativeLayout
+                    android:layout_width="160dp"
+                    android:layout_height="130dp"
+                    android:layout_marginRight="10dp"
+                    android:background="@drawable/card_1"
+                    >
+
+                    <ToggleButton
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:paddingTop="85dp"
+                        android:textColor="@color/purple"
+                        android:fontFamily="@font/basic"
+                        android:textOff="@string/request_stop"
+                        android:textOn="@string/cancel_stop"
+                        android:background="@drawable/card_1"
+                        android:id="@+id/stop"/>
+
+                    <ImageView
+                        android:layout_width="55dp"
+                        android:layout_height="55dp"
+                        android:src="@drawable/img_stop"
+                        android:layout_marginLeft="53dp"
+                        android:layout_marginTop="20dp"
+                        />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="160dp"
+                    android:layout_height="130dp"
+                    android:background="@drawable/card_1"
+                    android:layout_marginLeft="10dp"
+
+                    >
+
+                    <ToggleButton
+                        android:id="@+id/handicap"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/card_1"
+                        android:fontFamily="@font/basic"
+                        android:paddingTop="85dp"
+                        android:layout_margin="0dp"
+                        android:textColor="@color/purple"
+                        android:textOff="@string/handicap"
+                        android:textOn="@string/cancel_accessibility" />
+
+                    <ImageView
+                        android:layout_width="55dp"
+                        android:layout_height="55dp"
+                        android:src="@drawable/img_handicap"
+                        android:layout_marginLeft="49dp"
+                        android:layout_marginTop="20dp"
+                        />
+
+
+                </RelativeLayout>
+            </LinearLayout>
+        </RelativeLayout>
+
+    </LinearLayout>
+
+</androidx.drawerlayout.widget.DrawerLayout>
