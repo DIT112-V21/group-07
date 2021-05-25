@@ -18,7 +18,6 @@ import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -47,6 +46,11 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
     private static final String ODOMETER_LOG = "/smartcar/odometer";
     private static final String SPEEDOMETER_LOG = "/smartcar/speedometer";
     private static final String NEXT_STOP = "/smartcar/busNextStop";
+    private static final String BUS_STOP_LIST_TOPIC = "/smartcar/bus/StopList";
+    private static final String BUS_NAME_TOPIC = "/smartcar/bus/Name";
+    private static final String NEW_PASSENGER = "/smartcar/newPassengerConnected";
+    private static final String NEW_PASSENGER_BUS_ROUTE_TRIGGER = "1";
+    private static final String NEW_PASSENGER_BUS_NAME_TRIGGER = "2";
     private static final int IDLE_SPEED = 0;
     private static final int STRAIGHT_ANGLE = 0;
     private static final int QOS = 1;
@@ -216,6 +220,7 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
                     mMqttClient.subscribe("/smartcar/park", QOS, null);
                     mMqttClient.subscribe("/smartcar/camera", QOS, null);
                     mMqttClient.subscribe("/smartcar/odometer", QOS, null);
+                    mMqttClient.subscribe(NEW_PASSENGER,QOS,null);
                 }
 
                 @Override
@@ -256,6 +261,13 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
                         distanceLog(Double.parseDouble(message.toString()));
                     } else if(topic.equals("/smartcar/speedometer")) {
                         speedLog(Integer.parseInt(message.toString()));
+                    }else if (topic.equals(NEW_PASSENGER)){
+                        if (message.toString().equals(NEW_PASSENGER_BUS_ROUTE_TRIGGER)){
+                            publishStopList();
+                        }
+                        if(message.toString().equals(NEW_PASSENGER_BUS_NAME_TRIGGER)){
+                            publishBusName();
+                        }
                     }
                     else {
                         Log.i(TAG, "[MQTT] Topic: " + topic + " | Message: " + message.toString());
@@ -370,6 +382,10 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
         nextStop.setText(comingStop);
     }
 
+    /**
+     * Displays the list of all stops for the line.
+     * @param view -> The button that activates the view.
+     */
     public void displayAllStops(View view){
         if (stopInfo.getVisibility() == View.INVISIBLE){
             stopInfo.startAnimation(bottomAnim);
@@ -396,6 +412,24 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
          stopList.setAdapter(stopListAdapter);
 
          stopTitle.setText("Stops for line: " + busLine.getName());
+    }
+
+    /**
+     * Send all bus stop in one string separated by ";" to avoid sending multiple messages.
+     */
+    private void publishStopList(){
+        String busListMessage = "";
+        for (String busStop : busLine.getStopList()){
+            busListMessage = busListMessage + busStop + ";";
+        }
+        mMqttClient.publish(BUS_STOP_LIST_TOPIC,busListMessage,QOS,null);
+        Log.d("Driver To Passenger", busListMessage);
+    }
+
+    private void publishBusName(){
+        String busName = busLine.getName();
+        mMqttClient.publish(BUS_NAME_TOPIC, busName, QOS, null);
+        Log.d("Driver To Passenger", "Bus name: " + busName);
     }
 
 }

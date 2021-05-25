@@ -166,7 +166,7 @@
 
         <include
             android:id="@+id/busLineInfoPassenger"
-            layout="@layout/bus_route" />
+            layout="@layout/bus_route_passenger" />
 
     </LinearLayout>
 

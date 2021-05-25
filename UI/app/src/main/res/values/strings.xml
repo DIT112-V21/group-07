@@ -48,5 +48,6 @@
     <string name="cancel_stop">Cancel Stop</string>
     <string name="cancel_accessibility">Cancel Accessibility</string>
     <string name="find_route">Find Route</string>
+    <string name="new_passenger">1</string>
 
 </resources>
