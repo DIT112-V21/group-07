@@ -49,8 +49,8 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
     private MqttClient mMqttClient;
     private boolean isConnected = false;
     private ImageView mVideoStream, mSignOutBtn, mAccessibilityRequest;
-    private TextView mSpeedLog, mDistanceLog, mStopRequest, textView;
-    private SeekBar seekBar;
+    private TextView mSpeedLog, mDistanceLog, mStopRequest, mTextView;
+    private SeekBar mSeekBar;
     private ToggleButton mCruiseControlBtn, mParkBtn;
 
     SharedPreferences sharedPreferences;
@@ -79,8 +79,8 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
 
         mVideoStream = findViewById(R.id.videoStream);
 
-        textView = (TextView) findViewById(R.id.textView);
-        seekBar = (SeekBar) findViewById(R.id.seekBar);
+        mTextView = findViewById(R.id.textView);
+        mSeekBar = findViewById(R.id.seekBar);
 
         //checks the state of stop request
         checkStopRequest();
@@ -132,7 +132,7 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
         int angle = (int)((xPercent) * 100);
         int strength;
         //We need the negative of seekBar.getProgress()
-        int seekProgress = - seekBar.getProgress();
+        int seekProgress = - mSeekBar.getProgress();
         if(isCruiseControl){
             //setting fixed speed for cruise control
             strength = seekProgress;
@@ -148,7 +148,7 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
      * If cruise control is being disabled, vehicle will stop*/
     public void onCruiseControlBtn(View view) {
         isCruiseControl = !isCruiseControl;
-        int strength = seekBar.getProgress();
+        int strength = mSeekBar.getProgress();
         if (strength > IDLE_SPEED && isCruiseControl) {
             drive(strength, STRAIGHT_ANGLE, "driving");
         } else {
@@ -159,10 +159,10 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
     /**Updates text showing seekBar's progress
      * If cruise control is enabled, vehicle will drive with speed based on seekBar's progress*/
     private void seekBarListener(){
-        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+        mSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                textView.setText("" + progress + "%");
+                mTextView.setText("" + progress + "%");
                 if (isCruiseControl) {
                     drive(progress, STRAIGHT_ANGLE, "driving");
                 }
