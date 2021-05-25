@@ -267,26 +267,27 @@ bool isClear(String sensor, UltraSoundWrapper &ultraSoundWrapper,
     return false;
 }
 
-void slowDownSmoothly(SmartCarWrapper &car, float STOPPING_SPEED)
+float slowDownSmoothly(float STOPPING_SPEED, float initialSpeed)
 {
-    if (car.getSpeed() >= STOPPING_SPEED){
-        float setSpeed = convertSpeed(car.getSpeed() * 0.7);
-        car.setSpeed(setSpeed);
+    if (initialSpeed >= STOPPING_SPEED){ // 0.3
+        float setSpeed = convertSpeed(initialSpeed * 0.7);
+        return setSpeed;
     }
+    return 0;
 }
 
 float convertSpeed(float speed) {
-    return (speed / MAX_SPEED) * 100;
+    return (speed / MAX_SPEED) * 100;  //1.845
 }
 
-bool reactToSensor(int sensorDistance, int STOP_DISTANCE, bool isSlowDown, SmartCarWrapper &car, float STOPPING_SPEED, bool isParked){
+bool reactToSensor(int sensorDistance, int STOP_DISTANCE,
+                   SmartCarWrapper &car, float STOPPING_SPEED, float initialSpeed){
     if (sensorDistance != 0){
-        if(sensorDistance > STOP_DISTANCE && sensorDistance <= 250 && isSlowDown){
-            slowDownSmoothly(car, STOPPING_SPEED);
-            isParked = true;
+        if(sensorDistance > STOP_DISTANCE && sensorDistance <= 250){
+            float setSpeed = slowDownSmoothly(STOPPING_SPEED, initialSpeed);
+            car.setSpeed(setSpeed);
         }else if ( sensorDistance <= STOP_DISTANCE ){
             car.setSpeed(0);
-            isParked = true;
             return true;
         }
     }

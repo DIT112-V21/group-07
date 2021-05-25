@@ -7,9 +7,8 @@
 const auto kSuccess   = 200;
 const auto kLightsPin = 2;
 int STOP_DISTANCE = 70;
-bool isSlowDown = true;
-bool isParked = true;
 const float STOPPING_SPEED = 0.3;
+float initialSpeed = 1.845;
 
 struct MockMqttWrapper : public MqttWrapper {
   MOCK_METHOD(void, beginLocal, (), (override));
@@ -249,32 +248,31 @@ TEST(isClearTest, isClear_WhenCalled_WillInfraredSensorDistance) {
 
 TEST(convertSpeedTest, convertSpeed_WhenCalled_WillConvertTheSpeed) {
 
-    float speed = 100;
+    float expectedSpeed = 100;
 
-    EXPECT_EQ(speed, convertSpeed(MAX_SPEED));
+    EXPECT_EQ(expectedSpeed, convertSpeed(initialSpeed));
 }
 
 TEST(slowDownSmoothlyTest, slowDownSmoothly_WhenCalled_WillSetTheSpeedToSlowDownSmoothly) {
-    MockSmartcarWrapper car;
 
-    float carSpeed = 0.4;
 
-    EXPECT_CALL(car, getSpeed()).WillOnce(Return(carSpeed));
+    float expectedSpeed = 70;
 
-    slowDownSmoothly(car, STOPPING_SPEED);
+
+    EXPECT_EQ(expectedSpeed, slowDownSmoothly(STOPPING_SPEED, initialSpeed));
+
 }
 
 TEST(reactToSensorTest, reactToSensor_WhenObstacle_WillSlowDownTheCar) {
     MockSmartcarWrapper car;
     MockInfraredSensor infraredSensor;
 
-    float carSpeed = 0.4;
     int sensorDistance = 80;
+    float expectedSpeed = 70;
 
-    EXPECT_CALL(car, getSpeed()).WillOnce(Return(carSpeed));
+    EXPECT_CALL(car, setSpeed(expectedSpeed));
 
-    reactToSensor(sensorDistance, STOP_DISTANCE, isSlowDown,
-                  car, STOPPING_SPEED, isParked);
+    reactToSensor(sensorDistance, STOP_DISTANCE, car, STOPPING_SPEED, initialSpeed);
 }
 
 TEST(reactToSensorTest, reactToSensor_WhenObstacle_WillStopTheCar) {
@@ -284,8 +282,7 @@ TEST(reactToSensorTest, reactToSensor_WhenObstacle_WillStopTheCar) {
 
     EXPECT_CALL(car, setSpeed(0));
 
-    reactToSensor(sensorDistance, STOP_DISTANCE, isSlowDown,
-                  car, STOPPING_SPEED, isParked);
+    reactToSensor(sensorDistance, STOP_DISTANCE,car, STOPPING_SPEED, initialSpeed);
 }
 
 TEST(reactToSensorTest, reactToSensor_WhenNOobstacle_WillReturnFalse) {
@@ -293,8 +290,7 @@ TEST(reactToSensorTest, reactToSensor_WhenNOobstacle_WillReturnFalse) {
 
     int sensorDistance = 0;
 
-    bool obstacle = reactToSensor(sensorDistance, STOP_DISTANCE, isSlowDown,
-                  car, STOPPING_SPEED, isParked);
+    bool obstacle = reactToSensor(sensorDistance, STOP_DISTANCE,car, STOPPING_SPEED, initialSpeed);
 
     EXPECT_EQ(false, obstacle);
 
