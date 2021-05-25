@@ -15,10 +15,11 @@ const unsigned int kDefaultMaxDistance = 70;
 const auto ONE_SECOND = 1000UL;
 const int NO_OBSTACLE_VALUE = 0;
 const int FRONT_STOP_DISTANCE = 70;
+const float STOPPING_SPEED = 0.3;
 const int BACK_STOP_DISTANCE = 50;
-
 const float MAX_SPEED = 1.845;
-//const float STOPPING_SPEED = 0.3;
+float initialSpeed = 1.845;
+
 
 enum class PinDirection
 {
@@ -259,7 +260,7 @@ void connectExternalHost(MqttWrapper &mqttWrapper){
     mqttWrapper.beginExternal();
 }
 
-bool isClear(String sensor, UltraSoundWrapper &ultraSoundWrapper,
+/*bool isClear(String sensor, UltraSoundWrapper &ultraSoundWrapper,
              InfraredSensorWrapper &infraredSensorWrapper){
     if (sensor == "frontUS"){
         return (ultraSoundWrapper.getDistance() == NO_OBSTACLE_VALUE);
@@ -267,7 +268,30 @@ bool isClear(String sensor, UltraSoundWrapper &ultraSoundWrapper,
         return (infraredSensorWrapper.getDistance() == NO_OBSTACLE_VALUE);
     }
     return false;
+}*/
+
+
+bool isClear(int sensor, UltraSoundWrapper &ultraSoundWrapper,
+             InfraredSensorWrapper &infraredSensorWrapper){
+
+    switch (sensor) {
+        case 1:
+            return (ultraSoundWrapper.getDistance() == NO_OBSTACLE_VALUE);
+        case 2:
+            return (infraredSensorWrapper.getDistance() == NO_OBSTACLE_VALUE);
+
+        /*case 3:
+            return (backIRSensor.getDistance() == NO_OBSTACLE_VALUE);
+        case 4:
+            return (rightIRSensor.getDistance() == NO_OBSTACLE_VALUE);
+        case 5:
+            return (leftIRSensor.getDistance() == NO_OBSTACLE_VALUE); */
+        default:
+            return false;
+    }
 }
+
+
 
 float slowDownSmoothly(float STOPPING_SPEED, float initialSpeed)
 {
@@ -288,6 +312,7 @@ bool reactToSensor(int sensorDistance, int STOP_DISTANCE,
         if(sensorDistance > STOP_DISTANCE && sensorDistance <= 250){
             float setSpeed = slowDownSmoothly(STOPPING_SPEED, initialSpeed);
             car.setSpeed(setSpeed);
+            return false;
         }else if ( sensorDistance <= STOP_DISTANCE ){
             car.setSpeed(0);
             return true;
@@ -297,7 +322,7 @@ bool reactToSensor(int sensorDistance, int STOP_DISTANCE,
 }
 
 bool emergencyBrake(int leftDirection, int rightDirection,
-                    int frontSensorDistance, int backSensorDistance, String sensor,
+                    int frontSensorDistance, int backSensorDistance, int sensor,
                     UltraSoundWrapper &ultraSoundWrapper, InfraredSensorWrapper &infraredSensorWrapper,
                     int STOP_DISTANCE, SmartCarWrapper &car,
                     float STOPPING_SPEED, float initialSpeed){
@@ -307,9 +332,11 @@ bool emergencyBrake(int leftDirection, int rightDirection,
         if(isClear(sensor, ultraSoundWrapper, infraredSensorWrapper)){
             if(reactToSensor(frontSensorDistance, STOP_DISTANCE,
                         car, STOPPING_SPEED, initialSpeed)){
-                return true;}
+                return false;
+            }
         }else{
             car.setSpeed(0);
+            return true;
         }
     }else if (leftDirection == -1 && rightDirection == -1 && initialSpeed > 0){
 
