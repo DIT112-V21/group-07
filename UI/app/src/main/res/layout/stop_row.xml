@@ -15,7 +15,7 @@
         android:fontFamily="@font/basic"
         android:gravity="center|center_horizontal"
         android:textColor="@color/yellow"
-        android:textSize="24dp"
+        android:textSize="24sp"
         android:padding="5dp"
         />
 

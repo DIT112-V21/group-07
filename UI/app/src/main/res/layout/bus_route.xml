@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/bus_route_layout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:layout_centerInParent="true">
+
+
+    <TextView
+        android:id="@+id/stopTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+
+        android:background="@drawable/stop_list_background"
+        android:fontFamily="@font/basic"
+        android:gravity="center|center_horizontal"
+        android:textColor="@color/purple"
+        android:textSize="25sp"
+        android:padding="3dp"
+        />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/stopList"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/stopTitle"
+        android:layout_marginTop="2dp"
+        android:background="@drawable/stop_list_background"
+
+        />
+
+</RelativeLayout>

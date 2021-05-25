@@ -11,6 +11,7 @@ import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -69,7 +70,7 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
     private RecyclerView stopList;
     private RecyclerView.LayoutManager stopListLayoutManager;
     private RecyclerView.Adapter stopListAdapter;
-    private ConstraintLayout stopInfo;
+    private RelativeLayout stopInfo;
     private TextView busLineName, nextStop, stopTitle;
 
     Animation fadeAwayAnim, bottomAnim;
@@ -386,7 +387,7 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
      */
     private void generateStopList(){
          stopTitle = findViewById(R.id.stopTitle);
-         stopInfo = findViewById(R.id.stopInfo);
+         stopInfo = findViewById(R.id.busLineInfo);
          stopList = findViewById(R.id.stopList);
          stopList.setHasFixedSize(true);
          stopListLayoutManager = new LinearLayoutManager(this);
