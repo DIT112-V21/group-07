@@ -269,31 +269,32 @@
                 </RelativeLayout>
 
                 <RelativeLayout
+                    android:id="@+id/next_stop"
                     android:layout_width="70dp"
                     android:layout_height="85dp"
                     android:layout_gravity="center"
                     android:layout_marginLeft="5dp"
                     android:layout_marginRight="5dp"
                     android:background="@drawable/card_1"
-                    android:id="@+id/next_stop">
+                    android:onClick="changeStop">
 
                     <ImageView
                         android:layout_width="40dp"
                         android:layout_height="40dp"
+                        android:layout_centerHorizontal="true"
                         android:layout_marginTop="5dp"
-                        android:src="@drawable/img_next_stop"
-                        android:layout_centerHorizontal="true"/>
+                        android:src="@drawable/img_next_stop" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_centerHorizontal="true"
+                        android:layout_marginTop="58dp"
+                        android:fontFamily="@font/basic"
+                        android:gravity="center_horizontal"
                         android:text="@string/next_stop"
                         android:textAlignment="center"
-                        android:gravity="center_horizontal"
-                        android:fontFamily="@font/basic"
-                        android:textColor="@color/purple"
-                        android:layout_marginTop="58dp"/>
+                        android:textColor="@color/purple" />
 
                 </RelativeLayout>
 
@@ -309,13 +310,12 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:background="@drawable/card_1"
-                        android:textOff="@string/park"
-                        android:textOn="@string/unpark"
-                        android:paddingTop="50dp"
                         android:fontFamily="@font/basic"
-                        android:textColor="@color/purple"
+                        android:paddingTop="50dp"
                         android:textAllCaps="false"
-                        />
+                        android:textColor="@color/purple"
+                        android:textOff="@string/park"
+                        android:textOn="@string/unpark" />
 
                     <ImageView
                         android:layout_width="40dp"
@@ -330,10 +330,99 @@
 
         </RelativeLayout>
 
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="65dp">
+
+            <TextView
+                android:id="@+id/busLineName"
+                android:layout_width="68dp"
+                android:layout_height="32dp"
+                android:layout_marginStart="4dp"
+                android:layout_marginLeft="4dp"
+                android:autoText="false"
+                android:clickable="false"
+                android:editable="false"
+                android:fontFamily="@font/basic"
+                android:gravity="center|center_horizontal"
+                android:importantForAutofill="no"
+                android:textColor="@color/yellow"
+                android:textSize="16dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.575" />
+
+            <TextView
+                android:id="@+id/nextStopView"
+                android:layout_width="203dp"
+                android:layout_height="32dp"
+                android:layout_marginStart="4dp"
+                android:layout_marginLeft="4dp"
+                android:clickable="true"
+                android:editable="false"
+                android:fontFamily="@font/basic"
+                android:gravity="center|center_vertical"
+                android:importantForAutofill="no"
+                android:text="@string/display_first_stop"
+                android:textColor="@color/yellow"
+                android:textSize="16dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/busLineName"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.558" />
+
+            <Button
+                android:id="@+id/displayStopList"
+                android:layout_width="120dp"
+                android:layout_height="50dp"
+                android:onClick="displayAllStops"
+                android:text="@string/display_all_stops"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.483"
+                app:layout_constraintStart_toEndOf="@+id/nextStopView"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.64" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
         <com.example.pathfinder.Activities.ThumbstickView
             android:id="@+id/testThumbstick"
             android:layout_width="match_parent"
-            android:layout_height="300dp" />
+            android:layout_height="match_parent" />
+
     </LinearLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/stopInfo"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="invisible"
+        >
+
+
+        <TextView
+            android:id="@+id/stopTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="25sp"
+            android:gravity="center|center_horizontal"
+            android:fontFamily="@font/basic"
+            android:textColor="@color/white"
+            android:layout_centerHorizontal="true"
+            android:background="@drawable/rounded_corner"
+            app:layout_constraintBottom_toTopOf="@+id/stopList"
+            />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/stopList"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/rounded_corner"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.drawerlayout.widget.DrawerLayout>

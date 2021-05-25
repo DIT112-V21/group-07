@@ -1,7 +1,5 @@
 package com.example.pathfinder.Activities;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -10,13 +8,21 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.SeekBar;
 import android.widget.ToggleButton;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.example.pathfinder.Client.MqttClient;
+import com.example.pathfinder.Model.BusLine;
 import com.example.pathfinder.R;
 
 import org.eclipse.paho.client.mqttv3.IMqttActionListener;
@@ -25,7 +31,11 @@ import org.eclipse.paho.client.mqttv3.IMqttToken;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 
+import static android.view.Gravity.TOP;
+
 public class DriverDashboard extends AppCompatActivity implements ThumbstickView.ThumbstickListener {
+
+    public static final String LINE_SEPARATOR = "\n";
     private static final String TAG = "PathfinderController";
     private static final String EXTERNAL_MQTT_BROKER = "test.mosquitto.org";
     private static final String LOCALHOST = "10.0.2.2";
@@ -35,11 +45,13 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
     private static final String PARK = "/smartcar/control/park";
     private static final String ODOMETER_LOG = "/smartcar/odometer";
     private static final String SPEEDOMETER_LOG = "/smartcar/speedometer";
+    private static final String NEXT_STOP = "/smartcar/busNextStop";
     private static final int IDLE_SPEED = 0;
     private static final int STRAIGHT_ANGLE = 0;
     private static final int QOS = 1;
     private static final int IMAGE_WIDTH = 320;
     private static final int IMAGE_HEIGHT = 240;
+
 
     private MqttClient mMqttClient;
     //Park/ lock
@@ -53,29 +65,34 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
     private SeekBar seekBar;
     private ToggleButton mCruiseControlBtn, mParkBtn;
 
+
+    private RecyclerView stopList;
+    private RecyclerView.LayoutManager stopListLayoutManager;
+    private RecyclerView.Adapter stopListAdapter;
+    private ConstraintLayout stopInfo;
+    private TextView busLineName, nextStop, stopTitle;
+
+    Animation fadeAwayAnim, bottomAnim;
+
+    private BusLine busLine;
     SharedPreferences sharedPreferences;
 
-    /**
-     * Used as a way to compare previously published messages with GUI's current values
-     */
+    /**Used as a way to compare previously published messages with GUI's current values*/
     private int lastSentSpeed = 0;
     private int lastSentAngle = 0;
 
-    /**
-     * If true, cruise control is enabled
-     * If false, limit speed is enabled
-     */
+    /**If true, cruise control is enabled
+     * If false, limit speed is enabled*/
     private boolean isCruiseControl;
 
-    /**
-     * Method to create UI
-     * @param savedInstanceState
-     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_driver_dashboard);
+
+        fadeAwayAnim = AnimationUtils.loadAnimation(this, R.anim.fade_away_animation);
+        bottomAnim = AnimationUtils.loadAnimation(this, R.anim.slide_up_animation);
 
         mSpeedLog = findViewById(R.id.speed_log) ;
         mDistanceLog = findViewById(R.id.distance_log);
@@ -88,6 +105,10 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
         textView = (TextView) findViewById(R.id.textView);
         seekBar = (SeekBar) findViewById(R.id.seekBar);
 
+
+        busLineName = (TextView) findViewById(R.id.busLineName);
+        nextStop = (TextView) findViewById(R.id.nextStopView);
+
         seekBarListener();
         connectToMqttBroker();
 
@@ -99,11 +120,11 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
             }
         });
 
+        generateBusLine();
+        generateStopList();
+
     }
 
-    /**
-     * Method to reconnect to MQTT broker
-     */
     @Override
     protected void onResume() {
         super.onResume();
@@ -111,9 +132,6 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
         connectToMqttBroker();
     }
 
-    /**
-     * Method to disconnect from MQTT broker
-     */
     @Override
     protected void onPause() {
         super.onPause();
@@ -130,15 +148,14 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
         });
     }
 
-    /**
-     * Driving using thumbstick
+    /**Driving using thumbstick
      * If cruise control is enabled, speed will be set from seekBar's progress
-     * If cruise control is disabled, speed will be set as percentage of seekBar's progress
-     */
+     * If cruise control is disabled, speed will be set as percentage of seekBar's progress*/
     @Override
     public void onThumbstickMoved(float xPercent, float yPercent, int id) {
         int angle = (int)((xPercent) * 100);
         int strength;
+        //We need the negative of seekBar.getProgress()
         int seekProgress = - seekBar.getProgress();
         if(isCruiseControl){
             //setting fixed speed for cruise control
@@ -150,11 +167,9 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
         drive(strength, angle, "driving");
     }
 
-    /**
-     * Switches on/off cruise control
+    /**Switches on/off cruise control
      * If cruise control is being enabled, vehicle will drive with speed based on seekBar's progress
-     * If cruise control is being disabled, vehicle will stop
-     */
+     * If cruise control is being disabled, vehicle will stop*/
     public void onCruiseControlBtn(View view) {
         isCruiseControl = !isCruiseControl;
         int strength = seekBar.getProgress();
@@ -165,10 +180,8 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
         }
     }
 
-    /**
-     * Updates text showing seekBar's progress
-     * If cruise control is enabled, vehicle will drive with speed based on seekBar's progress
-     */
+    /**Updates text showing seekBar's progress
+     * If cruise control is enabled, vehicle will drive with speed based on seekBar's progress*/
     private void seekBarListener(){
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
@@ -186,10 +199,6 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
         });
     }
 
-    /**
-     * Handles everything related to MQTT, establishes the connection, subscribes to topics, checks for connection loss,
-     * handles incoming messages and logs delivery of messages.
-     */
     private void connectToMqttBroker() {
         if (!isConnected) {
             mMqttClient.connect(TAG, "", new IMqttActionListener() {
@@ -260,9 +269,6 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
         }
     }
 
-    /**
-     * Checks if the MQTT connection is not available.
-     */
     void notConnected() {
         if (!isConnected) {
             final String notConnected = "No connection";
@@ -272,13 +278,6 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
         }
     }
 
-    /**
-     * Receives input from the thumbstick and only publishes to the arduino if a large enough change was made
-     * This was done in an effort to reduce the the amount of messages sent to the arduino
-     * @param throttleSpeed
-     * @param steeringAngle
-     * @param actionDescription
-     */
     void drive(int throttleSpeed, int steeringAngle, String actionDescription) {
         notConnected();
         Log.i(TAG, actionDescription);
@@ -299,27 +298,17 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
         speedLog(Math.abs(throttleSpeed));
     }
 
-    /**
-     * Method used to stop the vehicle and set steering angle to 0
-     */
     void brake() {
         drive(0,0, "Stopped");
     }
 
-    /**
-     * Method used to display the current speed in km/h
-     * @param speed
-     */
     void speedLog(int speed) {
         notConnected();
         mMqttClient.subscribe(THROTTLE_CONTROL, QOS, null);
         mSpeedLog.setText(String.valueOf(speed) + " km/h");
     }
 
-    /**
-     * A helper method takes the distance value from ODOMETER_LOG(topic="/smartcar/odometer") and set it to distance log on the related layout in the UI.
-     * @param distance
-     */
+    // A helper method takes the distance value from ODOMETER_LOG(topic="/smartcar/odometer") and set it to distance log on the related layout in the UI.
     void distanceLog(double distance) {
         distance = distance/100;
         notConnected();
@@ -327,19 +316,85 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
         mDistanceLog.setText(String.valueOf(distance) + " m");
     }
 
-    /**
-     * Called when the brake button is pressed
-     * @param view
-     */
     public void brakeBtn(View view) {
         brake();
     }
 
     /**
-     * Method called when next stop is pressed, used to inform the driver of a stop request
-     * @param view
+     * Helper method that simulates the database retrieving a bus line. We assume the drivers have assigned bus lines by the system.
      */
-    public void nextStopBtn(View view) {
+    private void generateBusLine(){
+        busLine = new BusLine("9");
+        busLine.addStop("Sandarna");
+        busLine.addStop("Sannaplan");
+        busLine.addStop("Mariaplan");
+        busLine.addStop("Vagnhallen Majorna");
+
+        busLineName.setText("Line: " + busLine.getName());
+    }
+
+    /**
+     * Change the next stop on the driver's screen and publish it to communicate with the passengers.
+     * If the end of the line, display an information to the driver and invite to click one more time to reverse the line.
+     * @param view -> "next" button (R.id.changeStop)
+     */
+    public void changeStop(View view){
+        String comingStop = busLine.nextStop();
+
+        if (comingStop.equals(BusLine.NO_NEXT_STOP)){
+            Toast reverseInstruction = Toast.makeText(this, BusLine.REVERSE_INSTRUCTION, Toast.LENGTH_LONG);
+            reverseInstruction.setGravity(TOP, 0,0);
+            reverseInstruction.show();
+        }
+            publishNextStop(comingStop);
+            displayNextStop(comingStop);
+    }
+
+    /**
+     * Helper method when pressing the next stop button.
+     * Send the next stop via MQTT to the topic "NEXT_STOP + name of bus line" (In case we have several lines).
+     * The passengers should subscribe to this topic when choosing the line they are using.
+     * @param comingStop -> the next stop as a string
+     */
+    private void publishNextStop(String comingStop){
+        mMqttClient.publish(NEXT_STOP + busLine.getName(), comingStop, QOS, null);
+    }
+
+    /**
+     * Helper method when pressing the next stop button.
+     * Displays the next stop on the driver's dashboard.
+     * @param comingStop -> the next stop as a string
+     */
+    private void displayNextStop(String comingStop){
+        nextStop.setText(comingStop);
+    }
+
+    public void displayAllStops(View view){
+        if (stopInfo.getVisibility() == View.INVISIBLE){
+            stopInfo.startAnimation(bottomAnim);
+            stopInfo.setVisibility(View.VISIBLE);
+        }else{
+            stopInfo.startAnimation(fadeAwayAnim);
+            stopInfo.setVisibility(View.INVISIBLE);
+        }
 
     }
+
+    /**
+     * This method initialise the lists of stops corresponding to the bus line.
+     * It also initialise the needed attributes.
+     */
+    private void generateStopList(){
+         stopTitle = findViewById(R.id.stopTitle);
+         stopInfo = findViewById(R.id.stopInfo);
+         stopList = findViewById(R.id.stopList);
+         stopList.setHasFixedSize(true);
+         stopListLayoutManager = new LinearLayoutManager(this);
+         stopListAdapter = new StopListAdapter(busLine.getStopList());
+         stopList.setLayoutManager(stopListLayoutManager);
+         stopList.setAdapter(stopListAdapter);
+
+         stopTitle.setText("Stops for line: " + busLine.getName());
+    }
+
 }
