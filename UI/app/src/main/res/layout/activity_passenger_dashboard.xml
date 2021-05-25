@@ -68,57 +68,61 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="17dp"
-                android:layout_marginTop="20dp"
                 android:fontFamily="@font/basic"
-                android:gravity="center"
+                android:textSize="16dp"
                 android:text="@string/stop_requested"
-                android:textAllCaps="true"
                 android:textColor="@color/white"
-                android:textSize="16dp" />
+                android:layout_marginTop="20dp"
+                android:layout_marginLeft="56dp"
+                android:gravity="center"
+                android:textAllCaps="true"/>
         </RelativeLayout>
 
         <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:paddingTop="5dp"
             android:layout_marginTop="30dp"
-            android:paddingTop="5dp">
+            >
 
             <LinearLayout
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                >
 
                 <RelativeLayout
                     android:layout_width="160dp"
                     android:layout_height="130dp"
                     android:layout_marginRight="10dp"
-                    android:background="@drawable/card_1">
+                    android:background="@drawable/card_1"
+                    >
 
                     <ToggleButton
-                        android:id="@+id/stop"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:background="@drawable/card_1"
-                        android:fontFamily="@font/basic"
                         android:paddingTop="85dp"
                         android:textColor="@color/purple"
+                        android:fontFamily="@font/basic"
                         android:textOff="@string/request_stop"
-                        android:textOn="@string/cancel_stop" />
+                        android:textOn="@string/cancel_stop"
+                        android:background="@drawable/card_1"
+                        android:id="@+id/stop"/>
 
                     <ImageView
                         android:layout_width="55dp"
                         android:layout_height="55dp"
+                        android:src="@drawable/img_stop"
                         android:layout_marginLeft="53dp"
                         android:layout_marginTop="20dp"
-                        android:src="@drawable/img_stop" />
+                        />
                 </RelativeLayout>
 
                 <RelativeLayout
                     android:layout_width="160dp"
                     android:layout_height="130dp"
-                    android:layout_marginLeft="10dp"
                     android:background="@drawable/card_1"
+                    android:layout_marginLeft="10dp"
 
                     >
 
@@ -126,10 +130,10 @@
                         android:id="@+id/handicap"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_margin="0dp"
                         android:background="@drawable/card_1"
                         android:fontFamily="@font/basic"
                         android:paddingTop="85dp"
+                        android:layout_margin="0dp"
                         android:textColor="@color/purple"
                         android:textOff="@string/handicap"
                         android:textOn="@string/cancel_accessibility" />
@@ -137,9 +141,10 @@
                     <ImageView
                         android:layout_width="55dp"
                         android:layout_height="55dp"
+                        android:src="@drawable/img_handicap"
                         android:layout_marginLeft="49dp"
                         android:layout_marginTop="20dp"
-                        android:src="@drawable/img_handicap" />
+                        />
 
 
                 </RelativeLayout>

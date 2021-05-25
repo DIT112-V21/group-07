@@ -18,7 +18,7 @@
     <string name="welcome">Hello there, welcome back!</string>
     <string name="message">Sign In to continue</string>
     <string name="sign_in">Sign In</string>
-    <string name="passenger">Not a driver? Get started now.</string>
+    <string name="passenger">Are you a passenger? Get started now.</string>
 
     <!-- Driver Dashboard -->
     <string name="set_speed">Limit Speed</string>
@@ -32,8 +32,8 @@
     <string name="distance">Distance</string>
     <string name="speed_log">0 km/h</string>
     <string name="distance_log">0 m</string>
-    <string name="stop_requested">Stop Requested</string>
-    <string name="signIn_failed">Error: invalid username or password.</string>
+    <string name="stop_requested">Stop</string>
+    <string name="signIn_failed">"Error: invalid username or password."</string>
     <string name="display_first_stop">Press "Next stop" to start</string>
     <string name="display_all_stops">Stop list</string>
 
@@ -48,6 +48,6 @@
     <string name="cancel_stop">Cancel Stop</string>
     <string name="cancel_accessibility">Cancel Accessibility</string>
     <string name="find_route">Find Route</string>
-    <string name="new_passenger">1</string>
+
 
 </resources>
