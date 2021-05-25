@@ -108,7 +108,7 @@ void loop()
         mqtt.loop();  // Also needed to keep storing the mqtt operations
         cameraData(true); // True if camera is on, false otherwise.
         SR04sensorData(true, "/smartcar/ultrasound/front"); //publish sensor data every one second through MQTT
-        measureDistance(true, "/smartcar/car/distance");
+        measureDistance(true, "/smartcar/odometer"); // publishes the traveled distance to the odometer topic
   }
     handleInput();
     emergencyBrake(true);
@@ -140,9 +140,9 @@ void MQTTMessageInput(){
                 Serial.println(message);
             }
         });
-
     }
 }
+
 /**
  * Helper method for MQTTMessageinput() that handles the input from the app received via MQTT.
  * @param input: takes the speed as an input
@@ -161,6 +161,7 @@ void handleSpeedTopic(int input){
     }
     car.update();
 }
+
 /**
  * Helper method for MQTTMessageinput() that handles the input from the app received via MQTT.
  * @param input : takes the speed as an input
@@ -178,6 +179,7 @@ void handleAngleTopic(int input){
     }
     car.update();
 }
+
 /**
  * Method to control the car directly from the serial in the emulator.
  */
