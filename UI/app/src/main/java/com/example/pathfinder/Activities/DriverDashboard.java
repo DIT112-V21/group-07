@@ -68,7 +68,7 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
     private boolean isCruiseControl;
 
     /**
-     * Method to create UI
+     * Method to create driver UI
      * @param savedInstanceState
      */
     @Override

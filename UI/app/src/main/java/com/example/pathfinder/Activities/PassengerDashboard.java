@@ -34,7 +34,10 @@ public class PassengerDashboard extends AppCompatActivity {
     private static final String KEY_STOP = "stop";
     private static final String KEY_HANDICAP = "handicap";
 
-
+    /**
+     * Method to create passenger UI
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
