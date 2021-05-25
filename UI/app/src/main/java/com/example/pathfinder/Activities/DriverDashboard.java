@@ -37,7 +37,7 @@ import static android.view.Gravity.TOP;
 public class DriverDashboard extends AppCompatActivity implements ThumbstickView.ThumbstickListener {
 
     public static final String LINE_SEPARATOR = "\n";
-    private static final String TAG = "PathfinderController";
+    private static final String TAG = "PathfinderDriver";
     private static final String EXTERNAL_MQTT_BROKER = "test.mosquitto.org";
     private static final String LOCALHOST = "10.0.2.2";
     private static final String MQTT_SERVER = "tcp://" + LOCALHOST + ":1883";
@@ -358,7 +358,7 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
      * @param comingStop -> the next stop as a string
      */
     private void publishNextStop(String comingStop){
-        mMqttClient.publish(NEXT_STOP + busLine.getName(), comingStop, QOS, null);
+        mMqttClient.publish(NEXT_STOP, comingStop, QOS, null);
     }
 
     /**
