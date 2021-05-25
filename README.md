@@ -1,9 +1,21 @@
-## Installation
+##  App Installation
 Open your terminal then paste the following command to clone this repository.  Upon cloning, you may now import and simulate our source code into **Android Studio**.
 ```bash
 git clone git@github.com:DIT112-V21/group-07.git
 ```
 
+***
+
+## SMCE godot Installation
+
+**SMCE** : is an external virtual environment software that provides the possibility to run your software on. for more details on how to install and run it, please visit this link [SMCE](https://github.com/ItJustWorksTM/smce-gd/wiki).
+
+***
+
+## Smartcar_Shield
+
+The samrtcar functionalities in Pathfinder is using the open source library [smartcar_shield](https://github.com/platisd/smartcar_shield).
+***
 ## What
 Pathfinder is a remote-operated bus that is controllable via an Android app. The bus features two different screens, depending on the role of the user. 
 
@@ -16,6 +28,7 @@ A joystick is present to maneuver the bus along with basic obstacle avoidance fe
 The driver screen also features cruise control, which lets the bus drive at the desired speed; the speed of the bus may also be limited as specified on the seek bar on the screen. The bus may be set to park, which would not allow the bus to drive when it is toggled on. There is also a next stop button, which lets the driver indicate that they are approaching the next stop in the route they are traversing. Another feature that isn’t as obvious, is that the bus stops when it loses connection to the car — connectivity loss to the app will render the bus to pull over and stop by the curb. Finally, the driver may also log out of the app to better secure the state of the bus. 
 
 On both the passenger and driver screens, the traversed bus route is displayed, along with its associated stops. These stops are updated as instructed by the driver, in order to inform all passengers the next stop they are approaching are along the route.
+***
 
 ## Why?
 The COVID-19 pandemic has had a devastating impact on life, as we know it.  Social distancing measures have been taken to minimize its spread, encouraging all but essential workers to work remotely from home.  
@@ -23,6 +36,7 @@ The COVID-19 pandemic has had a devastating impact on life, as we know it.  Soci
 The Pathfinder app allows bus drivers to execute their work from home. Equipped with a live video stream and functionalities that control the bus from afar, drivers may now perform their duties without risking their health and those of others.  
 
 Furthermore, passengers may utilize the stop button controls available on the app which are traditionally present and shared by all bus passengers; with the buttons existing on passengers’ own phones, the spread of germs can be significantly minimized to avoid contraction of COVID-19.
+***
 
 ## How?
 1. Have a page that allows the user to select their role as either a driver or a passenger
@@ -31,6 +45,8 @@ Furthermore, passengers may utilize the stop button controls available on the ap
 4. Display all stop requests for every stop that is shown
 5. Update all stops as instructed by the driver
 6. Passengers will have buttons available to them that will indicate if the want to stop, or if the need more amenities available to them.
+
+***
 
 ## Shortcuts
 
