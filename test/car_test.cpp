@@ -295,3 +295,14 @@ TEST(reactToSensorTest, reactToSensor_WhenNOobstacle_WillReturnFalse) {
     EXPECT_EQ(false, obstacle);
 
 }
+
+TEST(emergencyBreakTest, emergencyBreak_WhenNOobstacle_WillReturnFalse) {
+    MockSmartcarWrapper car;
+
+    int sensorDistance = 0;
+
+    bool obstacle = reactToSensor(sensorDistance, STOP_DISTANCE,car, STOPPING_SPEED, initialSpeed);
+
+    EXPECT_EQ(false, obstacle);
+
+}

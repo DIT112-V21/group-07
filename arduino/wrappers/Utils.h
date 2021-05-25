@@ -14,6 +14,8 @@ using String = std::string;
 const unsigned int kDefaultMaxDistance = 70;
 const auto ONE_SECOND = 1000UL;
 const int NO_OBSTACLE_VALUE = 0;
+const int FRONT_STOP_DISTANCE = 70;
+const int BACK_STOP_DISTANCE = 50;
 
 const float MAX_SPEED = 1.845;
 //const float STOPPING_SPEED = 0.3;
@@ -293,3 +295,29 @@ bool reactToSensor(int sensorDistance, int STOP_DISTANCE,
     }
     return false;
 }
+
+bool emergencyBrake(int leftDirection, int rightDirection,
+                    int frontSensorDistance, int backSensorDistance, String sensor,
+                    UltraSoundWrapper &ultraSoundWrapper, InfraredSensorWrapper &infraredSensorWrapper,
+                    int STOP_DISTANCE, SmartCarWrapper &car,
+                    float STOPPING_SPEED, float initialSpeed){
+
+    if(leftDirection == 1 && rightDirection == 1 && initialSpeed > 0){
+
+        if(isClear(sensor, ultraSoundWrapper, infraredSensorWrapper)){
+            if(reactToSensor(frontSensorDistance, STOP_DISTANCE,
+                        car, STOPPING_SPEED, initialSpeed)){
+                return true;}
+        }else{
+            car.setSpeed(0);
+        }
+    }else if (leftDirection == -1 && rightDirection == -1 && initialSpeed > 0){
+
+        if(reactToSensor(backSensorDistance, STOP_DISTANCE,
+                                       car, STOPPING_SPEED, initialSpeed)){
+            return true;
+        }
+    }
+    return false;
+}
+
