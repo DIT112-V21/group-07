@@ -2,6 +2,7 @@ package com.example.pathfinder.Activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -41,15 +42,14 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
     private static final int IMAGE_WIDTH = 320;
     private static final int IMAGE_HEIGHT = 240;
 
+    //key names for stored data in shared preferences
+    private static final String KEY_STOP = "stop";
+    private static final String KEY_HANDICAP = "handicap";
+
     private MqttClient mMqttClient;
-    //Park/ lock
-    //private boolean isParked = false;
-    //Engine activity
-    //private boolean isActive = false;
     private boolean isConnected = false;
-    private ImageView mVideoStream, mSignOutBtn;
-    private TextView mSpeedLog, mDistanceLog;
-    private TextView textView;
+    private ImageView mVideoStream, mSignOutBtn, mAccessibilityRequest;
+    private TextView mSpeedLog, mDistanceLog, mStopRequest, textView;
     private SeekBar seekBar;
     private ToggleButton mCruiseControlBtn, mParkBtn;
 
@@ -80,6 +80,8 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
         mSpeedLog = findViewById(R.id.speed_log) ;
         mDistanceLog = findViewById(R.id.distance_log);
         mSignOutBtn = findViewById(R.id.sign_out);
+        mStopRequest = findViewById(R.id.stop);
+        mAccessibilityRequest = findViewById(R.id.accessibility);
 
         mMqttClient = new MqttClient(getApplicationContext(), MQTT_SERVER, TAG);
 
@@ -88,7 +90,13 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
         textView = (TextView) findViewById(R.id.textView);
         seekBar = (SeekBar) findViewById(R.id.seekBar);
 
+        //checks the state of stop request
+        checkStopRequest();
+        //checks the state of accessibility request
+        checkAccessibilityRequest();
+
         seekBarListener();
+
         connectToMqttBroker();
 
         //sign out button that redirects user back to DriverLogin activity
@@ -224,8 +232,12 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
                     Toast.makeText(getApplicationContext(), connectionLost, Toast.LENGTH_SHORT).show();
                 }
 
-                //The topics shall be catch hold of by this method and handled through the statements for the specific functions.
-                // (If a message published to a specific topic, use that message to the some specific function).
+                /*
+                * The topics shall be catch hold of by this method and handled through the
+                * statements for the specific functions.
+                * If a message published to a specific topic, use that message to the some
+                * ( specific function).
+                */
                 @Override
                 public void messageArrived(String topic, MqttMessage message) throws Exception {
                     if (topic.equals("/smartcar/camera")) {
@@ -272,13 +284,38 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
         }
     }
 
-    /**
-     * Receives input from the thumbstick and only publishes to the arduino if a large enough change was made
-     * This was done in an effort to reduce the the amount of messages sent to the arduino
-     * @param throttleSpeed
-     * @param steeringAngle
-     * @param actionDescription
+    /*
+     * helper method to check if stop request evaluates as true.
+     * if stop request has is true then the stop status lights up and is made visible; otherwise
+     * its color is set to white to appear invisible.
      */
+
+    public void checkStopRequest() {
+        sharedPreferences = getSharedPreferences(KEY_STOP, Context.MODE_PRIVATE);
+
+        if (sharedPreferences.getBoolean(KEY_STOP, false)) {
+            mStopRequest.setBackgroundColor(Color.parseColor("#B33701"));
+        } else {
+            mStopRequest.setBackgroundColor(Color.WHITE);
+        }
+    }
+
+    /*
+     * helper method to check if accessibility request evaluated as true.
+     * if accessibility request has is true then the stop status and accessibility symbols
+     * light up and is made visible; otherwise their colors are set to white to appear invisible.
+     */
+
+    public void checkAccessibilityRequest() {
+        sharedPreferences = getSharedPreferences(KEY_HANDICAP, Context.MODE_PRIVATE);
+
+        if (sharedPreferences.getBoolean(KEY_HANDICAP, false)) {
+            mAccessibilityRequest.setColorFilter(Color.parseColor("#008080"));
+        } else {
+            mAccessibilityRequest.setColorFilter(Color.WHITE);
+        }
+    }
+
     void drive(int throttleSpeed, int steeringAngle, String actionDescription) {
         notConnected();
         Log.i(TAG, actionDescription);
@@ -316,10 +353,10 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
         mSpeedLog.setText(String.valueOf(speed) + " km/h");
     }
 
-    /**
-     * A helper method takes the distance value from ODOMETER_LOG(topic="/smartcar/odometer") and set it to distance log on the related layout in the UI.
-     * @param distance
-     */
+    /*
+    * A helper method takes the distance value from ODOMETER_LOG(topic="/smartcar/odometer") and
+    * set it to distance log on the related layout in the UI.
+    */
     void distanceLog(double distance) {
         distance = distance/100;
         notConnected();

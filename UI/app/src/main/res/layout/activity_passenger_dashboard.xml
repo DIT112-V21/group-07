@@ -69,7 +69,7 @@
                 android:text="@string/stop_requested"
                 android:textColor="@color/white"
                 android:layout_marginTop="20dp"
-                android:layout_marginLeft="17dp"
+                android:layout_marginLeft="56dp"
                 android:gravity="center"
                 android:textAllCaps="true"/>
         </RelativeLayout>
