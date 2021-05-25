@@ -55,14 +55,22 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
 
     SharedPreferences sharedPreferences;
 
-    /**Used as a way to compare previously published messages with GUI's current values*/
+    /**
+     * Used as a way to compare previously published messages with GUI's current values
+     */
     private int lastSentSpeed = 0;
     private int lastSentAngle = 0;
 
-    /**If true, cruise control is enabled
-     * If false, limit speed is enabled*/
+    /**
+     * If true, cruise control is enabled
+     * If false, limit speed is enabled
+     */
     private boolean isCruiseControl;
 
+    /**
+     * Method to create UI
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -93,6 +101,9 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
 
     }
 
+    /**
+     * Method to reconnect to MQTT broker
+     */
     @Override
     protected void onResume() {
         super.onResume();
@@ -100,6 +111,9 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
         connectToMqttBroker();
     }
 
+    /**
+     * Method to disconnect from MQTT broker
+     */
     @Override
     protected void onPause() {
         super.onPause();
@@ -116,14 +130,15 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
         });
     }
 
-    /**Driving using thumbstick
+    /**
+     * Driving using thumbstick
      * If cruise control is enabled, speed will be set from seekBar's progress
-     * If cruise control is disabled, speed will be set as percentage of seekBar's progress*/
+     * If cruise control is disabled, speed will be set as percentage of seekBar's progress
+     */
     @Override
     public void onThumbstickMoved(float xPercent, float yPercent, int id) {
         int angle = (int)((xPercent) * 100);
         int strength;
-        //We need the negative of seekBar.getProgress()
         int seekProgress = - seekBar.getProgress();
         if(isCruiseControl){
             //setting fixed speed for cruise control
@@ -135,9 +150,11 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
         drive(strength, angle, "driving");
     }
 
-    /**Switches on/off cruise control
+    /**
+     * Switches on/off cruise control
      * If cruise control is being enabled, vehicle will drive with speed based on seekBar's progress
-     * If cruise control is being disabled, vehicle will stop*/
+     * If cruise control is being disabled, vehicle will stop
+     */
     public void onCruiseControlBtn(View view) {
         isCruiseControl = !isCruiseControl;
         int strength = seekBar.getProgress();
@@ -148,8 +165,10 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
         }
     }
 
-    /**Updates text showing seekBar's progress
-     * If cruise control is enabled, vehicle will drive with speed based on seekBar's progress*/
+    /**
+     * Updates text showing seekBar's progress
+     * If cruise control is enabled, vehicle will drive with speed based on seekBar's progress
+     */
     private void seekBarListener(){
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
@@ -167,6 +186,10 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
         });
     }
 
+    /**
+     * Handles everything related to MQTT, establishes the connection, subscribes to topics, checks for connection loss,
+     * handles incoming messages and logs delivery of messages.
+     */
     private void connectToMqttBroker() {
         if (!isConnected) {
             mMqttClient.connect(TAG, "", new IMqttActionListener() {
@@ -237,6 +260,9 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
         }
     }
 
+    /**
+     * Checks if the MQTT connection is not available.
+     */
     void notConnected() {
         if (!isConnected) {
             final String notConnected = "No connection";
@@ -246,6 +272,13 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
         }
     }
 
+    /**
+     * Receives input from the thumbstick and only publishes to the arduino if a large enough change was made
+     * This was done in an effort to reduce the the amount of messages sent to the arduino
+     * @param throttleSpeed
+     * @param steeringAngle
+     * @param actionDescription
+     */
     void drive(int throttleSpeed, int steeringAngle, String actionDescription) {
         notConnected();
         Log.i(TAG, actionDescription);
@@ -266,17 +299,27 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
         speedLog(Math.abs(throttleSpeed));
     }
 
+    /**
+     * Method used to stop the vehicle and set steering angle to 0
+     */
     void brake() {
         drive(0,0, "Stopped");
     }
 
+    /**
+     * Method used to display the current speed in km/h
+     * @param speed
+     */
     void speedLog(int speed) {
         notConnected();
         mMqttClient.subscribe(THROTTLE_CONTROL, QOS, null);
         mSpeedLog.setText(String.valueOf(speed) + " km/h");
     }
 
-    // A helper method takes the distance value from ODOMETER_LOG(topic="/smartcar/odometer") and set it to distance log on the related layout in the UI.
+    /**
+     * A helper method takes the distance value from ODOMETER_LOG(topic="/smartcar/odometer") and set it to distance log on the related layout in the UI.
+     * @param distance
+     */
     void distanceLog(double distance) {
         distance = distance/100;
         notConnected();
@@ -284,11 +327,18 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
         mDistanceLog.setText(String.valueOf(distance) + " m");
     }
 
+    /**
+     * Called when the brake button is pressed
+     * @param view
+     */
     public void brakeBtn(View view) {
         brake();
     }
 
-
+    /**
+     * Method called when next stop is pressed, used to inform the driver of a stop request
+     * @param view
+     */
     public void nextStopBtn(View view) {
 
     }
