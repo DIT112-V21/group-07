@@ -187,25 +187,7 @@ public class PassengerDashboard extends AppCompatActivity {
                 @Override
                 public void messageArrived(String topic, MqttMessage message) throws Exception {
                     if (topic.equals("/smartcar/camera")) {
-                        final Bitmap bm = Bitmap.createBitmap(IMAGE_WIDTH, IMAGE_HEIGHT, Bitmap.Config.ARGB_8888);
-
-                        final byte[] payload = message.getPayload();
-                        final int[] colors = new int[IMAGE_WIDTH * IMAGE_HEIGHT];
-                        for (int ci = 0; ci < colors.length; ++ci) {
-                            final byte r = payload[3 * ci];
-                            final byte g = payload[3 * ci + 1];
-                            final byte b = payload[3 * ci + 2];
-                            colors[ci] = Color.rgb(r, g, b);
-                        }
-                        bm.setPixels(colors, 0, IMAGE_WIDTH, 0, 0, IMAGE_WIDTH, IMAGE_HEIGHT);
-
-                        mVideoStream.setImageBitmap(bm);
-                    } else if(topic.equals("/smartcar/car/distance")) {
-                        distanceLog(Double.parseDouble(message.toString()));
-                    } else if(topic.equals("/smartcar/speed")) {
-                        speedLog(Integer.parseInt(message.toString()));
-                    }
-                    else {
+                    } else {
                         Log.i(TAG, "[MQTT] Topic: " + topic + " | Message: " + message.toString());
                     }
                 }
