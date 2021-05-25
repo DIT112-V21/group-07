@@ -142,7 +142,7 @@ TEST(handleInput_Test, handleInput_WhenConnectedAndSpeedIsPozitive_WillReturnSen
     MockInfraredSensor infraredSensor;
     String input = "start";
 
-    const auto speedPositive = 20.0f;
+    const auto speedPositive = 20;
 
     EXPECT_CALL(serialWrapper, available()).WillOnce(Return(true));
     EXPECT_CALL(infraredSensor, getDistance());
@@ -340,7 +340,7 @@ TEST(emergencyBreakTest, emergencyBreak_WhenBackSensorNotClearAnd_IsObstacle_Wil
     int rightDirection = -1;
     int backSensorDistance = 0;
     int newSensorValue = 40;
-    int sensor = 2;
+    int sensor = 1;
 
     EXPECT_CALL(car, setSpeed(0));
 
@@ -353,27 +353,37 @@ TEST(emergencyBreakTest, emergencyBreak_WhenBackSensorNotClearAnd_IsObstacle_Wil
 
 }
 
-/*TEST(reactToSidesTest, reactToSides_WhenRightSensorNotClearAnd_IsObstacle_WillSetAngleToLeft) {
+TEST(reactToSidesTest, reactToSides_WhenRightSensorNotClearAnd_IsObstacle_WillSetAngleToLeft) {
 
     MockSmartcarWrapper car;
-    MockSR04Wrapper ultrasoundSensor;
-    MockInfraredSensor infraredSensor;
     MockArduinoRunWrapper arduino;
 
     int leftValue = 50;
     int rightValue = 30;
-    int distance;
+    int distance = 25;
 
-    int frontSensorDistance = 0;
-    int backSensorDistance = 40;
-    int sensor = 2;
+    int sensor = 1;
 
+    EXPECT_CALL(car, setAngle(-45));
 
-    EXPECT_CALL(car, setSpeed(0));
-
-    reactToSides(sensor, leftValue, distance, rightValue, arduino,car);
+    reactToSides(sensor, distance, leftValue, rightValue, arduino,car);
 
 
-    //EXPECT_EQ(true, isEmergencyBreak);
+}
+TEST(reactToSidesTest, reactToSides_WhenLeftSensorNotClearAnd_IsObstacle_WillSetAngleToRight) {
 
-}*/
+    MockSmartcarWrapper car;
+    MockArduinoRunWrapper arduino;
+
+    int leftValue = 30;
+    int rightValue = 50;
+    int distance = 25;
+
+    int sensor = 1;
+
+    EXPECT_CALL(car, setAngle(45));
+
+    reactToSides(sensor, distance, leftValue, rightValue, arduino,car);
+
+
+}

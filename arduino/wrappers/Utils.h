@@ -352,15 +352,12 @@ void reactToSides(int sensor, int distance, int leftValue, int rightValue,
 
 
     if (rightValue < SIDE_REACT_DISTANCE && !isClear(sensor, distance)) { //rightIR
-        arduino.delay(100);
-        //int newValue = infraredSensorWrapper.getDistance(); //rightIR
+
         if (distance < rightValue && !isClear(sensor,distance)) { //rightIR
            car.setAngle(-45);
         }
     }
     if (leftValue < SIDE_REACT_DISTANCE && !isClear(sensor, distance)) { //leftIR
-        arduino.delay(100);
-        //int newValue = infraredSensorWrapper.getDistance();
         if (distance < leftValue && !isClear(sensor, distance)) { // leftIR
             car.setAngle(45);
         }

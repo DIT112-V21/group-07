@@ -93,7 +93,7 @@ void setup()
 
   //Example:
     // chose to connect to localhost or external
-    startCamera(); // To initiliaze the camera as soon as the car starts rolling
+    startCamera(); // To initialize the camera as soon as the car starts rolling
     connectHost(true); //choose true to connect to localhost.
 
     MQTTMessageInput();
