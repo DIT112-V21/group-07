@@ -15,8 +15,9 @@ const unsigned int kDefaultMaxDistance = 70;
 const auto ONE_SECOND = 1000UL;
 const int NO_OBSTACLE_VALUE = 0;
 const int FRONT_STOP_DISTANCE = 70;
-const float STOPPING_SPEED = 0.3;
 const int BACK_STOP_DISTANCE = 50;
+const float STOPPING_SPEED = 0.3;
+const int SIDE_REACT_DISTANCE = 35;
 const float MAX_SPEED = 1.845;
 float initialSpeed = 1.845;
 
@@ -271,21 +272,20 @@ void connectExternalHost(MqttWrapper &mqttWrapper){
 }*/
 
 
-bool isClear(int sensor, UltraSoundWrapper &ultraSoundWrapper,
-             InfraredSensorWrapper &infraredSensorWrapper){
+bool isClear(int sensor, int distance){
 
     switch (sensor) {
         case 1:
-            return (ultraSoundWrapper.getDistance() == NO_OBSTACLE_VALUE);
-        case 2:
-            return (infraredSensorWrapper.getDistance() == NO_OBSTACLE_VALUE);
+            return (distance == NO_OBSTACLE_VALUE);
+        /*case 2:
+            return (distance== NO_OBSTACLE_VALUE);
 
-        /*case 3:
-            return (backIRSensor.getDistance() == NO_OBSTACLE_VALUE);
+        case 3:
+            return (infraredSensorWrapper.getDistance() == NO_OBSTACLE_VALUE);
         case 4:
-            return (rightIRSensor.getDistance() == NO_OBSTACLE_VALUE);
+            return (infraredSensorWrapper.getDistance() == NO_OBSTACLE_VALUE);
         case 5:
-            return (leftIRSensor.getDistance() == NO_OBSTACLE_VALUE); */
+            return (infraredSensorWrapper.getDistance() == NO_OBSTACLE_VALUE);*/
         default:
             return false;
     }
@@ -307,7 +307,7 @@ float convertSpeed(float speed) {
 }
 
 bool reactToSensor(int sensorDistance, int STOP_DISTANCE,
-                   SmartCarWrapper &car, float STOPPING_SPEED, float initialSpeed){
+                   SmartCarWrapper &car, float STOPPING_SPEED, float initialSpeed){ //1.845
     if (sensorDistance != 0){
         if(sensorDistance > STOP_DISTANCE && sensorDistance <= 250){
             float setSpeed = slowDownSmoothly(STOPPING_SPEED, initialSpeed);
@@ -322,15 +322,14 @@ bool reactToSensor(int sensorDistance, int STOP_DISTANCE,
 }
 
 bool emergencyBrake(int leftDirection, int rightDirection,
-                    int frontSensorDistance, int backSensorDistance, int sensor,
-                    UltraSoundWrapper &ultraSoundWrapper, InfraredSensorWrapper &infraredSensorWrapper,
+                    int frontSensorDistance, int sensor, int newSensorValue,
                     int STOP_DISTANCE, SmartCarWrapper &car,
                     float STOPPING_SPEED, float initialSpeed){
 
     if(leftDirection == 1 && rightDirection == 1 && initialSpeed > 0){
 
-        if(isClear(sensor, ultraSoundWrapper, infraredSensorWrapper)){
-            if(reactToSensor(frontSensorDistance, STOP_DISTANCE,
+        if(isClear(sensor, frontSensorDistance)){
+            if(reactToSensor(newSensorValue, STOP_DISTANCE,
                         car, STOPPING_SPEED, initialSpeed)){
                 return false;
             }
@@ -340,7 +339,7 @@ bool emergencyBrake(int leftDirection, int rightDirection,
         }
     }else if (leftDirection == -1 && rightDirection == -1 && initialSpeed > 0){
 
-        if(reactToSensor(backSensorDistance, STOP_DISTANCE,
+        if(reactToSensor(newSensorValue, STOP_DISTANCE,
                                        car, STOPPING_SPEED, initialSpeed)){
             return true;
         }
@@ -348,3 +347,22 @@ bool emergencyBrake(int leftDirection, int rightDirection,
     return false;
 }
 
+void reactToSides(int sensor, int distance, int leftValue, int rightValue,
+                  ArduinoRunWrapper &arduino, SmartCarWrapper &car) {
+
+
+    if (rightValue < SIDE_REACT_DISTANCE && !isClear(sensor, distance)) { //rightIR
+        arduino.delay(100);
+        //int newValue = infraredSensorWrapper.getDistance(); //rightIR
+        if (distance < rightValue && !isClear(sensor,distance)) { //rightIR
+           car.setAngle(-45);
+        }
+    }
+    if (leftValue < SIDE_REACT_DISTANCE && !isClear(sensor, distance)) { //leftIR
+        arduino.delay(100);
+        //int newValue = infraredSensorWrapper.getDistance();
+        if (distance < leftValue && !isClear(sensor, distance)) { // leftIR
+            car.setAngle(45);
+        }
+    }
+}

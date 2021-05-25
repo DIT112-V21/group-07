@@ -219,26 +219,21 @@ TEST(SR04Test, SR04sensorData_WhenConnected_WillPublishToUltrasoundTopicEverySec
     SR04sensorData(true,mqttWrapper,serialWrapper, arduinoRunWrapper,ultraSoundWrapper );
 }
 
-TEST(isClearTest, isClear_WhenCalled_WillUltraSoundSensorDistance) {
-    MockSR04Wrapper ultraSoundWrapper;
-    MockInfraredSensor infraredSensor;
+TEST(isClearTest, isClear_WhenDistanceIsNotNull_WillReturnFalse) {
 
     int sensor = 1; // 1 means "frontUS"
+    int distance = 100 ;
 
-    EXPECT_CALL(ultraSoundWrapper, getDistance());
-
-    isClear(sensor, ultraSoundWrapper, infraredSensor);
+    EXPECT_EQ(false, isClear(sensor, distance));
 }
 
-TEST(isClearTest, isClear_WhenCalled_WillInfraredSensorDistance) {
-    MockSR04Wrapper ultraSoundWrapper;
-    MockInfraredSensor infraredSensor;
+TEST(isClearTest, isClear_WhenDistanceIsNotNull_WillReturnTrue) {
 
-    int sensor = 2; // 2 means "frontIR"
 
-    EXPECT_CALL(infraredSensor, getDistance());
+    int sensor = 1; // 1 means "frontUS"
+    int distance = 0 ;
 
-    isClear(sensor, ultraSoundWrapper, infraredSensor);
+    EXPECT_EQ(true, isClear(sensor, distance));
 }
 
 TEST(convertSpeedTest, convertSpeed_WhenCalled_WillConvertTheSpeed) {
@@ -280,79 +275,105 @@ TEST(reactToSensorTest, reactToSensor_WhenObstacle_WillStopTheCar) {
     reactToSensor(sensorDistance, FRONT_STOP_DISTANCE,car, STOPPING_SPEED, initialSpeed);
 }
 
-TEST(reactToSensorTest, reactToSensor_WhenNOobstacle_WillReturnFalse) {
+TEST(reactToSensorTest, reactToSensor_When_NO_obstacle_WillReturnFalse) {
     MockSmartcarWrapper car;
 
     int sensorDistance = 0;
 
-    bool obstacle = reactToSensor(sensorDistance, FRONT_STOP_DISTANCE,car, STOPPING_SPEED, initialSpeed);
+    bool isObstacle = reactToSensor(sensorDistance, FRONT_STOP_DISTANCE,car, STOPPING_SPEED, initialSpeed);
 
-    EXPECT_EQ(false, obstacle);
+    EXPECT_EQ(false, isObstacle);
 
 }
-
-TEST(emergencyBreakTest, emergencyBreak_WhenFrontSensorIsClearAnd_NOobstacle_WillReturnFalse) {
+//when there is an obstacle but suddenly the sensor reads an obstacle is in range the car shall
+//slow down smoothly. There is no need for an emergency break. returns false
+TEST(emergencyBreakTest, emergencyBreak_WhenFrontSensorIsClearAnd_SuddenlyIsObstacleInRange_WillReturnFalseAndSlowDownTheCar) {
     MockSmartcarWrapper car;
     MockSR04Wrapper ultrasoundSensor;
     MockInfraredSensor infraredSensor;
 
     int leftDirection = 1;
     int rightDirection = 1;
-    int frontSensorDistance = 80;
-    int backSensorDistance = 0;
+    int frontSensorDistance = 0;
+    int newSensorValue = 80;
     int sensor = 1;
 
 
     EXPECT_CALL(car, setSpeed(70));
 
-    bool emergencyBreak = emergencyBrake(leftDirection, rightDirection,frontSensorDistance, backSensorDistance, sensor,
-            ultrasoundSensor, infraredSensor,FRONT_STOP_DISTANCE, car,STOPPING_SPEED,  initialSpeed);
+    bool emergencyBreak = emergencyBrake(leftDirection, rightDirection,frontSensorDistance,
+                                         sensor, newSensorValue, FRONT_STOP_DISTANCE,
+                                         car,STOPPING_SPEED,  initialSpeed);
 
 
     EXPECT_EQ(false, emergencyBreak);
 
 }
 
-TEST(emergencyBreakTest, emergencyBreak_WhenFrontSensorNotClearAnd_IsObstacle_WillReturnTrue) {
+TEST(emergencyBreakTest, emergencyBreak_WhenFrontSensorNotClearAnd_IsObstacle_WillReturnTrueAndStopTheCar) {
     MockSmartcarWrapper car;
-    MockSR04Wrapper ultrasoundSensor;
-    MockInfraredSensor infraredSensor;
 
     int leftDirection = 1;
     int rightDirection = 1;
-    int frontSensorDistance = 60;
-    int backSensorDistance = 0;
-    int sensor = 3;
+    int frontSensorDistance = 40;
+    int newSensorValue = 0;
+    int sensor = 1;
 
 
     EXPECT_CALL(car, setSpeed(0));
 
-    bool isEmergencyBreak = emergencyBrake(leftDirection, rightDirection,frontSensorDistance, backSensorDistance, sensor,
-                                         ultrasoundSensor, infraredSensor,FRONT_STOP_DISTANCE, car,STOPPING_SPEED,  initialSpeed);
+    bool isEmergencyBreak = emergencyBrake(leftDirection, rightDirection,frontSensorDistance,
+                                           sensor, newSensorValue,FRONT_STOP_DISTANCE,
+                                           car,STOPPING_SPEED,  initialSpeed);
 
 
     EXPECT_EQ(true, isEmergencyBreak);
 
 }
 
-TEST(emergencyBreakTest, emergencyBreak_WhenBackSensorNotClearAnd_IsObstacle_WillReturnTrue) {
+TEST(emergencyBreakTest, emergencyBreak_WhenBackSensorNotClearAnd_IsObstacle_WillReturnTrueAndStopTheCar) {
     MockSmartcarWrapper car;
     MockSR04Wrapper ultrasoundSensor;
     MockInfraredSensor infraredSensor;
 
     int leftDirection = -1;
     int rightDirection = -1;
-    int frontSensorDistance = 0;
-    int backSensorDistance = 40;
-    int sensor = 0;
-
+    int backSensorDistance = 0;
+    int newSensorValue = 40;
+    int sensor = 2;
 
     EXPECT_CALL(car, setSpeed(0));
 
-    bool isEmergencyBreak = emergencyBrake(leftDirection, rightDirection,frontSensorDistance, backSensorDistance, sensor,
-                                           ultrasoundSensor, infraredSensor,BACK_STOP_DISTANCE, car,STOPPING_SPEED,  initialSpeed);
+    bool isEmergencyBreak = emergencyBrake(leftDirection, rightDirection,backSensorDistance,
+                                           sensor, newSensorValue, BACK_STOP_DISTANCE,
+                                           car,STOPPING_SPEED,  initialSpeed);
 
 
     EXPECT_EQ(true, isEmergencyBreak);
 
 }
+
+/*TEST(reactToSidesTest, reactToSides_WhenRightSensorNotClearAnd_IsObstacle_WillSetAngleToLeft) {
+
+    MockSmartcarWrapper car;
+    MockSR04Wrapper ultrasoundSensor;
+    MockInfraredSensor infraredSensor;
+    MockArduinoRunWrapper arduino;
+
+    int leftValue = 50;
+    int rightValue = 30;
+    int distance;
+
+    int frontSensorDistance = 0;
+    int backSensorDistance = 40;
+    int sensor = 2;
+
+
+    EXPECT_CALL(car, setSpeed(0));
+
+    reactToSides(sensor, leftValue, distance, rightValue, arduino,car);
+
+
+    //EXPECT_EQ(true, isEmergencyBreak);
+
+}*/
