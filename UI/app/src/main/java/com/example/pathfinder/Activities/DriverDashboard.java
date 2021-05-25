@@ -315,7 +315,13 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
             mAccessibilityRequest.setColorFilter(Color.WHITE);
         }
     }
-
+    /**
+     * Receives input from the thumbstick and only publishes to the arduino if a large enough change was made
+     * This was done in an effort to reduce the the amount of messages sent to the arduino
+     * @param throttleSpeed
+     * @param steeringAngle
+     * @param actionDescription
+     */
     void drive(int throttleSpeed, int steeringAngle, String actionDescription) {
         notConnected();
         Log.i(TAG, actionDescription);
