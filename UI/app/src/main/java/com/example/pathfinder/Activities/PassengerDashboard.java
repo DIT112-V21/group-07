@@ -22,6 +22,7 @@ import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.example.pathfinder.Client.MqttClient;
+import com.example.pathfinder.Model.BusLine;
 import com.example.pathfinder.R;
 
 import org.eclipse.paho.client.mqttv3.IMqttActionListener;
@@ -53,6 +54,7 @@ public class PassengerDashboard extends AppCompatActivity {
     private static final String SHARED_PREF_NAME = "myPref";
     private static final String KEY_STOP = "stop";
     private static final String KEY_HANDICAP = "handicap";
+    private static final String END_OF_LINE = "Terminus";
 
     private static final String EXTERNAL_MQTT_BROKER = "test.mosquitto.org";
     private static final String LOCALHOST = "10.0.2.2";
@@ -251,8 +253,12 @@ public class PassengerDashboard extends AppCompatActivity {
      * @param message -> mqtt message send on the relevant topic NEXT_STOP.
      */
     private void updateNextStop(MqttMessage message){
-        String nextStop = "Next stop: " + message.toString();
-        mNextStop.setText(nextStop);
+        if (message.toString().equals(BusLine.TERMINUS)){
+            mNextStop.setText(END_OF_LINE);
+        }else {
+            String nextStop = "Next stop: " + message.toString();
+            mNextStop.setText(nextStop);
+        }
     }
 
 
@@ -271,7 +277,7 @@ public class PassengerDashboard extends AppCompatActivity {
     /**
      * Parse the MQTT message into an array of strings. Characters need to be separated by a ";" in order to be separated during parsing.
      * @param message -> The MQTT message to be parsed
-     * @return an array of strings.
+     * @return an arrayList of strings.
      */
     private ArrayList<String> parseMessageToArray(MqttMessage message) {
         ArrayList messageAsArray = new ArrayList();

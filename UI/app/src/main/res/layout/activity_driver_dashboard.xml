@@ -344,7 +344,7 @@
             <TextView
                 android:id="@+id/busLineName"
                 android:layout_width="68dp"
-                android:layout_height="32dp"
+                android:layout_height="55dp"
                 android:layout_marginStart="4dp"
                 android:layout_marginLeft="4dp"
                 android:autoText="false"
@@ -363,7 +363,7 @@
             <TextView
                 android:id="@+id/nextStopView"
                 android:layout_width="203dp"
-                android:layout_height="32dp"
+                android:layout_height="55dp"
                 android:layout_marginStart="4dp"
                 android:layout_marginLeft="4dp"
                 android:clickable="true"
@@ -381,8 +381,8 @@
 
             <Button
                 android:id="@+id/displayStopList"
-                android:layout_width="108dp"
-                android:layout_height="55dp"
+                android:layout_width="92dp"
+                android:layout_height="57dp"
                 android:onClick="displayAllStops"
                 android:text="@string/display_all_stops"
                 app:layout_constraintBottom_toBottomOf="parent"

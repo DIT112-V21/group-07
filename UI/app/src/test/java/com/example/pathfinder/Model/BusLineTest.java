@@ -25,7 +25,7 @@ public class BusLineTest {
         String nextStop2 = busLine.nextStop();
         assertEquals("Sandarna", nextStop2);
         String nextStop3 = busLine.nextStop();
-        assertEquals(BusLine.NO_NEXT_STOP, nextStop3);
+        assertEquals(BusLine.TERMINUS, nextStop3);
     }
 
     @Test
