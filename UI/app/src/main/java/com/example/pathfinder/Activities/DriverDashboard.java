@@ -49,15 +49,15 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
     private MqttClient mMqttClient;
     private boolean isConnected = false;
     private ImageView mVideoStream, mSignOutBtn, mAccessibilityRequest;
-    private TextView mSpeedLog, mDistanceLog, mStopRequest, textView;
-    private SeekBar seekBar;
+    private TextView mSpeedLog, mDistanceLog, mStopRequest, mTextView;
+    private SeekBar mSeekBar;
     private ToggleButton mCruiseControlBtn, mParkBtn;
 
     SharedPreferences sharedPreferences;
 
-    /**
-     * Used as a way to compare previously published messages with GUI's current values
-     */
+    /**Used as a way to compare previously published messages with GUI's current values*/
+
+
     private int lastSentSpeed = 0;
     private int lastSentAngle = 0;
 
@@ -87,8 +87,8 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
 
         mVideoStream = findViewById(R.id.videoStream);
 
-        textView = (TextView) findViewById(R.id.textView);
-        seekBar = (SeekBar) findViewById(R.id.seekBar);
+        mTextView = findViewById(R.id.textView);
+        mSeekBar = findViewById(R.id.seekBar);
 
         //checks the state of stop request
         checkStopRequest();
@@ -106,6 +106,8 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
                 startActivity(new Intent(getApplicationContext(), DriverLogin.class));
             }
         });
+
+    }
 
     }
 
@@ -148,6 +150,8 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
         int angle = (int)((xPercent) * 100);
         int strength;
         int seekProgress = - seekBar.getProgress();
+        //We need the negative of seekBar.getProgress()
+        int seekProgress = - mSeekBar.getProgress();
         if(isCruiseControl){
             //setting fixed speed for cruise control
             strength = seekProgress;
@@ -165,7 +169,7 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
      */
     public void onCruiseControlBtn(View view) {
         isCruiseControl = !isCruiseControl;
-        int strength = seekBar.getProgress();
+        int strength = mSeekBar.getProgress();
         if (strength > IDLE_SPEED && isCruiseControl) {
             drive(strength, STRAIGHT_ANGLE, "driving");
         } else {
@@ -178,10 +182,10 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
      * If cruise control is enabled, vehicle will drive with speed based on seekBar's progress
      */
     private void seekBarListener(){
-        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+        mSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                textView.setText("" + progress + "%");
+                mTextView.setText("" + progress + "%");
                 if (isCruiseControl) {
                     drive(progress, STRAIGHT_ANGLE, "driving");
                 }
@@ -315,25 +319,32 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
             mAccessibilityRequest.setColorFilter(Color.WHITE);
         }
     }
+
     /**
      * Receives input from the thumbstick and only publishes to the arduino if a large enough change was made
-     * This was done in an effort to reduce the the amount of messages sent to the arduino
-     * @param throttleSpeed
+     * This was done in an effort to reduce the the amount of messages sent to the arduino     * @param throttleSpeed
      * @param steeringAngle
      * @param actionDescription
      */
     void drive(int throttleSpeed, int steeringAngle, String actionDescription) {
         notConnected();
         Log.i(TAG, actionDescription);
-        if(throttleSpeed > lastSentSpeed + 5 || throttleSpeed < lastSentSpeed - 5 || throttleSpeed == 0){
+
+        if((Math.abs(throttleSpeed - lastSentSpeed) > 5) || throttleSpeed < 6){
             lastSentSpeed = throttleSpeed;
             mMqttClient.publish(THROTTLE_CONTROL, Integer.toString(throttleSpeed), QOS, null);
         }
-        if(steeringAngle > 10 && lastSentAngle <= 0){
-            lastSentAngle = 30;
+        if(steeringAngle > 10 && lastSentAngle <= 0 && steeringAngle < 45){
+            lastSentAngle = 20;
             mMqttClient.publish(STEERING_CONTROL, Integer.toString(lastSentAngle), QOS, null);
-        }else if(steeringAngle < -10 && lastSentAngle >= 0){
-            lastSentAngle = -30;
+        }else if(steeringAngle < -10 && lastSentAngle >= 0 && steeringAngle > -45){
+            lastSentAngle = -20;
+            mMqttClient.publish(STEERING_CONTROL, Integer.toString(lastSentAngle), QOS, null);
+        }else if(steeringAngle >= 45 && lastSentAngle <= 0){
+            lastSentAngle = 40;
+            mMqttClient.publish(STEERING_CONTROL, Integer.toString(lastSentAngle), QOS, null);
+        }else if(steeringAngle <= -45 && lastSentAngle >= 0){
+            lastSentAngle = -40;
             mMqttClient.publish(STEERING_CONTROL, Integer.toString(lastSentAngle), QOS, null);
         }else if (steeringAngle <= 10 && steeringAngle >= -10 && lastSentAngle != 0){
             lastSentAngle = 0;
