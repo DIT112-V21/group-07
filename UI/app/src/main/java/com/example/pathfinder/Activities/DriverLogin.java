@@ -25,7 +25,7 @@ public class DriverLogin extends AppCompatActivity {
     private Map<String, String> driversProfiles;
 
 
-    /* Getters and setters */
+    /** Getters and setters */
     public Map<String, String> getDriversProfiles() {return driversProfiles;}
     public void setDriversProfiles(Map<String, String> driversProfiles) {this.driversProfiles = driversProfiles;}
 

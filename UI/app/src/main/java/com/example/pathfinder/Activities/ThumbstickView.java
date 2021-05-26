@@ -169,7 +169,5 @@ public class ThumbstickView extends SurfaceView implements SurfaceHolder.Callbac
         }
         return true;
     }
-
-
 }
 

@@ -76,6 +76,7 @@ DirectionalOdometer rightOdometer{
 
 //Constructor of the SmartCar
 SmartCar car(arduinoRuntime, control, gyroscope, leftOdometer, rightOdometer);
+
 /**
  * Setup the car:
  * - Activate the serial
@@ -85,7 +86,6 @@ SmartCar car(arduinoRuntime, control, gyroscope, leftOdometer, rightOdometer);
  * For testing, it is recommended using a local host when trying the app and using the serial when testing the car's behaviours.
  * To use the serial, comment out the connectHost() and MQTTMessageInput() methods in the setup().
  */
-
 void setup()
 {
     Serial.begin(9600);
@@ -143,6 +143,7 @@ void MQTTMessageInput(){
 
     }
 }
+
 /**
  * Helper method for MQTTMessageinput() that handles the input from the app received via MQTT.
  * @param input: takes the speed as an input
@@ -161,6 +162,7 @@ void handleSpeedTopic(int input){
     }
     car.update();
 }
+
 /**
  * Helper method for MQTTMessageinput() that handles the input from the app received via MQTT.
  * @param input : takes the speed as an input
@@ -178,6 +180,7 @@ void handleAngleTopic(int input){
     }
     car.update();
 }
+
 /**
  * Method to control the car directly from the serial in the emulator.
  */

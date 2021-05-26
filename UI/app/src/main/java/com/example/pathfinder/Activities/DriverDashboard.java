@@ -57,7 +57,6 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
 
     /**Used as a way to compare previously published messages with GUI's current values*/
 
-
     private int lastSentSpeed = 0;
     private int lastSentAngle = 0;
 
@@ -109,8 +108,6 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
 
     }
 
-    }
-
     /**
      * Method to reconnect to MQTT broker
      */
@@ -149,8 +146,6 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
     public void onThumbstickMoved(float xPercent, float yPercent, int id) {
         int angle = (int)((xPercent) * 100);
         int strength;
-        int seekProgress = - seekBar.getProgress();
-        //We need the negative of seekBar.getProgress()
         int seekProgress = - mSeekBar.getProgress();
         if(isCruiseControl){
             //setting fixed speed for cruise control
@@ -236,12 +231,6 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
                     Toast.makeText(getApplicationContext(), connectionLost, Toast.LENGTH_SHORT).show();
                 }
 
-                /*
-                * The topics shall be catch hold of by this method and handled through the
-                * statements for the specific functions.
-                * If a message published to a specific topic, use that message to the some
-                * ( specific function).
-                */
                 @Override
                 public void messageArrived(String topic, MqttMessage message) throws Exception {
                     if (topic.equals("/smartcar/camera")) {
@@ -288,7 +277,7 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
         }
     }
 
-    /*
+    /**
      * helper method to check if stop request evaluates as true.
      * if stop request has is true then the stop status lights up and is made visible; otherwise
      * its color is set to white to appear invisible.
@@ -304,7 +293,7 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
         }
     }
 
-    /*
+    /**
      * helper method to check if accessibility request evaluated as true.
      * if accessibility request has is true then the stop status and accessibility symbols
      * light up and is made visible; otherwise their colors are set to white to appear invisible.
@@ -370,7 +359,7 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
         mSpeedLog.setText(String.valueOf(speed) + " km/h");
     }
 
-    /*
+    /**
     * A helper method takes the distance value from ODOMETER_LOG(topic="/smartcar/odometer") and
     * set it to distance log on the related layout in the UI.
     */

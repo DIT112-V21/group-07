@@ -20,9 +20,9 @@ import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.example.pathfinder.R;
-import com.google.android.gms.maps.GoogleMap;
+/*import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
-import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.OnMapReadyCallback;*/
 
 public class PassengerDashboard extends AppCompatActivity {
 
@@ -133,7 +133,7 @@ public class PassengerDashboard extends AppCompatActivity {
 
     }
 
-    /*
+    /**
      * helper method to check if stop request evaluates as true.
      * if stop request has is true then the stop status lights up and is made visible; otherwise
      * its color is set to white to appear invisible.
@@ -150,7 +150,7 @@ public class PassengerDashboard extends AppCompatActivity {
         }
     }
 
-    /*
+    /**
     * helper method to check if accessibility request evaluates as true.
     * if accessibility request has is true then the stop status and accessibility symbols
     * light up and is made visible; otherwise their colors are set to white to appear invisible.
@@ -167,7 +167,7 @@ public class PassengerDashboard extends AppCompatActivity {
         }
     }
 
-    /*
+    /**
     * Helper method to save state of buttons into passenger shared preference
     *
     * */
@@ -178,7 +178,7 @@ public class PassengerDashboard extends AppCompatActivity {
         editor.commit();
     }
 
-    /*
+    /**
     * Helper method to save state of buttons into a shared preference
     */
     public void saveIntoSharedPrefs(String key, Boolean value) {
@@ -188,7 +188,7 @@ public class PassengerDashboard extends AppCompatActivity {
         editor.apply();
     }
 
-    /*
+    /**
     * Helper update to last state of buttons into a shared preference
     */
     public boolean update(String key) {
