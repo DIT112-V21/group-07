@@ -113,7 +113,6 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
         mMqttClient = new MqttClient(getApplicationContext(), MQTT_SERVER, TAG);
 
         mVideoStream = findViewById(R.id.videoStream);
-
         mTextView = findViewById(R.id.textView);
         mSeekBar = findViewById(R.id.seekBar);
 
@@ -121,23 +120,9 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
         nextStop = (TextView) findViewById(R.id.nextStopView);
 
         seekBarListener();
+        parkMode();
 
         connectToMqttBroker();
-
-        //sign out button that redirects user back to DriverLogin activity
-        mSignOutBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(getApplicationContext(), DriverLogin.class));
-            }
-        });
-
-        mParkBtn.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-
-            }
-        });
 
         generateBusLine();
         generateStopList();
@@ -225,6 +210,19 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
             public void onStartTrackingTouch(SeekBar seekBar) {}
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {}
+        });
+    }
+
+    private void parkMode() {
+        mParkBtn.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    Toast.makeText(getApplicationContext(), "Car is now parked.", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getApplicationContext(), "Car is now on drive.", Toast.LENGTH_SHORT).show();
+                }
+            }
         });
     }
 
@@ -408,6 +406,10 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
 
     public void brakeBtn(View view) {
         brake();
+    }
+
+    public void signOut(View view) {
+            startActivity(new Intent(getApplicationContext(), DriverLogin.class));
     }
 
         /**

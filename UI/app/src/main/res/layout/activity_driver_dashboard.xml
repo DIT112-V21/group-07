@@ -37,7 +37,8 @@
                 android:layout_height="30dp"
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
-                android:src="@drawable/img_sign_out" />
+                android:src="@drawable/img_sign_out"
+                android:onClick="signOut"/>
 
         </RelativeLayout>
 
