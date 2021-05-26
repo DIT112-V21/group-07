@@ -1,3 +1,7 @@
+# PathFinder [![Arduino CI](https://github.com/DIT112-V21/group-07/actions/workflows/Arduino-Build.yml/badge.svg?branch=Arduino-UnitTesting&event=push)](https://github.com/DIT112-V21/group-07/actions/workflows/Arduino-Build.yml) [![Arduino CI](https://github.com/DIT112-V21/group-07/actions/workflows/Arduino-Build.yml/badge.svg?branch=Arduino-UnitTesting&event=pull_request)](https://github.com/DIT112-V21/group-07/actions/workflows/Arduino-Build.yml) [![Arduino CI](https://github.com/DIT112-V21/group-07/actions/workflows/Arduino-Test.yml/badge.svg?branch=Arduino-UnitTesting&event=push)](https://github.com/DIT112-V21/group-07/actions/workflows/Arduino-Test.yml) [![Arduino CI](https://github.com/DIT112-V21/group-07/actions/workflows/Arduino-Test.yml/badge.svg?branch=Arduino-UnitTesting&event=pull_request)](https://github.com/DIT112-V21/group-07/actions/workflows/Arduino-Test.yml)
+
+***
+
 ##  App Installation
 Open your terminal then paste the following command to clone this repository.  Upon cloning, you may now import and simulate our source code into **Android Studio**.
 ```bash
