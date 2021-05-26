@@ -14,6 +14,7 @@ import android.media.Image;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
@@ -82,6 +83,7 @@ public class PassengerDashboard extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_passenger_dashboard);
 
         isMqttConnected = false;
@@ -256,7 +258,7 @@ public class PassengerDashboard extends AppCompatActivity {
         if (message.toString().equals(BusLine.TERMINUS)){
             mNextStop.setText(END_OF_LINE);
         }else {
-            String nextStop = "Next stop: " + message.toString();
+            String nextStop = message.toString();
             mNextStop.setText(nextStop);
         }
     }
