@@ -1,19 +1,30 @@
+/* This is the implementation of wrapper classes in header.
+*/
+
 #pragma once
+
+// Libraries
 #include <Arduino.h>
 #include <MQTT.h>
 #include <Smartcar.h>
 #include <WiFi.h>
+
+//Header
 #include "Utils.h"
 
 
 MQTTClient mqtt;
 WiFiClient net;
+ArduinoRuntime arduinoRuntime;
+
+//Sensors
 DistanceCar distanceCar;
 SR04 ultraSound;
 InfraredAnalogSensor infraredSensor;
-ArduinoRuntime arduinoRuntime;
 
 
+
+// The following ArduinoWrapper that is calling the functions from above Arduino library.
 struct ArduinoRunWrp : public ArduinoRunWrapper{
 
     long millis()override
@@ -28,6 +39,7 @@ struct ArduinoRunWrp : public ArduinoRunWrapper{
 
 };
 
+// The following UltraSoundWrapper that is calling the functions from above SmartCar library.
 struct UltraSoundWrp : public UltraSoundWrapper{
 
     int getDistance()override{
@@ -36,6 +48,7 @@ struct UltraSoundWrp : public UltraSoundWrapper{
 
 };
 
+// The following InfraredWrapper that is calling the functions from above SmartCar library.
 struct InfraredSensorWrp : public InfraredSensorWrapper{
 
     int getDistance()override{
@@ -44,7 +57,7 @@ struct InfraredSensorWrp : public InfraredSensorWrapper{
 
 };
 
-
+// The following SerialWrapper that is calling the functions from above Arduino library.
 struct SerialWrp: public SerialWrapper {
     void println(String message) override {
         Serial.println(message);
@@ -63,7 +76,7 @@ struct SerialWrp: public SerialWrapper {
     }
 };
 
-
+// The following MqttWrapper that is calling the functions from above MQTT library.
 struct MqttWrp : public MqttWrapper {
 
   void beginLocal() override{
@@ -114,7 +127,7 @@ struct MqttWrp : public MqttWrapper {
 };
 
 
-
+// The following SmartCarWrapper that is calling the functions from above SmartCar library.
 struct SmartCarWrp: public SmartCarWrapper{
 
     int getDistance() override{
