@@ -59,7 +59,6 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
     private static final int IMAGE_WIDTH = 320;
     private static final int IMAGE_HEIGHT = 240;
 
-
     //key names for stored data in shared preferences
     private static final String KEY_STOP = "stop";
     private static final String KEY_HANDICAP = "handicap";
@@ -67,8 +66,8 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
     private MqttClient mMqttClient;
     private boolean isConnected = false;
     private ImageView mVideoStream, mSignOutBtn, mAccessibilityRequest;
-    private TextView mSpeedLog, mDistanceLog, mStopRequest, textView;
-    private SeekBar seekBar;
+    private TextView mSpeedLog, mDistanceLog, mStopRequest, mTextView;
+    private SeekBar mSeekBar;
     private ToggleButton mCruiseControlBtn, mParkBtn;
 
 
@@ -114,8 +113,8 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
 
         mVideoStream = findViewById(R.id.videoStream);
 
-        textView = (TextView) findViewById(R.id.textView);
-        seekBar = (SeekBar) findViewById(R.id.seekBar);
+        mTextView = findViewById(R.id.textView);
+        mSeekBar = findViewById(R.id.seekBar);
 
 
         busLineName = (TextView) findViewById(R.id.busLineName);
@@ -176,8 +175,8 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
         int angle = (int) ((xPercent) * 100);
         int strength;
         //We need the negative of seekBar.getProgress()
-        int seekProgress = -seekBar.getProgress();
-        if (isCruiseControl) {
+        int seekProgress = - mSeekBar.getProgress();
+        if(isCruiseControl){
             //setting fixed speed for cruise control
             strength = seekProgress;
         } else {
@@ -194,7 +193,7 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
      */
     public void onCruiseControlBtn(View view) {
         isCruiseControl = !isCruiseControl;
-        int strength = seekBar.getProgress();
+        int strength = mSeekBar.getProgress();
         if (strength > IDLE_SPEED && isCruiseControl) {
             drive(strength, STRAIGHT_ANGLE, "driving");
         } else {
@@ -202,27 +201,22 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
         }
     }
 
-    /**
-     * Updates text showing seekBar's progress
-     * If cruise control is enabled, vehicle will drive with speed based on seekBar's progress
-     */
-    private void seekBarListener() {
-        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+    /**Updates text showing seekBar's progress
+     * If cruise control is enabled, vehicle will drive with speed based on seekBar's progress*/
+    private void seekBarListener(){
+        mSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                textView.setText("" + progress + "%");
+                mTextView.setText("" + progress + "%");
                 if (isCruiseControl) {
                     drive(progress, STRAIGHT_ANGLE, "driving");
                 }
             }
 
             @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-            }
-
+            public void onStartTrackingTouch(SeekBar seekBar) {}
             @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-            }
+            public void onStopTrackingTouch(SeekBar seekBar) {}
         });
     }
 
@@ -262,11 +256,11 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
                 }
 
                 /*
-                 * The topics shall be catch hold of by this method and handled through the
-                 * statements for the specific functions.
-                 * If a message published to a specific topic, use that message to the some
-                 * ( specific function).
-                 */
+                * The topics shall be catch hold of by this method and handled through the
+                * statements for the specific functions.
+                * If a message published to a specific topic, use that message to the some
+                * ( specific function).
+                */
                 @Override
                 public void messageArrived(String topic, MqttMessage message) throws Exception {
                     if (topic.equals("/smartcar/camera")) {
@@ -283,9 +277,9 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
                         bm.setPixels(colors, 0, IMAGE_WIDTH, 0, 0, IMAGE_WIDTH, IMAGE_HEIGHT);
 
                         mVideoStream.setImageBitmap(bm);
-                    } else if (topic.equals("/smartcar/odometer")) {
+                    } else if(topic.equals("/smartcar/odometer")) {
                         distanceLog(Double.parseDouble(message.toString()));
-                    } else if (topic.equals("/smartcar/speedometer")) {
+                    } else if(topic.equals("/smartcar/speedometer")) {
                         speedLog(Integer.parseInt(message.toString()));
                     } else if (topic.equals(NEW_PASSENGER)) {
                         if (message.toString().equals(NEW_PASSENGER_BUS_ROUTE_TRIGGER)) {
@@ -348,16 +342,41 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
         }
     }
 
+    /**
+     * Method to control reduce and send messages to the Arduino related to the car speed and angle based on the thumbstick and speedbar
+     * @param throttleSpeed
+     * @param steeringAngle
+     * @param actionDescription
+     */
     void drive(int throttleSpeed, int steeringAngle, String actionDescription) {
         notConnected();
         Log.i(TAG, actionDescription);
-        mMqttClient.publish(THROTTLE_CONTROL, Integer.toString(throttleSpeed), QOS, null);
-        mMqttClient.publish(STEERING_CONTROL, Integer.toString(steeringAngle), QOS, null);
+
+        if((Math.abs(throttleSpeed - lastSentSpeed) > 5) || throttleSpeed < 6){
+            lastSentSpeed = throttleSpeed;
+            mMqttClient.publish(THROTTLE_CONTROL, Integer.toString(throttleSpeed), QOS, null);
+        }
+        if(steeringAngle > 10 && lastSentAngle <= 0 && steeringAngle < 45){
+            lastSentAngle = 20;
+            mMqttClient.publish(STEERING_CONTROL, Integer.toString(lastSentAngle), QOS, null);
+        }else if(steeringAngle < -10 && lastSentAngle >= 0 && steeringAngle > -45){
+            lastSentAngle = -20;
+            mMqttClient.publish(STEERING_CONTROL, Integer.toString(lastSentAngle), QOS, null);
+        }else if(steeringAngle >= 45 && lastSentAngle <= 0){
+            lastSentAngle = 40;
+            mMqttClient.publish(STEERING_CONTROL, Integer.toString(lastSentAngle), QOS, null);
+        }else if(steeringAngle <= -45 && lastSentAngle >= 0){
+            lastSentAngle = -40;
+            mMqttClient.publish(STEERING_CONTROL, Integer.toString(lastSentAngle), QOS, null);
+        }else if (steeringAngle <= 10 && steeringAngle >= -10 && lastSentAngle != 0){
+            lastSentAngle = 0;
+            mMqttClient.publish(STEERING_CONTROL, Integer.toString(lastSentAngle), QOS, null);
+        }
         speedLog(Math.abs(throttleSpeed));
     }
 
     void brake() {
-        drive(0, 0, "Stopped");
+        drive(0,0, "Stopped");
     }
 
     void speedLog(int speed) {
@@ -367,11 +386,11 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
     }
 
     /*
-     * A helper method takes the distance value from ODOMETER_LOG(topic="/smartcar/odometer") and
-     * set it to distance log on the related layout in the UI.
-     */
+    * A helper method takes the distance value from ODOMETER_LOG(topic="/smartcar/odometer") and
+    * set it to distance log on the related layout in the UI.
+    */
     void distanceLog(double distance) {
-        distance = distance / 100;
+        distance = distance/100;
         notConnected();
         mMqttClient.subscribe(ODOMETER_LOG, QOS, null);
         mDistanceLog.setText(String.valueOf(distance) + " m");

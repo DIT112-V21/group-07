@@ -114,16 +114,21 @@ public class ThumbstickView extends SurfaceView implements SurfaceHolder.Callbac
     public boolean onTouch(View v, MotionEvent e) {
         if ( v.equals(this) ) {
             if ( e.getAction() != e.ACTION_UP) {
-                float displacement = (float) Math.sqrt((Math.pow(e.getX() - centerX, 2)) + Math.pow(e.getY() - centerY, 2)) ;
+                float displacement = (float) Math.sqrt((Math.pow(e.getX() - centerX, 2)) + Math.pow(e.getY() - centerY, 2));
                 if ( displacement < baseRadius ) {
                     drawThumbstick(e.getX(), e.getY());
-                    thumbstickCallback.onThumbstickMoved((e.getX() - centerX)/baseRadius, (e.getY() - centerY)/baseRadius,getId());
+                    float xPercent = (float) (Math.round(((e.getX() - centerX)/baseRadius) * 100.0)/100.0);
+                    float yPercent = (float) (Math.round(((e.getY() - centerY)/baseRadius)* 100.0)/100.0);
+                    thumbstickCallback.onThumbstickMoved(xPercent, yPercent, getId());
+
                 } else {
                     float ratio = baseRadius / displacement;
                     float constrainedX = centerX + (e.getX() - centerX) * ratio;
                     float constrainedY = centerY + (e.getY() - centerY) * ratio;
                     drawThumbstick(constrainedX, constrainedY);
-                    thumbstickCallback.onThumbstickMoved((constrainedX-centerX)/ baseRadius, (constrainedY-centerY)/baseRadius, getId());
+                    float xPercent = (float) (Math.round(((constrainedX-centerX)/ baseRadius) * 100.0)/100.0);
+                    float yPercent = (float) (Math.round(((constrainedY-centerY)/baseRadius)* 100.0)/100.0);
+                    thumbstickCallback.onThumbstickMoved(xPercent ,yPercent , getId());
                 }
             } else {
                 drawThumbstick(centerX, centerY);
