@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
@@ -107,6 +108,7 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
         mSignOutBtn = findViewById(R.id.sign_out);
         mStopRequest = findViewById(R.id.stop);
         mAccessibilityRequest = findViewById(R.id.accessibility);
+        mParkBtn = (ToggleButton) findViewById(R.id.park);
 
         mMqttClient = new MqttClient(getApplicationContext(), MQTT_SERVER, TAG);
 
@@ -127,6 +129,13 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(getApplicationContext(), DriverLogin.class));
+            }
+        });
+
+        mParkBtn.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+
             }
         });
 
@@ -169,14 +178,20 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
         int strength;
         //We need the negative of seekBar.getProgress()
         int seekProgress = - mSeekBar.getProgress();
-        if(isCruiseControl){
-            //setting fixed speed for cruise control
-            strength = seekProgress;
+        boolean isParked = mParkBtn.isChecked();
+
+        if (isParked) {
+            brake();
         } else {
+            if (isCruiseControl) {
+                //setting fixed speed for cruise control
+                strength = seekProgress;
+            } else {
+                strength = (int) (yPercent * seekProgress);
+            }
             //range calculation (limit speed is active)
-            strength = (int) (yPercent * seekProgress);
+            drive(strength, angle, "driving");
         }
-        drive(strength, angle, "driving");
     }
 
     /**
@@ -468,7 +483,6 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
                 stopInfo.startAnimation(fadeAwayAnim);
                 stopInfo.setVisibility(View.INVISIBLE);
             }
-
         }
 
         /**
