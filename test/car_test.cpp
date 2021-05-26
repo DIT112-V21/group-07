@@ -112,14 +112,14 @@ TEST(handleAngleInput_Test, handleAngleInput_WhenSetAngle_WillSetTheCarAngle){
     handleAngleInput (0, angle, serialWrapper, mqttWrapper, car);
 }
 
-TEST(handleInput_Test, handleInput_WhenConnectedAndSpeedIsPozitive_WillReturnSensorDistancePositive) {
+TEST(handleInput_Test, handleInput_WhenInputStartWithSAndSpeedIsPositive_WillHandleSpeedInput) {
     MockMqttWrapper mqttWrapper;
     MockSerialWrapper serialWrapper;
     MockSmartcarWrapper car;
     MockInfraredSensor infraredSensor;
     String input = "start";
 
-    const auto speedPositive = 20;
+    const auto speedPositive = 20.0;
 
     EXPECT_CALL(serialWrapper, available()).WillOnce(Return(true));
     EXPECT_CALL(infraredSensor, getDistance());
@@ -127,14 +127,14 @@ TEST(handleInput_Test, handleInput_WhenConnectedAndSpeedIsPozitive_WillReturnSen
     handleInput_SpeedTopicPositive(input, speedPositive, serialWrapper, mqttWrapper, car, infraredSensor);
 }
 
-TEST(handleInput_Test, handleInput_WhenConnectedAndSpeedIsNegative_WillReturnSensorDistanceNegative) {
+TEST(handleInput_Test, handleInput_WhenInputStartWithSAndSpeedIsNegative_WillHandleSpeedInput) {
     MockMqttWrapper mqttWrapper;
     MockSerialWrapper serialWrapper;
     MockSmartcarWrapper car;
     MockInfraredSensor infraredSensor;
     String input = "start";
 
-    const auto speedNegative = -20.0f;
+    const auto speedNegative = -20.0;
 
     EXPECT_CALL(serialWrapper, available()).WillOnce(Return(true));
     EXPECT_CALL(infraredSensor, getDistance());
