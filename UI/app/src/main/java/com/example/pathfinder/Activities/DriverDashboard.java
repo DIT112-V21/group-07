@@ -284,6 +284,7 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
                     } else if (topic.equals(NEW_PASSENGER)) {
                         if (message.toString().equals(NEW_PASSENGER_BUS_ROUTE_TRIGGER)) {
                             publishStopList();
+                            publishNextStop((String) nextStop.getText());
                         }
                         if (message.toString().equals(NEW_PASSENGER_BUS_NAME_TRIGGER)) {
                             publishBusName();
@@ -507,4 +508,6 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
         }
 
     }
+
+
 
