@@ -11,7 +11,6 @@ using String = std::string;
 #endif
 
 
-const unsigned int kDefaultMaxDistance = 70;
 const auto ONE_SECOND = 1000UL;
 const int NO_OBSTACLE_VALUE = 0;
 const int FRONT_STOP_DISTANCE = 70;
@@ -22,20 +21,39 @@ const float MAX_SPEED = 1.845;
 float initialSpeed = 1.845;
 
 
-enum class PinDirection
-{
-    kInput,
-    kOutput
+struct ArduinoRunWrapper {
+    virtual ~ArduinoRunWrapper() = default;
+
+    virtual long millis()                = 0;
+    virtual void delay(int n)            = 0;
+};
+
+struct UltraSoundWrapper {
+
+    virtual ~UltraSoundWrapper() = default;
+
+    virtual int getDistance()          = 0;
+
+};
+
+struct InfraredSensorWrapper {
+
+    virtual ~InfraredSensorWrapper() = default;
+
+    virtual int getDistance()          = 0;
+
 };
 
 
-struct ArduinoRunTimeWrapper {
 
-    virtual ~ArduinoRunTimeWrapper() = default;
+struct SerialWrapper {
 
-    virtual void setPinDirection(int pin, PinDirection pinDirection) = 0;
-    virtual void setPin(int pin)                                     = 0;
-    virtual void clearPin(int pin)                                   = 0;
+    virtual ~SerialWrapper() = default;
+
+    virtual void println(String message) = 0;
+    virtual void begin(int n) = 0;
+    virtual bool available() = 0;
+    virtual char readStringUntil(char singleQuotion) = 0;
 };
 
 
@@ -66,62 +84,7 @@ struct SmartCarWrapper {
 };
 
 
-struct UltraSoundWrapper {
-
-    virtual ~UltraSoundWrapper() = default;
-
-    virtual int getDistance()          = 0;
-
-};
-
-struct InfraredSensorWrapper {
-
-    virtual ~InfraredSensorWrapper() = default;
-
-    virtual int getDistance()          = 0;
-
-};
-
-struct OdometerWrapper {
-
-    virtual ~OdometerWrapper() = default;
-
-    virtual int getDirection()          = 0;
-
-};
-
-
-struct SerialWrapper {
-
-    virtual ~SerialWrapper() = default;
-
-    virtual void println(String message) = 0;
-    virtual void begin(int n) = 0;
-    virtual bool available() = 0;
-    virtual char readStringUntil(char singleQuotion) = 0;
-};
-
-struct ArduinoRunWrapper {
-    virtual ~ArduinoRunWrapper() = default;
-
-    virtual long millis()                = 0;
-    virtual void delay(int n)            = 0;
-};
-
 float convertSpeed(float speed);
-
-#if defined(ARDUINO)
-// TODO: Remove these forward declarations as you refactor code
-void connectivityLoss();
-void handleSpeedTopic(int);
-void handleAngleTopic(int);
-#else
-inline void connectivityLoss() {}
-
-inline void handleSpeedTopic(int) {}
-
-inline void handleAngleTopic(int) {}
-#endif
 
 inline int stringToInt(String input) {
 #if defined(ARDUINO)
@@ -131,25 +94,6 @@ inline int stringToInt(String input) {
 #endif
 }
 
-/*class SmartCarControllerWrapper : public SmartCarWrapper
-{
-
-public:
-    SmartCarControllerWrapper(SmartCarWrapper& car, MqttWrapper& mqtt, ArduinoRunTimeWrapper& pinController);
-
-    void setSpeed(float speed) override;
-    float getSpeed() override;
-    void setAngle(int angle) override;
-    int getDistance()    override;
-    void update() override;
-
-
-private:
-    SmartCarWrapper& mCar;
-    MqttWrapper& mMqtt;
-    ArduinoRunTimeWrapper& mPinController;
-};
-*/
 
 // Speed and Angle is not tested because they are tested for connectionLost and Control topics
 void MQTTMessageInput(MqttWrapper &mqtt, SerialWrapper &serial){
@@ -158,14 +102,14 @@ void MQTTMessageInput(MqttWrapper &mqtt, SerialWrapper &serial){
         mqtt.subscribe("/smartcar/connectionLost", 1);
 
         mqtt.onMessage([&](String topic, String message) {
-            // Check if connectionLost(Last will) topic is received
+
             if (topic == "/smartcar/connectionLost") {
-                connectivityLoss();
+                //connectivityLoss();
             }
             if (topic == "/smartcar/control/speed") {
-                handleSpeedTopic(stringToInt(message));
+                //handleSpeedTopic(stringToInt(message));
             } else if (topic == "/smartcar/control/angle") {
-                handleAngleTopic(stringToInt(message));
+                //handleAngleTopic(stringToInt(message));
             } else {
                 serial.println(message);
             }
@@ -181,6 +125,8 @@ void SR04sensorData(bool pubSensorData,MqttWrapper &mqttWrapper){
             mqttWrapper.publish("/smartcar/ultrasound/front", message);}
     }
 }
+
+
 void SR04sensorData(bool pubSensorData,MqttWrapper &mqttWrapper, SerialWrapper &serialWrapper
                     ,ArduinoRunWrapper &arduinoRunWrapper
                     ,UltraSoundWrapper &ultraSoundWrapper ){
@@ -197,6 +143,8 @@ void SR04sensorData(bool pubSensorData,MqttWrapper &mqttWrapper, SerialWrapper &
     }
 }
 
+
+
 void handleSpeedInput(int distance, int inputSpeed, SerialWrapper &serialWrapper, MqttWrapper &mqttWrapper, SmartCarWrapper &car) {
     if (distance != 0) {
         serialWrapper.println(
@@ -208,6 +156,8 @@ void handleSpeedInput(int distance, int inputSpeed, SerialWrapper &serialWrapper
     }
 }
 
+
+
 void handleAngleInput(int distance, int inputAngle, SerialWrapper &serialWrapper, MqttWrapper &mqttWrapper, SmartCarWrapper &car){
     if (distance != 0) {
         serialWrapper.println("Obstacle detected in the direction you are trying to move");
@@ -215,6 +165,8 @@ void handleAngleInput(int distance, int inputAngle, SerialWrapper &serialWrapper
         car.setAngle(inputAngle);
     }
 }
+
+
 
 void handleInput_SpeedTopicPositive(String input, int speed,
                               SerialWrapper &serialWrapper, MqttWrapper &mqttWrapper,
@@ -230,6 +182,8 @@ void handleInput_SpeedTopicPositive(String input, int speed,
     }
 }
 
+
+
 void handleInput_SpeedTopicNegative(String input, int speed,
     SerialWrapper &serialWrapper, MqttWrapper &mqttWrapper,
             SmartCarWrapper &car, InfraredSensorWrapper &InfraredSensor){
@@ -244,6 +198,8 @@ void handleInput_SpeedTopicNegative(String input, int speed,
         }
 }
 
+
+
 void handleInputStopCar(String input, SerialWrapper &serialWrapper, SmartCarWrapper &car){
     if (serialWrapper.available()) {
         String givenNameS = "s";
@@ -253,23 +209,17 @@ void handleInputStopCar(String input, SerialWrapper &serialWrapper, SmartCarWrap
     }
 }
 
+
+
 void connectLocalHost(MqttWrapper &mqttWrapper){
     mqttWrapper.beginLocal();
 }
+
 
 void connectExternalHost(MqttWrapper &mqttWrapper){
     mqttWrapper.beginExternal();
 }
 
-/*bool isClear(String sensor, UltraSoundWrapper &ultraSoundWrapper,
-             InfraredSensorWrapper &infraredSensorWrapper){
-    if (sensor == "frontUS"){
-        return (ultraSoundWrapper.getDistance() == NO_OBSTACLE_VALUE);
-    } else if(sensor == "frontIR") {
-        return (infraredSensorWrapper.getDistance() == NO_OBSTACLE_VALUE);
-    }
-    return false;
-}*/
 
 
 bool isClear(int sensor, int distance){
@@ -278,14 +228,14 @@ bool isClear(int sensor, int distance){
         case 1:
             return (distance == NO_OBSTACLE_VALUE);
         /*case 2:
-            return (distance== NO_OBSTACLE_VALUE);
+            return (sensor== NO_OBSTACLE_VALUE);
 
         case 3:
-            return (infraredSensorWrapper.getDistance() == NO_OBSTACLE_VALUE);
+            return (sensor.getDistance() == NO_OBSTACLE_VALUE);
         case 4:
-            return (infraredSensorWrapper.getDistance() == NO_OBSTACLE_VALUE);
+            return (sensor.getDistance() == NO_OBSTACLE_VALUE);
         case 5:
-            return (infraredSensorWrapper.getDistance() == NO_OBSTACLE_VALUE);*/
+            return (sensor.getDistance() == NO_OBSTACLE_VALUE);*/
         default:
             return false;
     }
@@ -302,9 +252,13 @@ float slowDownSmoothly(float STOPPING_SPEED, float initialSpeed)
     return 0;
 }
 
+
+
 float convertSpeed(float speed) {
     return (speed / MAX_SPEED) * 100;  //1.845
 }
+
+
 
 bool reactToSensor(int sensorDistance, int STOP_DISTANCE,
                    SmartCarWrapper &car, float STOPPING_SPEED, float initialSpeed){ //1.845
@@ -320,6 +274,8 @@ bool reactToSensor(int sensorDistance, int STOP_DISTANCE,
     }
     return false;
 }
+
+
 
 bool emergencyBrake(int leftDirection, int rightDirection,
                     int frontSensorDistance, int sensor, int newSensorValue,
@@ -347,18 +303,20 @@ bool emergencyBrake(int leftDirection, int rightDirection,
     return false;
 }
 
-void reactToSides(int sensor, int distance, int leftValue, int rightValue,
-                  ArduinoRunWrapper &arduino, SmartCarWrapper &car) {
+
+
+void reactToSides(int sensor, int distance,int newDistance, int leftValue, int rightValue,
+                  SmartCarWrapper &car) {
 
 
     if (rightValue < SIDE_REACT_DISTANCE && !isClear(sensor, distance)) { //rightIR
 
-        if (distance < rightValue && !isClear(sensor,distance)) { //rightIR
+        if (newDistance < rightValue && !isClear(sensor,distance)) { //rightIR
            car.setAngle(-45);
         }
     }
     if (leftValue < SIDE_REACT_DISTANCE && !isClear(sensor, distance)) { //leftIR
-        if (distance < leftValue && !isClear(sensor, distance)) { // leftIR
+        if (newDistance < leftValue && !isClear(sensor, distance)) { // leftIR
             car.setAngle(45);
         }
     }

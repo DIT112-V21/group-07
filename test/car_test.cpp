@@ -4,6 +4,27 @@
 
 #include <iostream>
 
+struct MockArduinoRunWrapper : public ArduinoRunWrapper {
+    MOCK_METHOD(long, millis, (), (override));
+    MOCK_METHOD(void, delay, (int), (override));
+
+};
+
+struct MockSR04Wrapper : public UltraSoundWrapper {
+    MOCK_METHOD(int, getDistance, (), (override));
+};
+
+struct MockInfraredSensor : public InfraredSensorWrapper {
+    MOCK_METHOD(int, getDistance, (), (override));
+};
+
+struct MockSerialWrapper : public SerialWrapper {
+    MOCK_METHOD(void, println, (String), (override));
+    MOCK_METHOD(void , begin, (int ), (override));
+    MOCK_METHOD(bool , available, (), (override));
+    MOCK_METHOD(char , readStringUntil, (char ), (override));
+};
+
 
 struct MockMqttWrapper : public MqttWrapper {
   MOCK_METHOD(void, beginLocal, (), (override));
@@ -16,38 +37,6 @@ struct MockMqttWrapper : public MqttWrapper {
   MOCK_METHOD(void, onMessage, (std::function<void(String, String)>), (override));
 };
 
-struct MockSerialWrapper : public SerialWrapper {
-  MOCK_METHOD(void, println, (String), (override));
-  MOCK_METHOD(void , begin, (int ), (override));
-  MOCK_METHOD(bool , available, (), (override));
-  MOCK_METHOD(char , readStringUntil, (char ), (override));
-};
-
-struct MockArduinoRunTimeWrapper : public ArduinoRunTimeWrapper {
-    MOCK_METHOD(void, setPinDirection, (int pin, PinDirection pinDirection), (override));
-    MOCK_METHOD(void , setPin, (int ), (override));
-    MOCK_METHOD(void , clearPin, (int), (override));
-};
-
-struct MockArduinoRunWrapper : public ArduinoRunWrapper {
-    MOCK_METHOD(long, millis, (), (override));
-    MOCK_METHOD(void, delay, (int), (override));
-
-};
-
-struct MockOdometerWrapper : public OdometerWrapper {
-    MOCK_METHOD(int, getDirection, (), (override));
-
-};
-
-
-struct MockSR04Wrapper : public UltraSoundWrapper {
-    MOCK_METHOD(int, getDistance, (), (override));
-};
-
-struct MockInfraredSensor : public InfraredSensorWrapper {
-    MOCK_METHOD(int, getDistance, (), (override));
-};
 
 struct MockSmartcarWrapper : public SmartCarWrapper {
     MOCK_METHOD(float, getSpeed, (), (override));
@@ -57,16 +46,6 @@ struct MockSmartcarWrapper : public SmartCarWrapper {
     MOCK_METHOD(void, update, (), (override));
 };
 
-/*struct MockSmartCarControllerWrapper : public SmartCarControllerWrapper {
-
-    MOCK_METHOD(float, getSpeed, (), (override));
-    MOCK_METHOD(void, setSpeed, (float speed), (override));
-    MOCK_METHOD(void, setAngle, (int angle), (override));
-    MOCK_METHOD(int, getDistance, (), (override));
-    MOCK_METHOD(void, update, (), (override));
-    //MOCK_METHOD(void, SR04sensorData,(bool pubSensorData,MqttWrapper &mqttWrapper));
-};
-*/
 using ::testing::_;
 using ::testing::Return;
 
@@ -105,11 +84,9 @@ TEST(MQTTMessageInputTest, MQTTMessageInput_WhenConnected_WillRegisterCallback) 
   MQTTMessageInput(mqttWrapper, serialWrapper);
 }
 
-
 // When moving this method to the Utils.cpp file it gives this error..
 // so we will keep it in the header file until we fix the error.
 // Error :: clang: error: linker command failed with exit code 1 (use -v to see invocation)
-
 
 TEST(handleSpeedInput_Test, handleSpeedInput_WhenSetSpeed_WillDivideTheCarSpeed) {
     MockMqttWrapper mqttWrapper;
@@ -296,17 +273,18 @@ TEST(emergencyBreakTest, emergencyBreak_WhenFrontSensorIsClearAnd_SuddenlyIsObst
     int rightDirection = 1;
     int frontSensorDistance = 0;
     int newSensorValue = 80;
+    float expectedSpeed = 70;
     int sensor = 1;
 
 
-    EXPECT_CALL(car, setSpeed(70));
+    EXPECT_CALL(car, setSpeed(expectedSpeed));
 
-    bool emergencyBreak = emergencyBrake(leftDirection, rightDirection,frontSensorDistance,
+    bool isEmergencyBreak = emergencyBrake(leftDirection, rightDirection,frontSensorDistance,
                                          sensor, newSensorValue, FRONT_STOP_DISTANCE,
                                          car,STOPPING_SPEED,  initialSpeed);
 
 
-    EXPECT_EQ(false, emergencyBreak);
+    EXPECT_EQ(false, isEmergencyBreak);
 
 }
 
@@ -356,34 +334,33 @@ TEST(emergencyBreakTest, emergencyBreak_WhenBackSensorNotClearAnd_IsObstacle_Wil
 TEST(reactToSidesTest, reactToSides_WhenRightSensorNotClearAnd_IsObstacle_WillSetAngleToLeft) {
 
     MockSmartcarWrapper car;
-    MockArduinoRunWrapper arduino;
 
     int leftValue = 50;
     int rightValue = 30;
-    int distance = 25;
+    int distance = 29;
+    int newDistance = 25;
 
     int sensor = 1;
 
     EXPECT_CALL(car, setAngle(-45));
 
-    reactToSides(sensor, distance, leftValue, rightValue, arduino,car);
+    reactToSides(sensor, distance, newDistance, leftValue, rightValue,car);
 
 
 }
 TEST(reactToSidesTest, reactToSides_WhenLeftSensorNotClearAnd_IsObstacle_WillSetAngleToRight) {
 
     MockSmartcarWrapper car;
-    MockArduinoRunWrapper arduino;
 
     int leftValue = 30;
     int rightValue = 50;
-    int distance = 25;
-
+    int distance = 29;
+    int newDistance = 25;
     int sensor = 1;
 
     EXPECT_CALL(car, setAngle(45));
 
-    reactToSides(sensor, distance, leftValue, rightValue, arduino,car);
+    reactToSides(sensor, distance, newDistance,leftValue, rightValue,car);
 
 
 }
