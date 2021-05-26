@@ -69,6 +69,9 @@ public class PassengerDashboard extends AppCompatActivity {
     private static final int QOS = 1;
     private static final String TAG = "PathfinderPassenger";
 
+    private static final String REQ_STOP = "/smartcar/stop";
+    private static final String REQ_HANDICAP = "/smartcar/handicap";
+
     private static final String NEXT_STOP = "/smartcar/busNextStop";
     private static final String NEW_PASSENGER = "/smartcar/newPassengerConnected";
     private static final String BUS_STOP_LIST_TOPIC = "/smartcar/bus/StopList";
@@ -108,7 +111,7 @@ public class PassengerDashboard extends AppCompatActivity {
                 //if the button is toggled to true
                 if (isChecked) {
                     //boolean data is stored to shared preference
-                    saveIntoSharedPrefs(KEY_STOP, true);
+                    saveIntoSharedPrefs(KEY_STOP, true, REQ_STOP);
                     passengerSharedPrefs(KEY_STOP, true);
                     /*
                      * text is given a red background color to make it visible when someone
@@ -118,7 +121,7 @@ public class PassengerDashboard extends AppCompatActivity {
                     Log.d(KEY_STOP, "this is on");
                 } else {
                     //boolean data is stored to shared preference
-                    saveIntoSharedPrefs(KEY_STOP, false);
+                    saveIntoSharedPrefs(KEY_STOP, false, REQ_STOP);
                     passengerSharedPrefs(KEY_STOP, false);
                     /*
                      * text is given a white background color to make it visible when someone
@@ -136,8 +139,8 @@ public class PassengerDashboard extends AppCompatActivity {
                 //if the button is toggled to true
                 if (isChecked) {
                     //boolean data is stored to shared preference
-                    saveIntoSharedPrefs(KEY_STOP, true);
-                    saveIntoSharedPrefs(KEY_HANDICAP, true);
+                    saveIntoSharedPrefs(KEY_STOP, true, REQ_STOP);
+                    saveIntoSharedPrefs(KEY_HANDICAP, true, REQ_HANDICAP);
                     passengerSharedPrefs(KEY_HANDICAP, true);
 
                     /*
@@ -149,8 +152,8 @@ public class PassengerDashboard extends AppCompatActivity {
                     Log.d(KEY_HANDICAP, "this is on");
                 } else {
                     //boolean data is stored to shared preference
-                    saveIntoSharedPrefs(KEY_STOP, false);
-                    saveIntoSharedPrefs(KEY_HANDICAP, false);
+                    saveIntoSharedPrefs(KEY_STOP, false, REQ_STOP);
+                    saveIntoSharedPrefs(KEY_HANDICAP, false, REQ_HANDICAP);
                     passengerSharedPrefs(KEY_HANDICAP, false);
                     /*
                      * images are given a white background color to make them
@@ -186,8 +189,8 @@ public class PassengerDashboard extends AppCompatActivity {
                     Log.i(TAG, successfulConnection);
                     Toast.makeText(getApplicationContext(), successfulConnection, Toast.LENGTH_SHORT).show();
 
-                    //Subscribes to topics prefixed with "smartcar/|
-                    mMqttClient.subscribe("smartcar/#", QOS, null);
+                    //Subscribes to topics prefixed with "/smartcar/|
+                    mMqttClient.subscribe("/smartcar/#", QOS, null);
                     notifyDriverAboutNewPassenger();
                 }
 
@@ -363,11 +366,15 @@ public class PassengerDashboard extends AppCompatActivity {
     /*
     * Helper method to save state of buttons into a shared preference
     */
-    public void saveIntoSharedPrefs(String key, Boolean value) {
+    public void saveIntoSharedPrefs(String key, Boolean value, String topic) {
         sharedPreferences = getApplicationContext().getSharedPreferences(key, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putBoolean(key, value);
         editor.apply();
+
+        mMqttClient.publish(topic, value.toString(), QOS, null);
+        Log.d("Topic", topic);
+        Log.d("Boolean", value.toString());
     }
 
     /*
