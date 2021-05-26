@@ -4,10 +4,12 @@
 
 #include <iostream>
 
+// MOCKS for Wrappers we have created to be able to use them in tested units.
+// ------------------------ MOCKS --------------------------------//
+
 struct MockArduinoRunWrapper : public ArduinoRunWrapper {
     MOCK_METHOD(long, millis, (), (override));
     MOCK_METHOD(void, delay, (int), (override));
-
 };
 
 struct MockSR04Wrapper : public UltraSoundWrapper {
@@ -45,12 +47,15 @@ struct MockSmartcarWrapper : public SmartCarWrapper {
     MOCK_METHOD(int, getDistance, (), (override));
     MOCK_METHOD(void, update, (), (override));
 };
+// ------------------------ end of MOCKS --------------------------------//
+
 
 using ::testing::_;
 using ::testing::Return;
 
 
-
+// A test if we can connect to MQTT.
+// We are using MQTTMessageInput() method which is expected to call mqtt.connect().
 TEST(MQTTMessageInputTest, MQTTMessageInput_WhenCalled_WillConnectToMqtt) {
   MockMqttWrapper mqttWrapper;
   MockSerialWrapper serialWrapper;
@@ -61,7 +66,8 @@ TEST(MQTTMessageInputTest, MQTTMessageInput_WhenCalled_WillConnectToMqtt) {
 }
 
 
-
+// A test if we can subscribe to topic.
+// We are using MQTTMessageInput() method which is expected to call mqtt.connect() & subscribe().
 TEST(MQTTMessageInputTest, MQTTMessageInput_WhenConnected_WillSubscribeToTopics) {
   MockMqttWrapper mqttWrapper;
   MockSerialWrapper serialWrapper;
@@ -73,7 +79,8 @@ TEST(MQTTMessageInputTest, MQTTMessageInput_WhenConnected_WillSubscribeToTopics)
   MQTTMessageInput(mqttWrapper, serialWrapper);
 }
 
-
+// A test if we can register callback.
+// We are using MQTTMessageInput() method which is expected to call mqtt.connect() & onMessage().
 TEST(MQTTMessageInputTest, MQTTMessageInput_WhenConnected_WillRegisterCallback) {
   MockMqttWrapper mqttWrapper;
   MockSerialWrapper serialWrapper;
@@ -84,10 +91,8 @@ TEST(MQTTMessageInputTest, MQTTMessageInput_WhenConnected_WillRegisterCallback) 
   MQTTMessageInput(mqttWrapper, serialWrapper);
 }
 
-// When moving this method to the Utils.cpp file it gives this error..
-// so we will keep it in the header file until we fix the error.
-// Error :: clang: error: linker command failed with exit code 1 (use -v to see invocation)
-
+// A test if we can divide the car speed, when handleSpeedInput() is called,
+// We are using handleSpeedInput() method which is expected to call car.setSpeed().
 TEST(handleSpeedInput_Test, handleSpeedInput_WhenSetSpeed_WillDivideTheCarSpeed) {
     MockMqttWrapper mqttWrapper;
     MockSerialWrapper serialWrapper;
@@ -100,6 +105,8 @@ TEST(handleSpeedInput_Test, handleSpeedInput_WhenSetSpeed_WillDivideTheCarSpeed)
     handleSpeedInput(0,speed,serialWrapper,mqttWrapper, car);
 }
 
+// A test if we can set the car angle, when handleAngleInput() is called,
+// We are using handleAngleInput() method which is expected to call car.setAngle().
 TEST(handleAngleInput_Test, handleAngleInput_WhenSetAngle_WillSetTheCarAngle){
     MockMqttWrapper mqttWrapper;
     MockSerialWrapper serialWrapper;
@@ -112,6 +119,9 @@ TEST(handleAngleInput_Test, handleAngleInput_WhenSetAngle_WillSetTheCarAngle){
     handleAngleInput (0, angle, serialWrapper, mqttWrapper, car);
 }
 
+// A test if the input start with "s" we check first if there is an obstacle in the front when the car is moving forward,
+// we handle the car speed.
+// We are using handleInput_SpeedTopicPositive() method which is expected to call serialWrapper.available() & infraredSensor.getDistance().
 TEST(handleInput_Test, handleInput_WhenInputStartWithSAndSpeedIsPositive_WillHandleSpeedInput) {
     MockMqttWrapper mqttWrapper;
     MockSerialWrapper serialWrapper;
@@ -127,6 +137,10 @@ TEST(handleInput_Test, handleInput_WhenInputStartWithSAndSpeedIsPositive_WillHan
     handleInput_SpeedTopicPositive(input, speedPositive, serialWrapper, mqttWrapper, car, infraredSensor);
 }
 
+
+// A test if the input start with "s" we check first if there is an obstacle in the back when the car is moving backward,
+// we handle the car speed.
+// We are using handleInput_SpeedTopicNegative() method which is expected to call serialWrapper.available() & infraredSensor.getDistance().
 TEST(handleInput_Test, handleInput_WhenInputStartWithSAndSpeedIsNegative_WillHandleSpeedInput) {
     MockMqttWrapper mqttWrapper;
     MockSerialWrapper serialWrapper;
@@ -142,7 +156,8 @@ TEST(handleInput_Test, handleInput_WhenInputStartWithSAndSpeedIsNegative_WillHan
     handleInput_SpeedTopicNegative(input, speedNegative, serialWrapper, mqttWrapper, car, infraredSensor);
 }
 
-
+// A test if the input doesn't start with "s" we stop the car.
+// We are using handleInputStopCar() method which is expected to call serialWrapper.available() & car.setSpeed().
 TEST(handleInputStopCar_Test, handleInputStopCar_WhenConnectedAndTopicNotStartWithS_WillStopTheCar) {
     MockSerialWrapper serialWrapper;
     MockSmartcarWrapper car;
@@ -155,6 +170,8 @@ TEST(handleInputStopCar_Test, handleInputStopCar_WhenConnectedAndTopicNotStartWi
     handleInputStopCar(input, serialWrapper,car);
 }
 
+// A test to connect to localHost.
+// We are using connectLocalHost() method which is expected to call mqttWrapper.beginLocal().
 TEST(connectLocalHost_Test, connectLocalHost_WhenCalled_WillConnectToLocalHost) {
     MockMqttWrapper mqttWrapper;
 
@@ -163,6 +180,8 @@ TEST(connectLocalHost_Test, connectLocalHost_WhenCalled_WillConnectToLocalHost) 
     connectLocalHost(mqttWrapper);
 }
 
+// A test to connect to externalHost.
+// We are using connectExternalHost() method which is expected to call mqttWrapper.beginExternal().
 TEST(connectExternalHost_Test, connectExternalHost_WhenCalled_WillConnectToExternalHost) {
     MockMqttWrapper mqttWrapper;
 
@@ -171,6 +190,7 @@ TEST(connectExternalHost_Test, connectExternalHost_WhenCalled_WillConnectToExter
     connectExternalHost(mqttWrapper);
 }
 
+// A test to connect to publish to this "/smartcar/ultrasound/front" topic.
 TEST(SR04Test, SR04sensorData_WhenConnected_WillPublishToUltrasoundTopic) {
     MockMqttWrapper mqttWrapper;
 
@@ -180,6 +200,9 @@ TEST(SR04Test, SR04sensorData_WhenConnected_WillPublishToUltrasoundTopic) {
     SR04sensorData(true, mqttWrapper);
 }
 
+// A test to connect to publish to this "/smartcar/ultrasound/front" topic for every second.
+// We are using connectExternalHost() method which is expected to call arduinoRunWrapper.millis() will return second,
+// ultraSoundWrapper.getDistance() & mqttWrapper.publish().
 TEST(SR04Test, SR04sensorData_WhenConnected_WillPublishToUltrasoundTopicEverySecond) {
 
     MockMqttWrapper mqttWrapper;
@@ -196,6 +219,7 @@ TEST(SR04Test, SR04sensorData_WhenConnected_WillPublishToUltrasoundTopicEverySec
     SR04sensorData(true,mqttWrapper,serialWrapper, arduinoRunWrapper,ultraSoundWrapper );
 }
 
+// A test if the distance which is given is not null, we return false.
 TEST(isClearTest, isClear_WhenDistanceIsNotNull_WillReturnFalse) {
 
     int sensor = 1; // 1 means "frontUS"
@@ -204,6 +228,7 @@ TEST(isClearTest, isClear_WhenDistanceIsNotNull_WillReturnFalse) {
     EXPECT_EQ(false, isClear(sensor, distance));
 }
 
+// A test if the distance which is given is null, we return true.
 TEST(isClearTest, isClear_WhenDistanceIsNotNull_WillReturnTrue) {
 
 
@@ -213,6 +238,7 @@ TEST(isClearTest, isClear_WhenDistanceIsNotNull_WillReturnTrue) {
     EXPECT_EQ(true, isClear(sensor, distance));
 }
 
+// A test if we get expected speed 1.0 from the conversion of the initial speed 1.845.
 TEST(convertSpeedTest, convertSpeed_WhenCalled_WillConvertTheSpeed) {
 
     float expectedSpeed = 100;
@@ -220,16 +246,16 @@ TEST(convertSpeedTest, convertSpeed_WhenCalled_WillConvertTheSpeed) {
     EXPECT_EQ(expectedSpeed, convertSpeed(initialSpeed));
 }
 
+// A test if we get (to slow down the speed) to 0.7 from the initial speed 1.845
 TEST(slowDownSmoothlyTest, slowDownSmoothly_WhenCalled_WillSetTheSpeedToSlowDownSmoothly) {
-
 
     float expectedSpeed = 70;
 
-
     EXPECT_EQ(expectedSpeed, slowDownSmoothly(STOPPING_SPEED, initialSpeed));
-
 }
 
+// A test if we get (to slow down the speed) to 0.7 from the initial speed 1.845. If there is an obstacle in range,
+// we are using the reactToSensor() method which is expected to call car.setSpeed().
 TEST(reactToSensorTest, reactToSensor_WhenObstacle_WillSlowDownTheCar) {
     MockSmartcarWrapper car;
     MockInfraredSensor infraredSensor;
@@ -242,6 +268,8 @@ TEST(reactToSensorTest, reactToSensor_WhenObstacle_WillSlowDownTheCar) {
     reactToSensor(sensorDistance, FRONT_STOP_DISTANCE, car, STOPPING_SPEED, initialSpeed);
 }
 
+// A test if we get set to car speed to 0 from the initial speed 1.845.
+// we are using the reactToSensor() method which is expected to call car.setSpeed().
 TEST(reactToSensorTest, reactToSensor_WhenObstacle_WillStopTheCar) {
     MockSmartcarWrapper car;
 
@@ -252,6 +280,7 @@ TEST(reactToSensorTest, reactToSensor_WhenObstacle_WillStopTheCar) {
     reactToSensor(sensorDistance, FRONT_STOP_DISTANCE,car, STOPPING_SPEED, initialSpeed);
 }
 
+// A test to see if front sensor dont detect any obstacle return false.
 TEST(reactToSensorTest, reactToSensor_When_NO_obstacle_WillReturnFalse) {
     MockSmartcarWrapper car;
 
@@ -262,8 +291,10 @@ TEST(reactToSensorTest, reactToSensor_When_NO_obstacle_WillReturnFalse) {
     EXPECT_EQ(false, isObstacle);
 
 }
-//when there is an obstacle but suddenly the sensor reads an obstacle is in range the car shall
-//slow down smoothly. There is no need for an emergency break. returns false
+
+// A test to see if there is an obstacle which appears suddenly and there is no need for emergency break we slow down the car.
+// The method emergencyBreak() will return false.
+// We are using the emergencyBreak() method which is expected to call car.setSpeed().
 TEST(emergencyBreakTest, emergencyBreak_WhenFrontSensorIsClearAnd_SuddenlyIsObstacleInRange_WillReturnFalseAndSlowDownTheCar) {
     MockSmartcarWrapper car;
     MockSR04Wrapper ultrasoundSensor;
@@ -276,18 +307,18 @@ TEST(emergencyBreakTest, emergencyBreak_WhenFrontSensorIsClearAnd_SuddenlyIsObst
     float expectedSpeed = 70;
     int sensor = 1;
 
-
     EXPECT_CALL(car, setSpeed(expectedSpeed));
 
     bool isEmergencyBreak = emergencyBrake(leftDirection, rightDirection,frontSensorDistance,
                                          sensor, newSensorValue, FRONT_STOP_DISTANCE,
                                          car,STOPPING_SPEED,  initialSpeed);
 
-
     EXPECT_EQ(false, isEmergencyBreak);
-
 }
 
+// A test to see if there is an obstacle that appears suddenly in the front of the car and we need an emergency break,
+// the method emergencyBreak() will return true.
+// We are using the emergencyBreak() method which is expected to call car.setSpeed().
 TEST(emergencyBreakTest, emergencyBreak_WhenFrontSensorNotClearAnd_IsObstacle_WillReturnTrueAndStopTheCar) {
     MockSmartcarWrapper car;
 
@@ -297,18 +328,18 @@ TEST(emergencyBreakTest, emergencyBreak_WhenFrontSensorNotClearAnd_IsObstacle_Wi
     int newSensorValue = 0;
     int sensor = 1;
 
-
     EXPECT_CALL(car, setSpeed(0));
 
     bool isEmergencyBreak = emergencyBrake(leftDirection, rightDirection,frontSensorDistance,
                                            sensor, newSensorValue,FRONT_STOP_DISTANCE,
                                            car,STOPPING_SPEED,  initialSpeed);
 
-
     EXPECT_EQ(true, isEmergencyBreak);
-
 }
 
+// A test to see if there is an obstacle which appears suddenly in the back of the car and we need an emergency break,
+// the method emergencyBreak() will return true.
+// We are using the emergencyBreak() method which is expected to call car.setSpeed().
 TEST(emergencyBreakTest, emergencyBreak_WhenBackSensorNotClearAnd_IsObstacle_WillReturnTrueAndStopTheCar) {
     MockSmartcarWrapper car;
     MockSR04Wrapper ultrasoundSensor;
@@ -326,11 +357,11 @@ TEST(emergencyBreakTest, emergencyBreak_WhenBackSensorNotClearAnd_IsObstacle_Wil
                                            sensor, newSensorValue, BACK_STOP_DISTANCE,
                                            car,STOPPING_SPEED,  initialSpeed);
 
-
     EXPECT_EQ(true, isEmergencyBreak);
-
 }
 
+// A test to see if there is an obstacle which appears suddenly on the right side of the car, we need to react by turning -45 degrees left.
+// We are using the reactToSides() method which is expected to call car.setAngle().
 TEST(reactToSidesTest, reactToSides_WhenRightSensorNotClearAnd_IsObstacle_WillSetAngleToLeft) {
 
     MockSmartcarWrapper car;
@@ -348,6 +379,9 @@ TEST(reactToSidesTest, reactToSides_WhenRightSensorNotClearAnd_IsObstacle_WillSe
 
 
 }
+
+// A test to see if there is an obstacle which appears suddenly on the left side of the car, we need to react by turning 45 degrees right.
+// We are using the reactToSides() method which is expected to call car.setAngle().
 TEST(reactToSidesTest, reactToSides_WhenLeftSensorNotClearAnd_IsObstacle_WillSetAngleToRight) {
 
     MockSmartcarWrapper car;
