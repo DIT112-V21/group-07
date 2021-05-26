@@ -1,6 +1,5 @@
 package com.example.pathfinder.Model;
 
-import com.example.pathfinder.Activities.DriverDashboard;
 
 import java.util.ArrayList;
 import java.util.EmptyStackException;
@@ -10,7 +9,7 @@ public class BusLine {
 
     public static final String NO_NEXT_STOP = "End of the line.";
     public static final String REVERSE_INSTRUCTION = "Click on 'NEXT' one more time to reverse the line";
-    public static final String END_OF_LINE = NO_NEXT_STOP + DriverDashboard.LINE_SEPARATOR + REVERSE_INSTRUCTION;
+
 
     // Attributes
     private String name;
@@ -89,8 +88,8 @@ public class BusLine {
      * Reverse the line at the end of the trip. The destination becomes the starting point and the starting point the destination.
      */
     public void reverseLine(){
-        Stack reversedComingStops = this.pastStops;
-        Stack reversedPastStops = this.comingStops;
+        Stack <String> reversedComingStops = this.pastStops;
+        Stack <String> reversedPastStops = this.comingStops;
         this.comingStops = reversedComingStops;
         this.pastStops = reversedPastStops;
     }

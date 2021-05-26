@@ -34,8 +34,6 @@
     <string name="distance_log">0 m</string>
     <string name="stop_requested">Stop</string>
     <string name="signIn_failed">"Error: invalid username or password."</string>
-    <string name="stop_requested">Stop Requested</string>
-    <string name="signIn_failed">Error: invalid username or password.</string>
     <string name="display_first_stop">Press "Next stop" to start</string>
     <string name="display_all_stops">Stop list</string>
 
@@ -50,5 +48,6 @@
     <string name="cancel_stop">Cancel Stop</string>
     <string name="cancel_accessibility">Cancel Accessibility</string>
     <string name="find_route">Find Route</string>
+
 
 </resources>
