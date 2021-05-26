@@ -437,7 +437,7 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
         public void changeStop (View view){
             String comingStop = busLine.nextStop();
 
-            if (comingStop.equals(BusLine.NO_NEXT_STOP)) {
+            if (comingStop.equals(BusLine.TERMINUS)) {
                 Toast reverseInstruction = Toast.makeText(this, BusLine.REVERSE_INSTRUCTION, Toast.LENGTH_LONG);
                 reverseInstruction.setGravity(TOP, 0, 0);
                 reverseInstruction.show();
@@ -497,7 +497,10 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
             stopTitle.setText("Stops for line: " + busLine.getName());
         }
 
-        private void publishBusName () {
+    /**
+     * Send the name to the passenger via MQTT
+     */
+    private void publishBusName () {
             String busName = busLine.getName();
             mMqttClient.publish(BUS_NAME_TOPIC, busName, QOS, null);
             Log.d("Driver To Passenger", "Bus name: " + busName);

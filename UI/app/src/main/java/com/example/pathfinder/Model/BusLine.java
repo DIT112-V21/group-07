@@ -7,7 +7,7 @@ import java.util.Stack;
 
 public class BusLine {
 
-    public static final String NO_NEXT_STOP = "End of the line.";
+    public static final String TERMINUS = "Terminus ";
     public static final String REVERSE_INSTRUCTION = "Click on 'NEXT' one more time to reverse the line";
 
 
@@ -73,14 +73,20 @@ public class BusLine {
      */
     public String nextStop(){
 
+        String nextStop = "";
+
         try {
             comingStops.peek();
         }catch (EmptyStackException e){
             reverseLine();
-            return NO_NEXT_STOP;
+            return TERMINUS;
         }
-            String nextStop = comingStops.pop();
+            nextStop = comingStops.pop();
             pastStops.push(nextStop);
+        if (comingStops.empty()){
+
+            nextStop = TERMINUS + nextStop;
+        }
             return nextStop;
     }
 
@@ -103,5 +109,6 @@ public class BusLine {
         stopList.add(stop);
         comingStops.push(stop);
     }
+
 
 }
