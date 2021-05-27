@@ -47,7 +47,7 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
 
     private static final String THROTTLE_CONTROL = "/smartcar/control/speed";
     private static final String STEERING_CONTROL = "/smartcar/control/angle";
-    private static final String ODOMETER = "/smartcar/car/distance";
+    private static final String ODOMETER = "/smartcar/odometer";
     private static final String SPEEDOMETER = "/smartcar/speed";
     private static final String NEXT_STOP = "/smartcar/busNextStop";
     private static final String BUS_STOP_LIST_TOPIC = "/smartcar/bus/StopList";
