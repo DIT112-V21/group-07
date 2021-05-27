@@ -148,7 +148,6 @@ public class PassengerDashboard extends AppCompatActivity {
                      * images are given a red and teal background colors respectively to make them
                      * visible when someone toggles on the handicap accessibility button
                      */
-                    mStopStatus.setBackgroundColor(Color.parseColor("#B33701"));
                     mAccessibility.setColorFilter(Color.parseColor("#008080"));
                     Log.d(KEY_HANDICAP, "this is on");
                 } else {
@@ -159,7 +158,6 @@ public class PassengerDashboard extends AppCompatActivity {
                      * images are given a white background color to make them
                      * visible when someone toggles off the handicap accessibility button
                      */
-                    mStopStatus.setBackgroundColor(Color.WHITE);
                     mAccessibility.setColorFilter(Color.WHITE);
                     Log.d(KEY_HANDICAP, "this is off");
                 }
