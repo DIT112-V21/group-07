@@ -412,7 +412,7 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
         mSpeedLog.setText(String.valueOf(speed) + " km/h");
     }
 
-    /*
+
     /**
     * A helper method takes the distance value from ODOMETER_LOG(topic="/smartcar/odometer") and
     * set it to distance log on the related layout in the UI.

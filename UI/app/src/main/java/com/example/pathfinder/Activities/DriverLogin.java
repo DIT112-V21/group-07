@@ -102,7 +102,7 @@ public class DriverLogin extends AppCompatActivity {
     /**
      * Method to check if a given name exists in the system
      * @param username
-     * @return
+     * @return true if the given name exists in the system
      */
     public boolean isRegisteredUsername(String username){
         return driversProfiles.containsKey(username);
@@ -112,7 +112,7 @@ public class DriverLogin extends AppCompatActivity {
      * Method to check if a given username and password belong to the same account
      * @param username
      * @param password
-     * @return
+     * @return true if username and password match
      */
     public boolean isMatchingPassword(String username, String password){
         return password.equals(driversProfiles.get(username));

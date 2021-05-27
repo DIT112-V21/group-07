@@ -141,7 +141,7 @@ public class ThumbstickView extends SurfaceView implements SurfaceHolder.Callbac
      * Method that calculates in which position the thumbstick currently is
      * @param v
      * @param e
-     * @return
+     * @return true when thumbstick is used
      */
     public boolean onTouch(View v, MotionEvent e) {
         if ( v.equals(this) ) {
