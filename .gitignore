@@ -81,9 +81,14 @@ captures/
 .idea/assetWizardSettings.xml
 .idea/dictionaries
 .idea/libraries
+
 # Android Studio 3 in .gitignore file.
 .idea/caches
 .idea/modules.xml
+
+# Cmake-debug-build in .gitignore file
+cmake-build-debug
+
 # Comment next line if keeping position of elements in Navigation Editor is relevant for you
 .idea/navEditor.xml
 
