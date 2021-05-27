@@ -24,6 +24,9 @@ public class ThumbstickView extends SurfaceView implements SurfaceHolder.Callbac
     private ThumbstickListener thumbstickCallback;
     private final int ratio = 5;
 
+    /**
+     * Dimensions of thumbstick
+     */
     private void setupDimensions() {
         centerX = getWidth() / 2;
         centerY = getHeight() / 2;
@@ -31,6 +34,10 @@ public class ThumbstickView extends SurfaceView implements SurfaceHolder.Callbac
         hatRadius = Math.min(getWidth(), getHeight()) / 5;
     }
 
+    /**
+     * Constructor
+     * @param context
+     */
     public ThumbstickView(Context context) {
         super(context);
         getHolder().addCallback(this);
@@ -40,6 +47,12 @@ public class ThumbstickView extends SurfaceView implements SurfaceHolder.Callbac
         }
     }
 
+    /**
+     * Constructor
+     * @param context
+     * @param attributes
+     * @param style
+     */
     public ThumbstickView(Context context, AttributeSet attributes, int style) {
         super(context, attributes, style);
         getHolder().addCallback(this);
@@ -49,6 +62,11 @@ public class ThumbstickView extends SurfaceView implements SurfaceHolder.Callbac
         }
     }
 
+    /**
+     * Constructor
+     * @param context
+     * @param attributes
+     */
     public ThumbstickView (Context context, AttributeSet attributes) {
         super(context, attributes);
         getHolder().addCallback(this);
@@ -58,6 +76,11 @@ public class ThumbstickView extends SurfaceView implements SurfaceHolder.Callbac
         }
     }
 
+    /**
+     * Method to draw the thumbstick, includes measurements and colours
+     * @param newX
+     * @param newY
+     */
     private void drawThumbstick (float newX, float newY) {
         if ( getHolder().getSurface().isValid() ) {
             Canvas myCanvas = this.getHolder().lockCanvas();
@@ -107,10 +130,19 @@ public class ThumbstickView extends SurfaceView implements SurfaceHolder.Callbac
         //NonNull to remove null pointer ref
     }
 
+    /**
+     * Called when thumbstick is moved
+     */
     public interface ThumbstickListener {
         void onThumbstickMoved(float xPercent, float yPercent, int id);
     }
 
+    /**
+     * Method that calculates in which position the thumbstick currently is
+     * @param v
+     * @param e
+     * @return true when thumbstick is used
+     */
     public boolean onTouch(View v, MotionEvent e) {
         if ( v.equals(this) ) {
             if ( e.getAction() != e.ACTION_UP) {
@@ -137,7 +169,5 @@ public class ThumbstickView extends SurfaceView implements SurfaceHolder.Callbac
         }
         return true;
     }
-
-
 }
 

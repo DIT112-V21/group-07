@@ -94,6 +94,10 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
      */
     private boolean isCruiseControl;
 
+    /**
+     * Method to create driver UI
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -129,6 +133,9 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
 
     }
 
+    /**
+     * Method to reconnect to MQTT broker
+     */
     @Override
     protected void onResume() {
         super.onResume();
@@ -136,6 +143,9 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
         connectToMqttBroker();
     }
 
+    /**
+     * Method to disconnect from MQTT broker
+     */
     @Override
     protected void onPause() {
         super.onPause();
@@ -161,7 +171,6 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
     public void onThumbstickMoved(float xPercent, float yPercent, int id) {
         int angle = (int) ((xPercent) * 100);
         int strength;
-        //We need the negative of seekBar.getProgress()
         int seekProgress = - mSeekBar.getProgress();
         boolean isParked = mParkBtn.isChecked();
 
@@ -194,8 +203,10 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
         }
     }
 
-    /**Updates text showing seekBar's progress
-     * If cruise control is enabled, vehicle will drive with speed based on seekBar's progress*/
+    /**
+     * Updates text showing seekBar's progress
+     * If cruise control is enabled, vehicle will drive with speed based on seekBar's progress
+     */
     private void seekBarListener(){
         mSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
@@ -226,6 +237,10 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
         });
     }
 
+    /**
+     * Handles everything related to MQTT, establishes the connection, subscribes to topics, checks for connection loss,
+     * handles incoming messages and logs delivery of messages.
+     */
     private void connectToMqttBroker() {
         if (!isConnected) {
             mMqttClient.connect(TAG, "", new IMqttActionListener() {
@@ -258,12 +273,6 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
                     Toast.makeText(getApplicationContext(), connectionLost, Toast.LENGTH_SHORT).show();
                 }
 
-                /*
-                * The topics shall be catch hold of by this method and handled through the
-                * statements for the specific functions.
-                * If a message published to a specific topic, use that message to the some
-                * ( specific function).
-                */
                 @Override
                 public void messageArrived(String topic, MqttMessage message) throws Exception {
                     if (topic.equals("/smartcar/camera")) {
@@ -310,6 +319,9 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
         }
     }
 
+    /**
+     * Checks if the MQTT connection is not available.
+     */
     void notConnected() {
         if (!isConnected) {
             final String notConnected = "No connection";
@@ -319,7 +331,7 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
         }
     }
 
-    /*
+    /**
      * helper method to check if stop request evaluates as true.
      * if stop request has is true then the stop status lights up and is made visible; otherwise
      * its color is set to white to appear invisible.
@@ -335,8 +347,7 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
         }
     }
 
-
-    /*
+    /**
      * helper method to check if accessibility request evaluated as true.
      * if accessibility request has is true then the stop status and accessibility symbols
      * light up and is made visible; otherwise their colors are set to white to appear invisible.
@@ -353,8 +364,8 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
     }
 
     /**
-     * Method to control reduce and send messages to the Arduino related to the car speed and angle based on the thumbstick and speedbar
-     * @param throttleSpeed
+     * Receives input from the thumbstick and only publishes to the arduino if a large enough change was made
+     * This was done in an effort to reduce the the amount of messages sent to the arduino     * @param throttleSpeed
      * @param steeringAngle
      * @param actionDescription
      */
@@ -385,16 +396,24 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
         speedLog(Math.abs(throttleSpeed));
     }
 
+    /**
+     * Method used to stop the vehicle and set steering angle to 0
+     */
     void brake() {
         drive(0,0, "Stopped");
     }
 
+    /**
+     * Method used to display the current speed in km/h
+     * @param speed
+     */
     void speedLog(int speed) {
         notConnected();
         mSpeedLog.setText(String.valueOf(speed) + " km/h");
     }
 
-    /*
+
+    /**
     * A helper method takes the distance value from ODOMETER_LOG(topic="/smartcar/odometer") and
     * set it to distance log on the related layout in the UI.
     */

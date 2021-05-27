@@ -25,10 +25,9 @@ public class DriverLogin extends AppCompatActivity {
     private Map<String, String> driversProfiles;
 
 
-    /* Getters and setters */
+    /** Getters and setters */
     public Map<String, String> getDriversProfiles() {return driversProfiles;}
     public void setDriversProfiles(Map<String, String> driversProfiles) {this.driversProfiles = driversProfiles;}
-
 
     /**
      * initialise the activity (page) with layout and a hardcoded map of users. This could be replaced later on with an import of a DB.
@@ -100,14 +99,24 @@ public class DriverLogin extends AppCompatActivity {
         });
     }
 
+    /**
+     * Method to check if a given name exists in the system
+     * @param username
+     * @return true if the given name exists in the system
+     */
     public boolean isRegisteredUsername(String username){
         return driversProfiles.containsKey(username);
     }
-    
+
+    /**
+     * Method to check if a given username and password belong to the same account
+     * @param username
+     * @param password
+     * @return true if username and password match
+     */
     public boolean isMatchingPassword(String username, String password){
         return password.equals(driversProfiles.get(username));
     }
-
 
     /**
      * Helper method for to notify the connection failed.

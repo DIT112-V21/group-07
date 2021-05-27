@@ -70,6 +70,7 @@ public class PassengerDashboard extends AppCompatActivity {
     private static final int QOS = 1;
     private static final String TAG = "PathfinderPassenger";
 
+
     private static final String REQ_STOP = "/smartcar/stop";
     private static final String REQ_HANDICAP = "/smartcar/handicap";
 
@@ -80,6 +81,10 @@ public class PassengerDashboard extends AppCompatActivity {
     private static final String NEW_PASSENGER_BUS_ROUTE_TRIGGER = "1";
     private static final String NEW_PASSENGER_BUS_NAME_TRIGGER = "2";
 
+    /**
+     * Method to create passenger UI
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -316,7 +321,7 @@ public class PassengerDashboard extends AppCompatActivity {
         Log.d("Bus Name", "Generated bus name: " + busName);
     }
 
-    /*
+    /**
      * helper method to check if stop request evaluates as true.
      * if stop request has is true then the stop status lights up and is made visible; otherwise
      * its color is set to white to appear invisible.
@@ -333,7 +338,7 @@ public class PassengerDashboard extends AppCompatActivity {
         }
     }
 
-    /*
+    /**
     * helper method to check if accessibility request evaluates as true.
     * if accessibility request has is true then the stop status and accessibility symbols
     * light up and is made visible; otherwise their colors are set to white to appear invisible.
@@ -350,7 +355,7 @@ public class PassengerDashboard extends AppCompatActivity {
         }
     }
 
-    /*
+    /**
     * Helper method to save state of buttons into passenger shared preference
     *
     * */
@@ -361,7 +366,7 @@ public class PassengerDashboard extends AppCompatActivity {
         editor.commit();
     }
 
-    /*
+    /**
     * Helper method to save state of buttons into a shared preference
     */
     public void saveIntoSharedPrefs(String key, Boolean value, String topic) {
@@ -375,7 +380,7 @@ public class PassengerDashboard extends AppCompatActivity {
         Log.d("Boolean", value.toString());
     }
 
-    /*
+    /**
     * Helper update to last state of buttons into a shared preference
     */
     public boolean update(String key) {

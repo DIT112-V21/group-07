@@ -77,6 +77,7 @@ DirectionalOdometer rightOdometer{
 
 //Constructor of the SmartCar
 SmartCar car(arduinoRuntime, control, gyroscope, leftOdometer, rightOdometer);
+
 /**
  * Setup the car:
  * - Activate the serial
@@ -86,7 +87,6 @@ SmartCar car(arduinoRuntime, control, gyroscope, leftOdometer, rightOdometer);
  * For testing, it is recommended using a local host when trying the app and using the serial when testing the car's behaviours.
  * To use the serial, comment out the connectHost() and MQTTMessageInput() methods in the setup().
  */
-
 void setup()
 {
     Serial.begin(9600);
