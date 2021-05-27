@@ -29,6 +29,7 @@ const float MAX_SPEED = 1.845; //value used for the conversion of speed into per
 const float STOPPING_SPEED = 0.3; //m/s. used to decide when to stop in slowDownSmoothly
 const int PULL_OVER_DISTANCE = 250; //value used for connectivityLoss(), as how far the car pulls over
 bool isParked = true;
+
 //Sensor numbers used in isClear().
 const int frontUS = 1;
 const int frontIR = 2;
@@ -50,13 +51,13 @@ BrushedMotor rightMotor(arduinoRuntime, smartcarlib::pins::v2::rightMotorPins);
 DifferentialControl control(leftMotor, rightMotor);
 
 //Infrared sensors (all long range 25 - 120cm range)
-GP2Y0A02 frontIR(arduinoRuntime, FRONT_PIN);
-GP2Y0A02 rightIR(arduinoRuntime, RIGHT_PIN);
-GP2Y0A02 leftIR(arduinoRuntime, LEFT_PIN);
-GP2Y0A02 backIR(arduinoRuntime, BACK_PIN);
+GP2Y0A02 frontIRSensor(arduinoRuntime, FRONT_PIN);
+GP2Y0A02 rightIRSensor(arduinoRuntime, RIGHT_PIN);
+GP2Y0A02 leftIRSensor(arduinoRuntime, LEFT_PIN);
+GP2Y0A02 backIRSensor(arduinoRuntime, BACK_PIN);
 
 //Ultrasonic sensor
-SR04 frontUS(arduinoRuntime, TRIGGER_PIN, ECHO_PIN, MAX_DISTANCE);
+SR04 frontUSSensor(arduinoRuntime, TRIGGER_PIN, ECHO_PIN, MAX_DISTANCE);
 
 //Header
 GY50 gyroscope(arduinoRuntime, 37);
@@ -92,7 +93,7 @@ void setup()
 
   //Example:
     // chose to connect to localhost or external
-    startCamera(); // To initiliaze the camera as soon as the car starts rolling
+    startCamera(); // To initialize the camera as soon as the car starts rolling
     connectHost(true); //choose true to connect to localhost.
 
     MQTTMessageInput();
@@ -108,7 +109,7 @@ void loop()
         mqtt.loop();  // Also needed to keep storing the mqtt operations
         cameraData(true); // True if camera is on, false otherwise.
         SR04sensorData(true, "/smartcar/ultrasound/front"); //publish sensor data every one second through MQTT
-        measureDistance(true, "/smartcar/car/distance");
+        measureDistance(true, "/smartcar/odometer"); // publishes the traveled distance to the odometer topic
   }
     handleInput();
     emergencyBrake(true);
@@ -140,7 +141,6 @@ void MQTTMessageInput(){
                 Serial.println(message);
             }
         });
-
     }
 }
 
@@ -152,10 +152,10 @@ void handleSpeedTopic(int input){
     // front and back sensors and we look at the + or - for direction
     isParked = false;
     if (input > 0) {
-        int frontValue = frontIR.getDistance();
+        int frontValue = frontIRSensor.getDistance();
         handleSpeedInput(frontValue, input);
     } else if (input < 0) {
-        int backValue = backIR.getDistance();
+        int backValue = backIRSensor.getDistance();
         handleSpeedInput(backValue, input);
     } else {
         car.setSpeed(0);
@@ -170,10 +170,10 @@ void handleSpeedTopic(int input){
 void handleAngleTopic(int input){
     // look at the angle + or - :  + -> right and - -> left
     if (input > 0){
-        int rightValue = rightIR.getDistance();
+        int rightValue = rightIRSensor.getDistance();
         handleAngleInput(rightValue, input);
     } else if (input < 0) {
-        int leftValue = leftIR.getDistance();
+        int leftValue = leftIRSensor.getDistance();
         handleAngleInput(leftValue, input);
     } else {
         car.setAngle(0);
@@ -191,10 +191,10 @@ void handleInput() {
             // front and back sensors and we look at the + or - for direction
             int inputSpeed = input.substring(1).toInt();
             if (inputSpeed > 0) {
-                int frontValue = frontIR.getDistance();
+                int frontValue = frontIRSensor.getDistance();
                 handleSpeedInput(frontValue, inputSpeed);
             } else if (inputSpeed < 0) {
-                int backValue = backIR.getDistance();
+                int backValue = backIRSensor.getDistance();
                 handleSpeedInput(backValue, inputSpeed);
             } else {
                 car.setSpeed(0);
@@ -203,10 +203,10 @@ void handleInput() {
             // look at the angle + or - :  + -> right and - -> left
             int inputAngle = input.substring(1).toInt();
             if (inputAngle > 0) {
-                int rightValue = rightIR.getDistance();
+                int rightValue = rightIRSensor.getDistance();
                 handleAngleInput(rightValue, inputAngle);
             } else if (inputAngle < 0) {//get left sensor
-                int leftValue = leftIR.getDistance();
+                int leftValue = leftIRSensor.getDistance();
                 handleAngleInput(leftValue, inputAngle);
             } else {
                 car.setAngle(0);
@@ -253,7 +253,7 @@ bool emergencyBrake(bool isSlowDown){
     int rightDirection = rightOdometer.getDirection();
     float currentSpeed = car.getSpeed();
     if(leftDirection == 1 && rightDirection == 1 && currentSpeed > 0){
-        int frontSensorDistance = frontUS.getDistance();
+        int frontSensorDistance = frontUSSensor.getDistance();
         if(isClear(frontIR)){
             if(reactToSensor(frontSensorDistance, FRONT_STOP_DISTANCE, isSlowDown)){
                 return true;}
@@ -262,7 +262,7 @@ bool emergencyBrake(bool isSlowDown){
             isParked = true;
         }
     }else if (leftDirection == -1 && rightDirection == -1 && currentSpeed > 0){
-        int backSensorDistance = backIR.getDistance();
+        int backSensorDistance = backIRSensor.getDistance();
         if(reactToSensor(backSensorDistance, BACK_STOP_DISTANCE, isSlowDown)){
         return true;}
     }
@@ -293,7 +293,7 @@ bool reactToSensor(int sensorDistance, int STOP_DISTANCE, bool isSlowDown){
 void connectivityLoss(){
     Serial.println("Connection to the app lost, pulling the vehicle over");
     //If obstacle is on the right side of the car
-    if(rightIR.getDistance() != NO_OBSTACLE_VALUE && !isParked){
+    if(rightIRSensor.getDistance() != NO_OBSTACLE_VALUE && !isParked){
         while(!isClear(rightIR)){
             handleSpeedTopic(30);
             if(emergencyBrake(false)){
@@ -339,21 +339,22 @@ void connectivityLoss(){
 
 /**
  * @param sensor : receives the number of the sensor to be checked. Sensor numbers declared as constant class variables.
- * @Returns true if sensor does not detect an obstacle or if it is too close to be detected. False if an obstacle is detected within the range of the sensor.
+ * @Returns true if sensor does not detect an obstacle or if it is too close to be detected.
+ * False if an obstacle is detected within the range of the sensor.
  */
 bool isClear(int sensor){
 
     switch (sensor) {
         case 1:
-            return (frontUS.getDistance() == NO_OBSTACLE_VALUE);
+            return (frontUSSensor.getDistance() == NO_OBSTACLE_VALUE);
         case 2:
-            return (frontIR.getDistance() == NO_OBSTACLE_VALUE);
+            return (frontIRSensor.getDistance() == NO_OBSTACLE_VALUE);
         case 3:
-            return (backIR.getDistance() == NO_OBSTACLE_VALUE);
+            return (backIRSensor.getDistance() == NO_OBSTACLE_VALUE);
         case 4:
-            return (rightIR.getDistance() == NO_OBSTACLE_VALUE);
+            return (rightIRSensor.getDistance() == NO_OBSTACLE_VALUE);
         case 5:
-            return (leftIR.getDistance() == NO_OBSTACLE_VALUE);
+            return (leftIRSensor.getDistance() == NO_OBSTACLE_VALUE);
         default:
             return false;
     }
@@ -373,18 +374,18 @@ void slowDownSmoothly()
  * Method to look and compare two sensor values (100ms apart) to know if an obstacle is coming towards the car
  */
 void reactToSides() {
-    int rightValue = rightIR.getDistance();
-    int leftValue = leftIR.getDistance();
+    int rightValue = rightIRSensor.getDistance();
+    int leftValue = leftIRSensor.getDistance();
     if (rightValue < SIDE_REACT_DISTANCE && !isClear(rightIR)) {
         delay(100);
-        float newValue = rightIR.getDistance();
+        float newValue = rightIRSensor.getDistance();
         if (newValue < rightValue && !isClear(rightIR)) {
             sideAvoidance(-45);
         }
     }
     if (leftValue < SIDE_REACT_DISTANCE && !isClear(leftIR)) {
         delay(100);
-        int newValue = leftIR.getDistance();
+        int newValue = leftIRSensor.getDistance();
         if (newValue < leftValue && !isClear(leftIR)) {
             sideAvoidance(45);
         }
@@ -397,20 +398,20 @@ void reactToSides() {
  */
 void sideAvoidance(int newAngle){
     if (newAngle < 0){
-        int rightIRDistance = rightIR.getDistance();
+        int rightIRDistance = rightIRSensor.getDistance();
         while(rightIRDistance < SIDE_REACT_DISTANCE && !isClear(rightIR)) {
             car.setAngle(newAngle);
-            rightIRDistance = rightIR.getDistance();
+            rightIRDistance = rightIRSensor.getDistance();
             car.update();
             if(emergencyBrake(true)){
                 return;
             }
         }
     }else{
-        int leftIRDistance = leftIR.getDistance();
+        int leftIRDistance = leftIRSensor.getDistance();
         while(leftIRDistance < SIDE_REACT_DISTANCE && !isClear(leftIR)){
             car.setAngle(newAngle);
-            leftIRDistance = leftIR.getDistance();
+            leftIRDistance = leftIRSensor.getDistance();
             car.update();
             if(emergencyBrake(true)){
                 return;
@@ -434,7 +435,7 @@ void SR04sensorData(boolean pubSensorData, String publishTopic){
 
       if (currentTime - previousTransmission >= ONE_SECOND) {
         previousTransmission = currentTime;
-        const auto distance = String(frontUS.getDistance());
+        const auto distance = String(frontUSSensor.getDistance());
         mqtt.publish(publishTopic, distance);  
       }
     }
