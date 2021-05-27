@@ -141,7 +141,6 @@ public class PassengerDashboard extends AppCompatActivity {
                 //if the button is toggled to true
                 if (isChecked) {
                     //boolean data is stored to shared preference
-                    saveIntoSharedPrefs(KEY_STOP, true, REQ_STOP);
                     saveIntoSharedPrefs(KEY_HANDICAP, true, REQ_HANDICAP);
                     passengerSharedPrefs(KEY_HANDICAP, true);
 
@@ -154,7 +153,6 @@ public class PassengerDashboard extends AppCompatActivity {
                     Log.d(KEY_HANDICAP, "this is on");
                 } else {
                     //boolean data is stored to shared preference
-                    saveIntoSharedPrefs(KEY_STOP, false, REQ_STOP);
                     saveIntoSharedPrefs(KEY_HANDICAP, false, REQ_HANDICAP);
                     passengerSharedPrefs(KEY_HANDICAP, false);
                     /*
