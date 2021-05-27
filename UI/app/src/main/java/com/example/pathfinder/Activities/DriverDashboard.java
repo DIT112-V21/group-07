@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
@@ -13,6 +14,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
@@ -42,26 +44,25 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
     private static final String EXTERNAL_MQTT_BROKER = "test.mosquitto.org";
     private static final String LOCALHOST = "10.0.2.2";
     private static final String MQTT_SERVER = "tcp://" + LOCALHOST + ":1883";
+
     private static final String THROTTLE_CONTROL = "/smartcar/control/speed";
     private static final String STEERING_CONTROL = "/smartcar/control/angle";
-    private static final String PARK = "/smartcar/control/park";
-    private static final String ODOMETER_LOG = "/smartcar/odometer";
-    private static final String SPEEDOMETER_LOG = "/smartcar/speedometer";
+    private static final String ODOMETER = "/smartcar/car/distance";
+    private static final String SPEEDOMETER = "/smartcar/speed";
     private static final String NEXT_STOP = "/smartcar/busNextStop";
     private static final String BUS_STOP_LIST_TOPIC = "/smartcar/bus/StopList";
     private static final String BUS_NAME_TOPIC = "/smartcar/bus/Name";
     private static final String NEW_PASSENGER = "/smartcar/newPassengerConnected";
     private static final String NEW_PASSENGER_BUS_ROUTE_TRIGGER = "1";
     private static final String NEW_PASSENGER_BUS_NAME_TRIGGER = "2";
+    private static final String REQ_STOP = "/smartcar/stop";
+    private static final String REQ_HANDICAP = "/smartcar/handicap";
+
     private static final int IDLE_SPEED = 0;
     private static final int STRAIGHT_ANGLE = 0;
     private static final int QOS = 1;
     private static final int IMAGE_WIDTH = 320;
     private static final int IMAGE_HEIGHT = 240;
-
-    //key names for stored data in shared preferences
-    private static final String KEY_STOP = "stop";
-    private static final String KEY_HANDICAP = "handicap";
 
     private MqttClient mMqttClient;
     private boolean isConnected = false;
@@ -80,7 +81,6 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
     Animation fadeAwayAnim, bottomAnim;
 
     private BusLine busLine;
-    SharedPreferences sharedPreferences;
 
     /**
      * Used as a way to compare previously published messages with GUI's current values
@@ -108,34 +108,21 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
         mSignOutBtn = findViewById(R.id.sign_out);
         mStopRequest = findViewById(R.id.stop);
         mAccessibilityRequest = findViewById(R.id.accessibility);
+        mParkBtn = (ToggleButton) findViewById(R.id.park);
 
         mMqttClient = new MqttClient(getApplicationContext(), MQTT_SERVER, TAG);
 
         mVideoStream = findViewById(R.id.videoStream);
-
         mTextView = findViewById(R.id.textView);
         mSeekBar = findViewById(R.id.seekBar);
-
 
         busLineName = (TextView) findViewById(R.id.busLineName);
         nextStop = (TextView) findViewById(R.id.nextStopView);
 
-        //checks the state of stop request
-        checkStopRequest();
-        //checks the state of accessibility request
-        checkAccessibilityRequest();
-
         seekBarListener();
+        parkMode();
 
         connectToMqttBroker();
-
-        //sign out button that redirects user back to DriverLogin activity
-        mSignOutBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(getApplicationContext(), DriverLogin.class));
-            }
-        });
 
         generateBusLine();
         generateStopList();
@@ -176,14 +163,20 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
         int strength;
         //We need the negative of seekBar.getProgress()
         int seekProgress = - mSeekBar.getProgress();
-        if(isCruiseControl){
-            //setting fixed speed for cruise control
-            strength = seekProgress;
+        boolean isParked = mParkBtn.isChecked();
+
+        if (isParked) {
+            brake();
         } else {
+            if (isCruiseControl) {
+                //setting fixed speed for cruise control
+                strength = seekProgress;
+            } else {
+                strength = (int) (yPercent * seekProgress);
+            }
             //range calculation (limit speed is active)
-            strength = (int) (yPercent * seekProgress);
+            drive(strength, angle, "driving");
         }
-        drive(strength, angle, "driving");
     }
 
     /**
@@ -220,6 +213,19 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
         });
     }
 
+    private void parkMode() {
+        mParkBtn.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    Toast.makeText(getApplicationContext(), "Car is now parked.", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getApplicationContext(), "Car is now on drive.", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+    }
+
     private void connectToMqttBroker() {
         if (!isConnected) {
             mMqttClient.connect(TAG, "", new IMqttActionListener() {
@@ -233,10 +239,7 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
                     Toast.makeText(getApplicationContext(), successfulConnection, Toast.LENGTH_SHORT).show();
 
                     // These are to subscribe to that related specific topics mentioned as first parameter. Topics shall match the topics smart car publishes its data on.
-                    mMqttClient.subscribe("/smartcar/park", QOS, null);
-                    mMqttClient.subscribe("/smartcar/camera", QOS, null);
-                    mMqttClient.subscribe("/smartcar/odometer", QOS, null);
-                    mMqttClient.subscribe(NEW_PASSENGER, QOS, null);
+                    mMqttClient.subscribe("/smartcar/#", QOS, null);
                 }
 
                 @Override
@@ -277,10 +280,15 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
                         bm.setPixels(colors, 0, IMAGE_WIDTH, 0, 0, IMAGE_WIDTH, IMAGE_HEIGHT);
 
                         mVideoStream.setImageBitmap(bm);
-                    } else if(topic.equals("/smartcar/odometer")) {
+                    } else if(topic.equals(ODOMETER)) {
                         distanceLog(Double.parseDouble(message.toString()));
-                    } else if(topic.equals("/smartcar/speedometer")) {
+                    } else if(topic.equals(SPEEDOMETER)) {
                         speedLog(Integer.parseInt(message.toString()));
+                    } else if(topic.equals(REQ_STOP)) {
+                        getStopRequest(message.toString());
+                        Log.i(REQ_STOP, message.toString());
+                    } else if(topic.equals(REQ_HANDICAP)) {
+                        getAccessibility(message.toString());
                     } else if (topic.equals(NEW_PASSENGER)) {
                         if (message.toString().equals(NEW_PASSENGER_BUS_ROUTE_TRIGGER)) {
                             publishStopList();
@@ -317,15 +325,16 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
      * its color is set to white to appear invisible.
      */
 
-    public void checkStopRequest() {
-        sharedPreferences = getSharedPreferences(KEY_STOP, Context.MODE_PRIVATE);
+    public void getStopRequest(String message) {
+        notConnected();
 
-        if (sharedPreferences.getBoolean(KEY_STOP, false)) {
+        if (message.equals("true")) {
             mStopRequest.setBackgroundColor(Color.parseColor("#B33701"));
         } else {
             mStopRequest.setBackgroundColor(Color.WHITE);
         }
     }
+
 
     /*
      * helper method to check if accessibility request evaluated as true.
@@ -333,10 +342,10 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
      * light up and is made visible; otherwise their colors are set to white to appear invisible.
      */
 
-    public void checkAccessibilityRequest() {
-        sharedPreferences = getSharedPreferences(KEY_HANDICAP, Context.MODE_PRIVATE);
+    public void getAccessibility(String message) {
+        notConnected();
 
-        if (sharedPreferences.getBoolean(KEY_HANDICAP, false)) {
+        if (message.equals("true")) {
             mAccessibilityRequest.setColorFilter(Color.parseColor("#008080"));
         } else {
             mAccessibilityRequest.setColorFilter(Color.WHITE);
@@ -382,7 +391,6 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
 
     void speedLog(int speed) {
         notConnected();
-        mMqttClient.subscribe(THROTTLE_CONTROL, QOS, null);
         mSpeedLog.setText(String.valueOf(speed) + " km/h");
     }
 
@@ -391,9 +399,9 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
     * set it to distance log on the related layout in the UI.
     */
     void distanceLog(double distance) {
-        distance = distance/100;
+        distance = distance / 100;
+
         notConnected();
-        mMqttClient.subscribe(ODOMETER_LOG, QOS, null);
         mDistanceLog.setText(String.valueOf(distance) + " m");
     }
 
@@ -401,8 +409,8 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
         brake();
     }
 
-    public void nextStopBtn(View view) {
-
+    public void signOut(View view) {
+            startActivity(new Intent(getApplicationContext(), DriverLogin.class));
     }
 
         /**
@@ -478,7 +486,6 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
                 stopInfo.startAnimation(fadeAwayAnim);
                 stopInfo.setVisibility(View.INVISIBLE);
             }
-
         }
 
         /**

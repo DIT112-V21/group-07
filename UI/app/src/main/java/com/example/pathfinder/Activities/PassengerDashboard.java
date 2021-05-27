@@ -7,12 +7,14 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.media.Image;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
@@ -32,6 +34,12 @@ import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 
 import java.util.ArrayList;
+
+import org.eclipse.paho.client.mqttv3.IMqttActionListener;
+import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
+import org.eclipse.paho.client.mqttv3.IMqttToken;
+import org.eclipse.paho.client.mqttv3.MqttCallback;
+import org.eclipse.paho.client.mqttv3.MqttMessage;
 
 public class PassengerDashboard extends AppCompatActivity {
 
@@ -59,22 +67,23 @@ public class PassengerDashboard extends AppCompatActivity {
     private static final String EXTERNAL_MQTT_BROKER = "test.mosquitto.org";
     private static final String LOCALHOST = "10.0.2.2";
     private static final String MQTT_SERVER = "tcp://" + LOCALHOST + ":1883";
+    private static final int QOS = 1;
+    private static final String TAG = "PathfinderPassenger";
+
+    private static final String REQ_STOP = "/smartcar/stop";
+    private static final String REQ_HANDICAP = "/smartcar/handicap";
+
     private static final String NEXT_STOP = "/smartcar/busNextStop";
     private static final String NEW_PASSENGER = "/smartcar/newPassengerConnected";
     private static final String BUS_STOP_LIST_TOPIC = "/smartcar/bus/StopList";
     private static final String BUS_NAME_TOPIC = "/smartcar/bus/Name";
     private static final String NEW_PASSENGER_BUS_ROUTE_TRIGGER = "1";
     private static final String NEW_PASSENGER_BUS_NAME_TRIGGER = "2";
-    private static final int QOS = 1;
-    private static final String TAG = "PathfinderPassenger";
-
-
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_passenger_dashboard);
 
         isMqttConnected = false;
@@ -98,15 +107,13 @@ public class PassengerDashboard extends AppCompatActivity {
         mStopBtn.setChecked(update(KEY_STOP));
         mHandicapBtn.setChecked(update(KEY_HANDICAP));
 
-
-
         mStopBtn.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 //if the button is toggled to true
                 if (isChecked) {
                     //boolean data is stored to shared preference
-                    saveIntoSharedPrefs(KEY_STOP, true);
+                    saveIntoSharedPrefs(KEY_STOP, true, REQ_STOP);
                     passengerSharedPrefs(KEY_STOP, true);
                     /*
                      * text is given a red background color to make it visible when someone
@@ -116,7 +123,7 @@ public class PassengerDashboard extends AppCompatActivity {
                     Log.d(KEY_STOP, "this is on");
                 } else {
                     //boolean data is stored to shared preference
-                    saveIntoSharedPrefs(KEY_STOP, false);
+                    saveIntoSharedPrefs(KEY_STOP, false, REQ_STOP);
                     passengerSharedPrefs(KEY_STOP, false);
                     /*
                      * text is given a white background color to make it visible when someone
@@ -134,27 +141,23 @@ public class PassengerDashboard extends AppCompatActivity {
                 //if the button is toggled to true
                 if (isChecked) {
                     //boolean data is stored to shared preference
-                    saveIntoSharedPrefs(KEY_STOP, true);
-                    saveIntoSharedPrefs(KEY_HANDICAP, true);
+                    saveIntoSharedPrefs(KEY_HANDICAP, true, REQ_HANDICAP);
                     passengerSharedPrefs(KEY_HANDICAP, true);
 
                     /*
                      * images are given a red and teal background colors respectively to make them
                      * visible when someone toggles on the handicap accessibility button
                      */
-                    mStopStatus.setBackgroundColor(Color.parseColor("#B33701"));
                     mAccessibility.setColorFilter(Color.parseColor("#008080"));
                     Log.d(KEY_HANDICAP, "this is on");
                 } else {
                     //boolean data is stored to shared preference
-                    saveIntoSharedPrefs(KEY_STOP, false);
-                    saveIntoSharedPrefs(KEY_HANDICAP, false);
+                    saveIntoSharedPrefs(KEY_HANDICAP, false, REQ_HANDICAP);
                     passengerSharedPrefs(KEY_HANDICAP, false);
                     /*
                      * images are given a white background color to make them
                      * visible when someone toggles off the handicap accessibility button
                      */
-                    mStopStatus.setBackgroundColor(Color.WHITE);
                     mAccessibility.setColorFilter(Color.WHITE);
                     Log.d(KEY_HANDICAP, "this is off");
                 }
@@ -184,10 +187,8 @@ public class PassengerDashboard extends AppCompatActivity {
                     Log.i(TAG, successfulConnection);
                     Toast.makeText(getApplicationContext(), successfulConnection, Toast.LENGTH_SHORT).show();
 
-                    // These are to subscribe to that related specific topics mentioned as first parameter. Topics shall match the topics smart car publishes its data on.
-                    mMqttClient.subscribe(NEXT_STOP, QOS, null);
-                    mMqttClient.subscribe(BUS_STOP_LIST_TOPIC,QOS,null);
-                    mMqttClient.subscribe(BUS_NAME_TOPIC,QOS,null);
+                    //Subscribes to topics prefixed with "/smartcar/|
+                    mMqttClient.subscribe("/smartcar/#", QOS, null);
                     notifyDriverAboutNewPassenger();
                 }
 
@@ -231,9 +232,6 @@ public class PassengerDashboard extends AppCompatActivity {
         }
     }
 
-
-
-
     /**
      * Method that checks if the mqtt broker is connected to the app
      * create a toast if not notify the problem
@@ -256,7 +254,7 @@ public class PassengerDashboard extends AppCompatActivity {
         if (message.toString().equals(BusLine.TERMINUS)){
             mNextStop.setText(END_OF_LINE);
         }else {
-            String nextStop = "Next stop: " + message.toString();
+            String nextStop = message.toString();
             mNextStop.setText(nextStop);
         }
     }
@@ -318,8 +316,6 @@ public class PassengerDashboard extends AppCompatActivity {
         Log.d("Bus Name", "Generated bus name: " + busName);
     }
 
-
-
     /*
      * helper method to check if stop request evaluates as true.
      * if stop request has is true then the stop status lights up and is made visible; otherwise
@@ -368,11 +364,15 @@ public class PassengerDashboard extends AppCompatActivity {
     /*
     * Helper method to save state of buttons into a shared preference
     */
-    public void saveIntoSharedPrefs(String key, Boolean value) {
+    public void saveIntoSharedPrefs(String key, Boolean value, String topic) {
         sharedPreferences = getApplicationContext().getSharedPreferences(key, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putBoolean(key, value);
         editor.apply();
+
+        mMqttClient.publish(topic, value.toString(), QOS, null);
+        Log.d("Topic", topic);
+        Log.d("Boolean", value.toString());
     }
 
     /*

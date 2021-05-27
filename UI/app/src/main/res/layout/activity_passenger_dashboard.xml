@@ -44,9 +44,56 @@
 
         </RelativeLayout>
 
-        <RelativeLayout
+        <include
+            android:id="@+id/busLineInfoPassenger"
+            layout="@layout/bus_route_passenger" />
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
+
+
+        </LinearLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="5dp">
+
+            <TextView
+                android:id="@+id/nextStop"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:padding="2dp"
+                android:text="@string/next_stop"
+                android:fontFamily="@font/black_ops_one"
+                android:gravity="center|center_horizontal"
+                android:textColor="@color/purple"
+                android:textSize="20sp"
+                android:textAllCaps="true"/>
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="2dp">
+
+            <TextView
+                android:id="@+id/nextStopPassenger"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:fontFamily="@font/basic"
+                android:gravity="center|center_horizontal"
+                android:textColor="@color/yellow"
+                android:textSize="23sp" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp">
 
             <ImageView
                 android:id="@+id/accessibility"
@@ -89,6 +136,10 @@
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
                 >
 
                 <RelativeLayout
@@ -146,32 +197,9 @@
                         android:layout_marginTop="20dp"
                         />
 
-
                 </RelativeLayout>
             </LinearLayout>
         </RelativeLayout>
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="20dp">
-
-            <TextView
-                android:id="@+id/nextStopPassenger"
-                android:layout_width="349dp"
-                android:layout_height="72dp"
-                android:layout_gravity="center"
-                android:background="@drawable/stop_list_background"
-                android:fontFamily="@font/basic"
-                android:gravity="center|center_horizontal"
-                android:textColor="@color/purple"
-                android:textSize="20sp" />
-
-        </RelativeLayout>
-
-        <include
-            android:id="@+id/busLineInfoPassenger"
-            layout="@layout/bus_route_passenger" />
 
     </LinearLayout>
 
