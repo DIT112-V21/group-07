@@ -171,7 +171,8 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
     public void onThumbstickMoved(float xPercent, float yPercent, int id) {
         int angle = (int) ((xPercent) * 100);
         int strength;
-        int seekProgress = - mSeekBar.getProgress();
+        int seekProgress = mSeekBar.getProgress();
+
         boolean isParked = mParkBtn.isChecked();
 
         if (isParked) {
@@ -181,7 +182,7 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
                 //setting fixed speed for cruise control
                 strength = seekProgress;
             } else {
-                strength = (int) (yPercent * seekProgress);
+                strength = (int) (yPercent * -seekProgress);
             }
             //range calculation (limit speed is active)
             drive(strength, angle, "driving");

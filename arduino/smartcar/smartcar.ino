@@ -108,7 +108,6 @@ void loop()
    if (mqtt.connected()) { // check if the mqtt is connected .. needed if you connect through MQTT
         mqtt.loop();  // Also needed to keep storing the mqtt operations
         cameraData(true); // True if camera is on, false otherwise.
-        SR04sensorData(true, "/smartcar/ultrasound/front"); //publish sensor data every one second through MQTT
         measureDistance(true, "/smartcar/odometer"); // publishes the traveled distance to the odometer topic
   }
     handleInput();
@@ -277,7 +276,6 @@ bool reactToSensor(int sensorDistance, int STOP_DISTANCE, bool isSlowDown){
     if (sensorDistance != 0){
         if(sensorDistance > STOP_DISTANCE && sensorDistance <= 250 && isSlowDown){
             slowDownSmoothly();
-            isParked = true;
         }else if ( sensorDistance <= STOP_DISTANCE ){
             car.setSpeed(0);
             isParked = true;
