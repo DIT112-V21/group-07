@@ -1,10 +1,8 @@
-# PathFinder 
-_Project for autonomous public transporation_
 
 <p align="center"><img src="https://i.postimg.cc/tRKJ5w9C/Pathfinder.jpg" alt="Pathfinder.jpg" width="480" height="121"></p>
+<p align="center">Project for autonomous public transporation</p>
 
 [![Arduino CI](https://github.com/DIT112-V21/group-07/actions/workflows/Arduino-Build&Test.yml/badge.svg?branch=master&event=push)](https://github.com/DIT112-V21/group-07/actions/workflows/Arduino-Build&Test.yml)
-
 ***
 
 
