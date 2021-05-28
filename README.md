@@ -12,9 +12,9 @@
 - [App Installation](#app-installation)
 - [Dependencies](#dependencies)
 - [Testing](#testing)
-- [What](#what?)
-- [Why](#why?)
-- [How](#howt?)
+- [What?](#what)
+- [Why?](#why)
+- [How?](#how)
 - [Developers](#developers)
 - [Credits](#credits)
 - [License](#license)
@@ -30,11 +30,13 @@ to passenger's interaction with the bus directly through their phone.
 Please refer below pages  for a complete tutorial of the system; 
 - [User manual](https://github.com/DIT112-V21/group-07/wiki/User-Manual)
 - [Project charter](https://github.com/DIT112-V21/group-07/wiki/Project-Charter)
-- [Wiki pages](https://github.com/DIT112-V21/group-07/wiki/Pathfinder's-Wiki#welcome-to-the-pathfinders-wiki)
+- [Wiki pages](https://github.com/DIT112-V21/group-07/wiki)
 
 ***
 
 ### App Installation
+
+Installation guidance are provided in detail on the Wiki pages below.
 
 - To install the application, please proceed to [user installation](https://github.com/DIT112-V21/group-07/wiki/User-installation-&-setup-guidance).
 
