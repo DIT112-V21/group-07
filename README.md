@@ -1,24 +1,62 @@
-# PathFinder [![Arduino CI](https://github.com/DIT112-V21/group-07/actions/workflows/Arduino-Build.yml/badge.svg?branch=Arduino-UnitTesting&event=push)](https://github.com/DIT112-V21/group-07/actions/workflows/Arduino-Build.yml) [![Arduino CI](https://github.com/DIT112-V21/group-07/actions/workflows/Arduino-Build.yml/badge.svg?branch=Arduino-UnitTesting&event=pull_request)](https://github.com/DIT112-V21/group-07/actions/workflows/Arduino-Build.yml) [![Arduino CI](https://github.com/DIT112-V21/group-07/actions/workflows/Arduino-Test.yml/badge.svg?branch=Arduino-UnitTesting&event=push)](https://github.com/DIT112-V21/group-07/actions/workflows/Arduino-Test.yml) [![Arduino CI](https://github.com/DIT112-V21/group-07/actions/workflows/Arduino-Test.yml/badge.svg?branch=Arduino-UnitTesting&event=pull_request)](https://github.com/DIT112-V21/group-07/actions/workflows/Arduino-Test.yml)
+# PathFinder 
+_Project for autonomous public transporation_
+
+<p align="center"><img src="https://i.postimg.cc/tRKJ5w9C/Pathfinder.jpg" alt="Pathfinder.jpg" width="480" height="121"></p>
+
+[![Arduino CI](https://github.com/DIT112-V21/group-07/actions/workflows/Arduino-Build&Test.yml/badge.svg?branch=master&event=push)](https://github.com/DIT112-V21/group-07/actions/workflows/Arduino-Build&Test.yml)
 
 ***
 
-##  App Installation
-Open your terminal then paste the following command to clone this repository.  Upon cloning, you may now import and simulate our source code into **Android Studio**.
-```bash
-git clone git@github.com:DIT112-V21/group-07.git
-```
+
+- [Introduction](#introduction)
+- [App Installation](#app-installation)
+- [Dependencies](#dependencies)
+- [Testing](#testing)
+- [About PathFinder](#what)
+- [Developers](#developers)
+- [Credits](#credits)
+- [License](#license)
+
+## Introduction
+The purpose of the PathFinder smart vehicle is to offer to public transportation companies and their client a digitalized experience. We aim to do so by offering:
+
+to drivers the possibility to control the vehicle from their phone and remotely
+to passenger's interaction with the bus directly through their phone.
+
+Please refer below pages  for a complete tutorial of the system; 
+- [User manual](https://github.com/DIT112-V21/group-07/wiki/User-Manual)
+- [Project charter](https://github.com/DIT112-V21/group-07/wiki/Project-Charter)
+- [Wiki pages](https://github.com/DIT112-V21/group-07/wiki/Pathfinder's-Wiki#welcome-to-the-pathfinders-wiki)
+
+## App Installation
+
+- User guidance: to install the application, please proceed to [user installation](https://github.com/DIT112-V21/group-07/wiki/User-installation-&-setup-guidance) link.
+- Developer guidance: to install the application, please proceed to [developer installation](https://github.com/DIT112-V21/group-07/wiki/Developer-Installation) link.
 
 ***
+## Dependencies
 
-## SMCE godot Installation
+- [Arduino IDE](https://www.arduino.cc/en/software)
+- [SMCE-gd](https://github.com/ItJustWorksTM/smce-gd)
 
-**SMCE** : is an external virtual environment software that provides the possibility to run your software on. for more details on how to install and run it, please visit this link [SMCE](https://github.com/ItJustWorksTM/smce-gd/wiki).
+***
+## SMCE Installation
 
+**SMCE** : is an external virtual environment software that provides the possibility to run your software on, for more details on how to install and run it in different operating systems, please visit this link [SMCE](https://github.com/ItJustWorksTM/smce-gd/wiki).
 ***
 
 ## Smartcar_Shield
 
 The samrtcar functionalities in Pathfinder is using the open source library [smartcar_shield](https://github.com/platisd/smartcar_shield).
+***
+## Testing
+
+
+
+
+To run the unit tests for the back-end, please refer the link below;
+ - [Arduino unit testing](https://github.com/DIT112-V21/group-07/wiki/Guidance-for-unit-testing)
+
 ***
 ## What
 Pathfinder is a remote-operated bus that is controllable via an Android app. The bus features two different screens, depending on the role of the user. 
@@ -51,9 +89,21 @@ Furthermore, passengers may utilize the stop button controls available on the ap
 6. Passengers will have buttons available to them that will indicate if the want to stop, or if the need more amenities available to them.
 
 ***
+## Developers
+* [Alexandre Rancati-Palmer](https://github.com/alrapal)
+* [Bassam Eldesouki](https://github.com/bassamEldesouki)
+* [Christopher Axt](https://github.com/gusaxtcha)
+* [Ediz Genc](https://github.com/edizgenc2021)
+* [Gianmarco Iachella](https://github.com/iachella)
+* [Julia Van Kirk](https://github.com/juliavankirk)
+***
 
-## Shortcuts
+## Credits
+We would like to thank everyone who had even a small contribution in this project. We appericiate all support we have had along the way. 
+Please follow the [credits](https://github.com/DIT112-V21/group-07/wiki/Credits) for our gratitude. In case we forgot to thank anyone, please forgive us. :)
 
-  * [WIKI](https://github.com/DIT112-V21/group-07/wiki/Pathfinder's-Wiki#welcome-to-the-pathfinders-wiki)
-  * [User Manual](https://github.com/DIT112-V21/group-07/wiki/User-Manual)
-  * [Project charter](https://github.com/DIT112-V21/group-07/wiki/Project-Charter)
+## License
+
+MIT © Group-07 
+
+The source code for the reprository is licensed under the MIT license, refer to [LICENSE](https://github.com/DIT112-V21/group-07/wiki/License) file in the reprository.
