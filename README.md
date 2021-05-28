@@ -1,6 +1,6 @@
 
 <p align="center"><img src="https://i.postimg.cc/tRKJ5w9C/Pathfinder.jpg" alt="Pathfinder.jpg" width="480" height="121"></p>
-<p align="center">Project for autonomous public transporation</p>
+<p align="center">Project for autonomous public transportation</p>
 
 [![Arduino CI](https://github.com/DIT112-V21/group-07/actions/workflows/Arduino-Build&Test.yml/badge.svg?branch=master&event=push)](https://github.com/DIT112-V21/group-07/actions/workflows/Arduino-Build&Test.yml)
 ***
@@ -16,7 +16,7 @@
 - [License](#license)
 
 ## Introduction
-The purpose of the PathFinder smart vehicle is to offer to public transportation companies and their client a digitalized experience. We aim to do so by offering:
+The purpose of the PathFinder smart vehicle is to offer to public transportation companies, and their client a digitalized experience. We aim to do so by offering:
 
 to drivers the possibility to control the vehicle from their phone and remotely
 to passenger's interaction with the bus directly through their phone.
@@ -45,7 +45,7 @@ Please refer below pages  for a complete tutorial of the system;
 
 ## Smartcar_Shield
 
-The samrtcar functionalities in Pathfinder is using the open source library [smartcar_shield](https://github.com/platisd/smartcar_shield).
+The smart-car functionalities in Pathfinder is using the open source library [smartcar_shield](https://github.com/platisd/smartcar_shield).
 ***
 ## Testing
 
