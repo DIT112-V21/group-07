@@ -57,6 +57,8 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
     private static final String NEW_PASSENGER_BUS_NAME_TRIGGER = "2";
     private static final String REQ_STOP = "/smartcar/stop";
     private static final String REQ_HANDICAP = "/smartcar/handicap";
+    private static final String CRUISE_CONTROL = "/smartcar/cruisecontrol";
+    private View cruiseControl;
 
     private static final int IDLE_SPEED = 0;
     private static final int STRAIGHT_ANGLE = 0;
@@ -202,6 +204,7 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
         } else {
             drive(IDLE_SPEED, STRAIGHT_ANGLE, "stopping");
         }
+        cruiseControl = view;
     }
 
     /**
@@ -307,6 +310,10 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
                         if (message.toString().equals(NEW_PASSENGER_BUS_NAME_TRIGGER)) {
                             publishBusName();
                         }
+                    }else if(topic.equals(CRUISE_CONTROL)){
+                        if(isCruiseControl) {
+                            cruiseControl.performClick();
+                        }
                     } else {
                         Log.i(TAG, "[MQTT] Topic: " + topic + " | Message: " + message.toString());
                     }
@@ -402,6 +409,9 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
      */
     void brake() {
         drive(0,0, "Stopped");
+        if(isCruiseControl) {
+            cruiseControl.performClick();
+        }
     }
 
     /**
