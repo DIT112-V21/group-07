@@ -255,10 +255,12 @@ bool emergencyBrake(bool isSlowDown){
         int frontSensorDistance = frontUSSensor.getDistance();
         if(isClear(frontIR)){
             if(reactToSensor(frontSensorDistance, FRONT_STOP_DISTANCE, isSlowDown)){
+                mqtt.publish("/smartcar/cruisecontrol", "disable");
                 return true;}
         }else{
             car.setSpeed(0);
             isParked = true;
+            mqtt.publish("/smartcar/cruisecontrol", "disable");
         }
     }else if (leftDirection == -1 && rightDirection == -1 && currentSpeed > 0){
         int backSensorDistance = backIRSensor.getDistance();
