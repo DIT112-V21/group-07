@@ -109,6 +109,7 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
         fadeAwayAnim = AnimationUtils.loadAnimation(this, R.anim.fade_away_animation);
         bottomAnim = AnimationUtils.loadAnimation(this, R.anim.slide_up_animation);
 
+        cruiseControl = findViewById(R.id.cruise_control);
         mSpeedLog = findViewById(R.id.speed_log);
         mDistanceLog = findViewById(R.id.distance_log);
         mSignOutBtn = findViewById(R.id.sign_out);
@@ -204,7 +205,6 @@ public class DriverDashboard extends AppCompatActivity implements ThumbstickView
         } else {
             drive(IDLE_SPEED, STRAIGHT_ANGLE, "stopping");
         }
-        cruiseControl = view;
     }
 
     /**
