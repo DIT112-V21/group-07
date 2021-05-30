@@ -1,4 +1,4 @@
-name: GUI CI
+name: Android CI
 
 on: [push, pull_request]
 

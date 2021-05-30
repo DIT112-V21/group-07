@@ -3,8 +3,7 @@
 <p align="center">Project for autonomous public transportation</p>
 
 [![Arduino CI](https://github.com/DIT112-V21/group-07/actions/workflows/Arduino-Build&Test.yml/badge.svg?branch=master&event=push)](https://github.com/DIT112-V21/group-07/actions/workflows/Arduino-Build&Test.yml)
-[![Arduino CI](https://github.com/DIT112-V21/group-07/actions/workflows/Arduino-Build&Test.yml/badge.svg?branch=master&event=pull_request)](https://github.com/DIT112-V21/group-07/actions/workflows/Arduino-Build&Test.yml)
-
+[![Android CI](https://github.com/DIT112-V21/group-07/actions/workflows/Android_CI.yml/badge.svg?branch=master&event=push)](https://github.com/DIT112-V21/group-07/actions/workflows/Android_CI.yml)
 ***
 
 ### Contents
@@ -65,7 +64,7 @@ The smart-car functionalities in Pathfinder utilizes the open source library [sm
 ### Testing
 
 To run the unit tests for the back-end, please refer the link below;
- - [Arduino unit testing](https://github.com/DIT112-V21/group-07/wiki/Guidance-for-unit-testing)
+ - [Google unit testing](https://github.com/DIT112-V21/group-07/wiki/Guidance-for-Google-unit-testing)
  - [Android unit testing](https://github.com/DIT112-V21/group-07/wiki/Guidance-for-Android-testing)
 
 ***
