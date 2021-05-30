@@ -26,10 +26,11 @@ The purpose of the PathFinder smart vehicle is to offer a digitalized experience
 to drivers the possibility to control the vehicle from their phone and remotely
 to passenger's interaction with the bus directly through their phone.
 
-Please refer below pages  for a complete tutorial of the system; 
+Please refer below pages  for a complete tutorial and demonstration of the system; 
 - [User manual](https://github.com/DIT112-V21/group-07/wiki/User-Manual)
 - [Project charter](https://github.com/DIT112-V21/group-07/wiki/Project-Charter)
 - [Wiki pages](https://github.com/DIT112-V21/group-07/wiki)
+- [Pathfinder demo](https://youtu.be/yIKet0pUt-s)
 
 ***
 
