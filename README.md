@@ -3,7 +3,7 @@
 <p align="center">Project for autonomous public transportation</p>
 
 [![Arduino CI](https://github.com/DIT112-V21/group-07/actions/workflows/Arduino-Build&Test.yml/badge.svg?branch=master&event=push)](https://github.com/DIT112-V21/group-07/actions/workflows/Arduino-Build&Test.yml)
-
+[![Android CI](https://github.com/DIT112-V21/group-07/actions/workflows/Android_CI.yml/badge.svg?branch=master&event=push)](https://github.com/DIT112-V21/group-07/actions/workflows/Android_CI.yml)
 ***
 
 ### Contents
