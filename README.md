@@ -64,7 +64,7 @@ The smart-car functionalities in Pathfinder utilizes the open source library [sm
 ### Testing
 
 To run the unit tests for the back-end, please refer the link below;
- - [Arduino unit testing](https://github.com/DIT112-V21/group-07/wiki/Guidance-for-Arduino-unit-testing)
+ - [Google unit testing](https://github.com/DIT112-V21/group-07/wiki/Guidance-for-Google-unit-testing)
  - [Android unit testing](https://github.com/DIT112-V21/group-07/wiki/Guidance-for-Android-testing)
 
 ***
